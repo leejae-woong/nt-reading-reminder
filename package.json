@@ -1,0 +1,8 @@
+{
+  "name": "nt-reading-reminder",
+  "private": true,
+  "type": "module",
+  "description": "신약 1독 체크표: 아침 9시, 저녁 9시에 오늘 기록이 없는 사람에게 알림",
+  "scripts": { "start": "node notify.mjs" },
+  "dependencies": { "web-push": "3.6.7" }
+}
