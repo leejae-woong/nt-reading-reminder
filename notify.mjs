@@ -11,10 +11,12 @@ const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY;
 const TEST = process.env.TEST === "true"; // 기록 여부와 상관없이 모두에게 보내기
 const DRY = process.env.DRY_RUN === "true"; // 보내지 않고 누구에게 갈지만 출력
 
-if (!VAPID_PRIVATE && !DRY) {
-  console.error("VAPID_PRIVATE_KEY 시크릿이 없어요. 저장소 Settings → Secrets and variables → Actions에서 등록해 주세요.");
-  process.exit(1);
-}
+// GitHub 실행 화면에 바로 보이도록 오류를 주석(annotation)으로 남긴다
+const fail = msg => { console.log(`::error::${msg}`); process.exit(1); };
+process.on("uncaughtException", e => fail(`실행 오류: ${e.message}`));
+process.on("unhandledRejection", e => fail(`실행 오류: ${e && e.message || e}`));
+console.log(`::notice::비밀키(VAPID_PRIVATE_KEY) 등록: ${VAPID_PRIVATE ? "있음" : "없음"}`);
+if (!VAPID_PRIVATE && !DRY) fail("VAPID_PRIVATE_KEY 시크릿이 없어요. Settings → Secrets and variables → Actions에서 등록해 주세요.");
 if (!DRY) webpush.setVapidDetails(SITE, VAPID_PUBLIC, VAPID_PRIVATE);
 
 // ---- 날짜 (한국 시간) ----
@@ -71,7 +73,7 @@ for (const m of members) {
   const all = new Set(done); for (const l of mine) for (let i = l.start; i <= l.end; i++) all.add(i);
   const remain = total - all.size;
   if (remain <= 0) { skipped++; continue; }
-  if (DRY && readToday && !TEST) console.log(`[미리보기] ${m.name}: 오늘 기록 있음 → 안 보냄`);                 // 완독한 사람은 보내지 않음
+  if (DRY && readToday && !TEST) console.log(`::notice::[점검] ${m.name}: 오늘 기록 있음 → 안 보냄 (폰 ${mySubs.length}대)`);                 // 완독한 사람은 보내지 않음
   if (readToday && !TEST) { skipped++; continue; }           // 오늘 기록했으면 보내지 않음
 
   const quota = Math.ceil((total - done.size) / DAYS_LEFT);
@@ -81,7 +83,7 @@ for (const m of members) {
     : `${m.name}, 아직 오늘 기록이 없어요. 자기 전에 ${quota}장 같이 읽어요.`;
   const payloadFor = s => JSON.stringify({ title: "오늘 성경 읽으셨나요?", body, url: s.site || SITE, tag: `nt-${TODAY}-${SLOT}` });
 
-  if (DRY) { console.log(`[미리보기] ${m.name} (구독 ${mySubs.length}) ← ${body}`); continue; }
+  if (DRY) { console.log(`::notice::[점검] ${m.name} · 이 사람 폰 ${mySubs.length}대 ← ${body}`); continue; }
   for (const s of mySubs) {
     try {
       await webpush.sendNotification({ endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } }, payloadFor(s), { TTL: 6 * 3600, urgency: "normal" });
@@ -90,8 +92,8 @@ for (const m of members) {
       if (e.statusCode === 404 || e.statusCode === 410) {   // 앱 삭제 등으로 만료된 구독은 정리
         await fetch(`${BASE}/push/${s.id}`, { method: "DELETE" });
         removed++;
-      } else console.error(`${m.name} 전송 실패:`, e.statusCode || "", e.body || e.message);
+      } else console.log(`::warning::${m.name} 전송 실패: ${e.statusCode || ""} ${e.body || e.message}`);
     }
   }
 }
-console.log(`보냄 ${sent} · 건너뜀 ${skipped} · 만료 정리 ${removed}`);
+console.log(`::notice::${TODAY} ${SLOT}${DRY ? " (점검만, 전송 안 함)" : ""} · 구독 ${subs.length} · 보냄 ${sent} · 건너뜀 ${skipped} · 만료 정리 ${removed}`);

@@ -16,6 +16,10 @@ on:
         description: "테스트: 오늘 기록했어도 모두에게 보내기"
         type: boolean
         default: false
+      dry:
+        description: "점검만: 실제로 보내지 않고 누구에게 갈지만 확인"
+        type: boolean
+        default: false
 
 jobs:
   remind:
@@ -35,6 +39,7 @@ jobs:
           VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
           SLOT: ${{ inputs.slot }}
           TEST: ${{ inputs.test }}
+          DRY_RUN: ${{ inputs.dry }}
       # 공개 저장소는 60일 동안 변화가 없으면 예약 실행이 멈춰서, 일요일 아침마다 실행 날짜를 기록해 둔다
       - name: 예약 실행 유지 (일요일 아침)
         if: github.event_name == 'schedule' && github.event.schedule == '50 23 * * *'
