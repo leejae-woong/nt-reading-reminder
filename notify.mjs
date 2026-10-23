@@ -7,7 +7,8 @@ const PROJECT = "bible-nt-check";
 const BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
 const SITE = (process.env.SITE_URL || readFileSync(new URL("./site-url.txt", import.meta.url), "utf8")).trim();
 const VAPID_PUBLIC = readFileSync(new URL("./vapid-public.txt", import.meta.url), "utf8").trim();
-const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY;
+// 붙여넣을 때 섞여 들어간 공백·줄바꿈·따옴표·= 를 걷어낸다
+const VAPID_PRIVATE = (process.env.VAPID_PRIVATE_KEY || "").replace(/[\s"'`=]/g, "");
 const TEST = process.env.TEST === "true"; // 기록 여부와 상관없이 모두에게 보내기
 const DRY = process.env.DRY_RUN === "true"; // 보내지 않고 누구에게 갈지만 출력
 
