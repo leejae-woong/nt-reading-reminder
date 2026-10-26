@@ -1,7 +1,7 @@
 // 신약 1독 체크표 알림
 // 아침 9시, 저녁 9시(한국 시간)에 실행되어 오늘 읽기 기록이 없는 멤버에게만 웹 푸시를 보낸다.
 import webpush from "web-push";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 
 const PROJECT = "bible-nt-check";
 const BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
@@ -28,6 +28,18 @@ const SLOT = process.env.SLOT || (HOUR < 15 ? "morning" : "evening");
 const END = TODAY.slice(0, 4) + "-12-31";
 const dayNum = s => Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10)) / 864e5;
 const DAYS_LEFT = Math.max(1, dayNum(END) - dayNum(TODAY) + 1);
+
+// ---- 중복·늦은 실행 막기 ----
+// cron-job.org가 정시에 실행하고, GitHub 예약 실행은 백업이다. 같은 날 같은 알림은 한 번만 보낸다.
+const EVENT = process.env.EVENT || "";
+const MARK = `sent/${TODAY}-${SLOT}`;
+if (!TEST && !DRY) {
+  if (EVENT === "schedule") {
+    const inWindow = SLOT === "morning" ? HOUR >= 8 && HOUR < 12 : HOUR >= 20;
+    if (!inWindow) { console.log(`::notice::예약 실행이 너무 늦게 시작돼서 건너뜀 (한국 ${HOUR}시)`); process.exit(0); }
+  }
+  if (existsSync(new URL(`./${MARK}`, import.meta.url))) { console.log(`::notice::${TODAY} ${SLOT} 알림은 이미 보내서 건너뜀`); process.exit(0); }
+}
 
 // ---- 신약 장 번호 ----
 const BOOKS = [["마태복음",28],["마가복음",16],["누가복음",24],["요한복음",21],["사도행전",28],["로마서",16],["고린도전서",16],["고린도후서",13],["갈라디아서",6],["에베소서",6],["빌립보서",4],["골로새서",4],["데살로니가전서",5],["데살로니가후서",3],["디모데전서",6],["디모데후서",4],["디도서",3],["빌레몬서",1],["히브리서",13],["야고보서",5],["베드로전서",5],["베드로후서",3],["요한일서",5],["요한이서",1],["요한삼서",1],["유다서",1],["요한계시록",22]];
@@ -97,4 +109,5 @@ for (const m of members) {
     }
   }
 }
+if (!TEST && !DRY) { mkdirSync(new URL("./sent/", import.meta.url), { recursive: true }); writeFileSync(new URL(`./${MARK}`, import.meta.url), `보냄 ${sent}\n`); }
 console.log(`::notice::${TODAY} ${SLOT}${DRY ? " (점검만, 전송 안 함)" : ""} · 구독 ${subs.length} · 보냄 ${sent} · 건너뜀 ${skipped} · 만료 정리 ${removed}`);
