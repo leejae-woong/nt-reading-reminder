@@ -74,6 +74,16 @@ async function list(col) {
 const [members, logs, prior, subs] = await Promise.all(["members", "logs", "prior", "push"].map(list));
 console.log(`오늘 ${TODAY} (${SLOT}) · 멤버 ${members.length} · 알림 구독 ${subs.length}${TEST ? " · 테스트" : ""}`);
 
+// ---- 팀 현황 ----
+const addDay = (d, n) => { const x = new Date(Date.UTC(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10)) + n * 864e5); return x.toISOString().slice(0, 10); };
+const josa = (w, a, b) => { const c = w.charCodeAt(w.length - 1); return c >= 0xac00 && c <= 0xd7a3 && (c - 0xac00) % 28 ? a : b; };
+const byDate = new Map(); for (const l of logs) { if (!byDate.has(l.date)) byDate.set(l.date, new Set()); byDate.get(l.date).add(l.member); }
+const activeOn = d => members.filter(m => (m.startDate || TODAY) <= d);
+const allDone = d => { const a = activeOn(d), s = byDate.get(d) || new Set(); return a.length > 0 && a.every(m => s.has(m.id)); };
+let teamStreak = 0; { let d = allDone(TODAY) ? TODAY : addDay(TODAY, -1); while (allDone(d) && teamStreak < 400) { teamStreak++; d = addDay(d, -1); } }
+const doneToday = activeOn(TODAY).filter(m => (byDate.get(TODAY) || new Set()).has(m.id));
+const nameList = ms => ms.map(m => m.name).join(", ");
+
 let sent = 0, skipped = 0, removed = 0;
 for (const m of members) {
   const mine = logs.filter(l => l.member === m.id);
@@ -91,9 +101,12 @@ for (const m of members) {
 
   const quota = Math.ceil((total - done.size) / DAYS_LEFT);
   let next = 0; while (next < total && all.has(next)) next++;
+  const others = doneToday.filter(x => x.id !== m.id);
   const body = SLOT === "morning"
-    ? `${m.name}, 오늘은 ${quota}장이면 돼요. ${label(next)}부터 시작!`
-    : `${m.name}, 아직 오늘 기록이 없어요. 자기 전에 ${quota}장 같이 읽어요.`;
+    ? `${m.name}, 오늘은 ${quota}장이면 돼요. ${label(next)}부터 시작!` + (teamStreak >= 2 ? ` 팀 연속 ${teamStreak}일째 🔥` : "")
+    : others.length
+      ? `${m.name}, 오늘 ${nameList(others)}${josa(others[others.length - 1].name, "은", "는")} 읽었어요. 바쁘면 1장만 읽어도 출석이에요!`
+      : `${m.name}, 아직 오늘 기록이 없어요. 자기 전에 ${quota}장, 바쁘면 1장이라도 같이 읽어요.`;
   const payloadFor = s => JSON.stringify({ title: "오늘 성경 읽으셨나요?", body, url: s.site || SITE, tag: `nt-${TODAY}-${SLOT}` });
 
   if (DRY) { console.log(`::notice::[점검] ${m.name} · 이 사람 폰 ${mySubs.length}대 ← ${body}`); continue; }
@@ -107,6 +120,19 @@ for (const m of members) {
         removed++;
       } else console.log(`::warning::${m.name} 전송 실패: ${e.statusCode || ""} ${e.body || e.message}`);
     }
+  }
+}
+// ---- 일요일 저녁: 이번 주 요약 알림 (모두에게) ----
+const dow = new Date(Date.UTC(+TODAY.slice(0, 4), +TODAY.slice(5, 7) - 1, +TODAY.slice(8, 10))).getUTCDay();
+if (SLOT === "evening" && dow === 0 && !TEST) {
+  const ws = addDay(TODAY, -6); let att = 0, possible = 0, ch = 0;
+  for (let i = 0; i < 7; i++) { const d = addDay(ws, i); for (const m of activeOn(d)) { possible++; if ((byDate.get(d) || new Set()).has(m.id)) att++; } }
+  for (const l of logs) if (l.date >= ws && l.date <= TODAY) ch += l.end - l.start + 1;
+  const body = `이번 주 출석 ${att}/${possible} · 함께 ${ch}장 읽었어요. 대시보드에서 요약 카드를 만들어 카톡에 공유해봐요!`;
+  if (DRY) console.log(`::notice::[점검] 주간 요약 ← ${body}`);
+  else for (const s of subs) {
+    try { await webpush.sendNotification({ endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } }, JSON.stringify({ title: "이번 주 우리 팀 📸", body, url: (s.site || SITE) + "#dashboard", tag: `nt-week-${TODAY}` }), { TTL: 6 * 3600 }); sent++; }
+    catch (e) { if (e.statusCode !== 404 && e.statusCode !== 410) console.log(`::warning::주간 요약 전송 실패: ${e.statusCode || ""}`); }
   }
 }
 if (!TEST && !DRY) { mkdirSync(new URL("./sent/", import.meta.url), { recursive: true }); writeFileSync(new URL(`./${MARK}`, import.meta.url), `보냄 ${sent}\n`); }
