@@ -86,6 +86,7 @@ export default async (req) => {
   const userMsg = [
     label ? (mode === "free" && !p.cont ? `[지금 읽는 본문 (참고용)] ${label}` : `[본문] ${label}`) : "",
     text ? `[붙여넣은 본문 (개역개정)]\n${text}` : "",
+    text && !label && !p.cont ? "[본문 위치] 사용자가 위치를 알려주지 않았어. 답 맨 앞에 한 줄로 이 본문이 어디인지 밝혀줘 (예: \"본문: 마태복음 13:31-32\"). 공관복음 병행 본문처럼 비슷한 곳이 여럿이면 가장 가능성 높은 곳과 다른 후보를 함께 말하고, 확실하지 않으면 확실하지 않다고 해줘." : "",
     p.cont ? `[이어쓰기] ${question}` : mode === "free" ? `[질문] ${question}\n\n[답하는 방식] ${MODES.free}` : `[요청] ${MODES[mode]}`
   ].filter(Boolean).join("\n\n");
 
