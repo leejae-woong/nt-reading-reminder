@@ -217,26 +217,20 @@ textarea{min-height:92px;resize:vertical;line-height:1.5}
 .log .r{font-weight:700;font-size:15.5px}
 .log .nt{font-family:var(--f-hand);font-size:22px;line-height:1.25;color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
 /* 말씀곁에서 */
-.w-head{font-size:30px;line-height:1.3;font-weight:400;letter-spacing:-.01em;margin:6px 0 2px}
-.w-head b{font-weight:800;display:block}
-.w-main{display:flex;flex-direction:column;gap:26px}
-.w-sec{display:flex;flex-direction:column;gap:10px}
-.w-lbl{font-size:13px;color:var(--muted)}
-.w-seg{display:grid;grid-template-columns:1fr 1fr;background:var(--chip);border-radius:99px;padding:4px;gap:4px}
-.w-seg button{appearance:none;border:0;background:transparent;border-radius:99px;padding:10px 8px;font-size:14.5px;color:var(--muted);cursor:pointer;font-family:inherit}
-.w-seg button[aria-pressed="true"]{background:var(--note);color:var(--note-ink);font-weight:700}
+.w-intro{text-align:center;display:flex;flex-direction:column;gap:2px}
+.w-intro .big{font-family:var(--f-hand);font-size:38px;line-height:1.1}
+.w-intro .sub{font-size:13px;color:var(--muted)}
 .w-pass{display:grid;grid-template-columns:1fr 80px 86px;gap:8px;align-items:center}
-.w-ask{display:flex;gap:10px;align-items:flex-end;border-bottom:2px solid var(--line);padding-bottom:4px}
-.w-ask:focus-within{border-bottom-color:var(--ink)}
-.w-ask textarea{flex:1;min-width:0;min-height:0;height:30px;max-height:160px;resize:none;border:0;background:transparent;border-radius:0;padding:4px 0;font-size:18px;line-height:1.4;color:var(--ink);box-shadow:none;outline:none}
-.w-ask textarea::placeholder{color:var(--muted)}
-.w-send{appearance:none;border:0;background:none;color:var(--ink);padding:2px;margin-bottom:2px;cursor:pointer;display:grid;place-items:center}
-.w-send svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
-.w-send:disabled{color:var(--muted);cursor:default}
-.w-chips{display:flex;flex-wrap:wrap;gap:8px}
-.w-chip{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:9px 16px;font-size:14.5px;cursor:pointer;font-family:inherit}
-.w-chip.main{background:var(--note);border-color:var(--note);color:var(--note-ink);font-weight:700}
-.w-chip:disabled{opacity:.45;cursor:default}
+.w-toggle{appearance:none;border:0;background:none;color:var(--muted);font-size:13px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:2px 0;align-self:flex-start}
+.w-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.w-btn{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:11px 12px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:1px;min-height:58px}
+.w-btn b{font-size:14.5px;font-weight:700}
+.w-btn span{font-size:12px;color:var(--muted)}
+.w-btn.wide{grid-column:1/-1;background:var(--note);border-color:var(--note);color:var(--note-ink)}
+.w-btn.wide span{color:var(--note-soft)}
+.w-btn:disabled{opacity:.45;cursor:default}
+.w-ask{display:flex;gap:8px;align-items:flex-end}
+.w-ask textarea{min-height:48px;flex:1;min-width:0}
 .w-thread{display:flex;flex-direction:column;gap:12px}
 .w-q{align-self:flex-end;max-width:88%;background:var(--btn);color:var(--btn-ink);border-radius:16px 16px 4px 16px;padding:9px 13px;font-size:14px}
 .w-q small{display:block;opacity:.7;font-size:11.5px;font-family:var(--f-mono)}
@@ -322,31 +316,29 @@ textarea{min-height:92px;resize:vertical;line-height:1.5}
 
   <!-- 말씀곁에서 -->
   <main id="word" hidden>
-    <h2 class="w-head">어떤 말씀이<b>궁금해?</b></h2>
+    <div class="w-intro"><div class="sub">읽다가 궁금한 걸 물어봐. 버튼만 눌러도 돼.</div></div>
     <section class="card" id="wCodeCard" hidden>
       <label class="lbl" for="wCode">우리끼리 코드</label>
       <p class="pcount" style="margin:0">처음 한 번만 입력하면 돼. 코드는 재웅이 알려줄 거야.</p>
       <div class="addrow"><input id="wCode" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="코드 입력"><button class="btn primary sm" id="wCodeSave" type="button">확인</button></div>
     </section>
-    <div class="w-main" id="wMain">
-      <div class="w-sec">
-        <span class="w-lbl">본문</span>
-        <div class="w-seg"><button type="button" id="wSrcPick" aria-pressed="true">성경에서 고르기</button><button type="button" id="wSrcPaste" aria-pressed="false">직접 붙여넣기</button></div>
-        <div class="w-pass" id="wPickBox"><select id="wBook" aria-label="책"></select><select id="wCh" aria-label="장"></select><input id="wVs" placeholder="절" aria-label="절" inputmode="numeric"></div>
-        <textarea id="wPaste" hidden maxlength="8000" placeholder="성경 앱에서 복사한 본문을 여기에 붙여넣어줘."></textarea>
+    <section class="card" id="wMain">
+      <div><span class="lbl">어느 본문?</span>
+        <div class="w-pass"><select id="wBook" aria-label="책"></select><select id="wCh" aria-label="장"></select><input id="wVs" placeholder="절 (예: 1-20)" aria-label="절" inputmode="numeric"></div>
       </div>
-      <div class="w-sec">
-        <div class="w-ask"><textarea id="wQ" rows="1" maxlength="1500" placeholder="궁금한 걸 적어줘" aria-label="질문"></textarea><button class="w-send" id="wSend" type="button" aria-label="묻기"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="M15.8 15.8 21 21"/></svg></button></div>
+      <button class="w-toggle" type="button" id="wPasteT">+ 본문 붙여넣기 (개역개정)</button>
+      <textarea id="wPaste" hidden maxlength="8000" placeholder="성경 앱에서 복사한 본문을 붙여넣어줘. 붙여넣으면 더 정확하게 답해."></textarea>
+      <div><span class="lbl">가볍게 눌러보기</span>
+        <div class="w-btns" id="wBtns"></div>
       </div>
-      <div class="w-sec">
-        <span class="w-lbl">빠르게 물어보기</span>
-        <div class="w-chips" id="wBtns"></div>
+      <div><label class="lbl" for="wQ">직접 물어보기</label>
+        <div class="w-ask"><textarea id="wQ" maxlength="1500" placeholder="예: 여기서 '천국 열쇠'는 무슨 뜻이야?"></textarea><button class="btn primary sm" id="wSend" type="button">보내기</button></div>
       </div>
-    </div>
+    </section>
     <section class="w-thread" id="wThread" aria-live="polite"></section>
     <div style="display:flex;justify-content:center;gap:14px">
       <button class="linkbtn" type="button" id="wClear" hidden>대화 새로 시작</button>
-      <button class="linkbtn" type="button" id="wSetBtn">내 소개 · 코드</button>
+      <button class="linkbtn" type="button" id="wSetBtn">⚙ 내 소개 · 코드</button>
     </div>
     <p class="w-note">AI가 쓴 답이라 틀릴 수 있어. 성경 본문과 함께 확인하고, 교회 안에서 판단이 필요한 일은 담임목사님과 상의하자.</p>
   </main>
@@ -582,7 +574,7 @@ let inlineFor=null;
 // ---------- routing ----------
 function go(v){
   view=v==="dash"||v==="word"?v:"home";
-  try{history.replaceState(null,"",v==="dash"?"#dashboard":v==="word"?"#ask":"#")}catch(e){}
+  try{history.replaceState(null,"",v==="dash"?"#dashboard":v==="word"?"#word":"#")}catch(e){}
   closeDrawer();$("app").scrollTop=0;render();
 }
 function render(){
@@ -941,13 +933,16 @@ $("bellHint").onclick=()=>openSheet("push");
 
 // ---------- 말씀곁에서 ----------
 const W_BTNS=[
-  ["full","전체 정리",true],["flow","흐름 정리"],["background","그 시대 배경"],["why","왜 이렇게 썼을까"],
-  ["meaning","핵심 의미"],["words","원어 노트"],["refs","관련 구절"],["doctrine","교리 연결"],["apply","오늘 나에게"]
+  ["full","📖 전체 정리","관찰부터 적용까지 한 번에",true],
+  ["flow","🧭 흐름 정리","문맥 · 앞뒤 흐름 · 핵심 단어"],
+  ["background","🏛 그 시대 배경","처음 읽은 사람들의 상황"],
+  ["why","💡 왜 이렇게 썼을까","표현·비유가 당시 어떻게 들렸나"],
+  ["meaning","🔑 핵심 의미","비유로 쉽게"],
+  ["words","🔤 원어 노트","헬라어 핵심 단어"],
+  ["refs","🔗 관련 구절","각주처럼 연결"],
+  ["doctrine","📜 교리 연결","신앙고백 · 요리문답"],
+  ["apply","🌱 오늘 나에게","내 삶의 자리에"]
 ];
-let wSrc=(()=>{try{return localStorage.getItem("nt-word-src")==="paste"?"paste":"pick"}catch(e){return"pick"}})();
-function wSetSrc(v){wSrc=v;try{localStorage.setItem("nt-word-src",v)}catch(e){}
-  $("wSrcPick").setAttribute("aria-pressed",v==="pick");$("wSrcPaste").setAttribute("aria-pressed",v==="paste");
-  $("wPickBox").hidden=v!=="pick";$("wPaste").hidden=v!=="paste"}
 let wPass=null,wBusy=false,wThread=[],wThreadFor=null,wShowSet=false;
 const wGet=k=>{try{return localStorage.getItem(k)||""}catch(e){return""}};
 const wPut=(k,v)=>{try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}};
@@ -988,7 +983,7 @@ function renderWord(m){
     $("wCodeReset").onclick=()=>{wPut("nt-code","");wShowSet=false;box.remove();render()};
   }
   const B=$("wBtns");
-  if(!B.children.length)for(const[k,t,main]of W_BTNS){const b=document.createElement("button");b.type="button";b.className="w-chip"+(main?" main":"");b.textContent=t;b.onclick=()=>wAsk(k,t);B.appendChild(b)}
+  if(!B.children.length)for(const[k,t,d,wide]of W_BTNS){const b=document.createElement("button");b.type="button";b.className="w-btn"+(wide?" wide":"");b.innerHTML="<b>"+t+"</b><span>"+d+"</span>";b.onclick=()=>wAsk(k,t.replace(/^\S+\s/,""));B.appendChild(b)}
   B.querySelectorAll("button").forEach(b=>b.disabled=wBusy||!m);
   $("wSend").disabled=wBusy||!m;
   if(!m){$("wThread").innerHTML='<div class="empty">홈에서 내 이름을 먼저 골라줘.</div>';$("wClear").hidden=true;return}
@@ -1001,7 +996,7 @@ function wRenderThread(){
     else{const a=document.createElement("div");a.className="w-a";
       a.innerHTML=x.content?mdLite(x.content):'<div class="w-wait"><i></i><i></i><i></i> 말씀을 살펴보는 중…</div>';
       if(x.content&&!x.pending&&!x.error){const tl=document.createElement("div");tl.className="tools";const cut=i===wThread.length-1&&/(멈췄어|끊겼어)\. 아래 '이어서 보기'/.test(x.content);
-        tl.innerHTML=(cut?'<button type="button" class="wmore">이어서 보기</button>':'')+'<button type="button" class="wcopy">복사</button>';
+        tl.innerHTML=(cut?'<button type="button" class="wmore">▶ 이어서 보기</button>':'')+'<button type="button" class="wcopy">📋 복사</button>';
         if(cut)tl.querySelector(".wmore").onclick=()=>wAsk("free","","끊긴 곳 바로 다음부터 이어서 써줘. 앞부분은 반복하지 마.");
         tl.querySelector(".wcopy").onclick=async()=>{try{await navigator.clipboard.writeText(x.content);toast("복사했어")}catch(e){toast("길게 눌러서 복사해줘")}};a.appendChild(tl)}
       T.appendChild(a)}
@@ -1012,15 +1007,12 @@ async function wAsk(mode,title,preset){
   if(wBusy)return;const m=members.find(x=>x.id===me);if(!m)return toast("홈에서 내 이름을 먼저 골라줘");
   const code=wGet("nt-code");if(!code){render();return}
   const q=mode==="free"?(preset||$("wQ").value.trim()):"";if(mode==="free"&&!q)return toast("궁금한 걸 적어줘");
-  const pasted=wSrc==="paste"?$("wPaste").value.trim():"";
-  if(wSrc==="paste"&&!pasted&&!preset)return toast("본문을 붙여넣어줘");
-  const passage=wSrc==="paste"?{label:"",text:pasted}:{label:wLabel(),text:""};
-  const where=wSrc==="paste"?"붙여넣은 본문":passage.label;
+  const passage={label:wLabel(),text:$("wPaste").hidden?"":$("wPaste").value.trim()};
   const history=wThread.filter(x=>!x.pending&&x.content&&!x.error).map(x=>({role:x.role,content:x.role==="user"?(x.sent||x.content):x.content}));
-  const sent="[본문] "+(where)+"\n"+(mode==="free"?"[질문] "+q:"[요청] "+title);
-  wThread.push({role:"user",content:preset?"이어서":(q||title),label:preset?"이어서":(mode==="free"?q:title),passage:where,sent});
+  const sent="[본문] "+passage.label+"\n"+(mode==="free"?"[질문] "+q:"[요청] "+title);
+  wThread.push({role:"user",content:preset?"이어서":(q||title),label:preset?"▶ 이어서":(mode==="free"?q:title),passage:passage.label,sent});
   const ans={role:"assistant",content:"",pending:true};wThread.push(ans);
-  wBusy=true;if(mode==="free"&&!preset){$("wQ").value="";$("wQ").style.height="30px"}render();
+  wBusy=true;if(mode==="free"&&!preset)$("wQ").value="";render();
   setTimeout(()=>{const el=$("wThread").lastElementChild;if(el)el.scrollIntoView({block:"start",behavior:"smooth"})},50);
   let last=0;const MARK=/\[\[(END|CUT)\]\]\s*$/;
   const paint=()=>{const now=Date.now();if(now-last>120){last=now;const el=$("wThread").lastElementChild;if(el)el.innerHTML=mdLite(ans.content.replace(/\[\[(E|C)[A-Z]*\]?\]?$/,""))}};
@@ -1050,10 +1042,7 @@ async function wAsk(mode,title,preset){
 }
 $("wSend").onclick=()=>wAsk("free");
 $("wQ").onkeydown=e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey))wAsk("free")};
-$("wSrcPick").onclick=()=>wSetSrc("pick");
-$("wSrcPaste").onclick=()=>{wSetSrc("paste");$("wPaste").focus()};
-wSetSrc(wSrc);
-$("wQ").oninput=()=>{const t=$("wQ");t.style.height="30px";t.style.height=Math.min(t.scrollHeight,160)+"px"};
+$("wPasteT").onclick=()=>{const t=$("wPaste");t.hidden=!t.hidden;$("wPasteT").textContent=t.hidden?"+ 본문 붙여넣기 (개역개정)":"− 붙여넣기 닫기";if(!t.hidden)t.focus()};
 $("wCodeSave").onclick=()=>{const v=$("wCode").value.trim();if(!v)return;wPut("nt-code",v);$("wCode").value="";render();toast("확인! 이제 물어볼 수 있어")};
 $("wCode").onkeydown=e=>{if(e.key==="Enter")$("wCodeSave").click()};
 $("wClear").onclick=()=>{wThread=[];wSave();render()};
@@ -1066,7 +1055,7 @@ function notice(msg){const N=$("notice");N.textContent=msg;N.hidden=!msg}
 
 // ---------- boot ----------
 let dbReady=false;
-view=location.hash==="#dashboard"?"dash":location.hash==="#ask"?"word":"home";
+view=location.hash==="#dashboard"?"dash":location.hash==="#word"?"word":"home";
 render();
 (()=>{
   try{
