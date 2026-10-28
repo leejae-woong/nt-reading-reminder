@@ -216,58 +216,6 @@ textarea{min-height:92px;resize:vertical;line-height:1.5}
 .log .t span:first-child{display:flex;align-items:center;gap:6px;color:var(--ink);font-weight:600}
 .log .r{font-weight:700;font-size:15.5px}
 .log .nt{font-family:var(--f-hand);font-size:22px;line-height:1.25;color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
-/* team */
-.teamline{appearance:none;border:0;background:var(--surface);box-shadow:var(--shadow);border-radius:99px;padding:8px 14px 8px 8px;display:flex;align-items:center;gap:10px;margin:0 auto;cursor:pointer;font-size:13.5px;color:var(--ink);max-width:100%}
-.teamline .avs{display:flex}
-.teamline .av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--note-ink);border:2px solid var(--surface);margin-left:-6px;position:relative}
-.teamline .av:first-child{margin-left:0}
-.teamline .av.off{opacity:.35;filter:grayscale(1)}
-.teamline b{font-weight:700}
-.todo-x{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
-.todo-x a{color:var(--ink);font-weight:600;text-decoration:none;background:var(--chip);border-radius:99px;padding:6px 12px;white-space:nowrap}
-.intro{background:var(--app);border-radius:12px;padding:10px 12px;font-size:13.5px;line-height:1.5}
-.intro b{display:block;margin-bottom:2px}
-.newreact{appearance:none;border:0;background:var(--note);color:var(--note-ink);border-radius:12px;padding:10px 12px;font-weight:600;font-size:14px;cursor:pointer;text-align:left}
-.chk{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;user-select:none}
-.chk input{width:20px;height:20px;accent-color:var(--btn);flex:none}
-.teambox{background:var(--surface);border-radius:18px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px}
-.tb-top{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tb-top>div{background:var(--app);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
-.tb-top span{font-size:12px;color:var(--muted)}
-.tb-top b{font-family:var(--f-hand);font-size:36px;font-weight:400;line-height:1}
-.tb-avs{display:flex;gap:4px;margin-top:4px}
-.tb-avs i{font-style:normal;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--note-ink)}
-.tb-avs i.off{opacity:.3;filter:grayscale(1)}
-.tb-gauge{height:12px;border-radius:99px;background:var(--chip);overflow:hidden;display:flex}
-.tb-gauge i{display:block;height:100%}
-.tb-sub{font-size:12.5px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.tb-msg{font-size:14px}
-.tb-msg b{background:linear-gradient(transparent 60%,var(--note) 60%)}
-.miles{display:flex;flex-direction:column;gap:8px}
-.mile{background:var(--surface);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center}
-.mile.done{background:var(--note);color:var(--note-ink)}
-.mile h4{margin:0;font-size:15px}
-.mile h4 small{font-weight:400;color:var(--muted);font-size:12px;margin-left:6px}
-.mile.done h4 small{color:var(--note-soft)}
-.mile .who{display:flex;gap:4px}
-.mile .who i{font-style:normal;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--note-ink);border:1.5px dashed var(--line);background:transparent}
-.mile .who i.on{border:0}
-.mile .rw{grid-column:1/-1;appearance:none;border:0;background:transparent;text-align:left;padding:0;font-size:13px;color:var(--muted);cursor:pointer}
-.mile.done .rw{color:var(--note-ink);font-weight:600}
-.mile .rw b{color:var(--ink)}
-.log{cursor:default}
-.log .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:2px}
-.rbtn{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
-.rbtn[aria-pressed="true"]{background:var(--note);border-color:var(--note);color:var(--note-ink);font-weight:600}
-.rbtn.edit{margin-left:auto;border:0;background:transparent;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:5px 4px}
-.cmts{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:8px;margin-top:2px}
-.cmt{font-size:13.5px;display:flex;gap:6px;align-items:baseline}
-.cmt b{font-weight:600;white-space:nowrap}
-.cmt span{flex:1;min-width:0;overflow-wrap:anywhere}
-.cmt button{appearance:none;border:0;background:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0 2px}
-.cmtrow{display:flex;gap:6px}
-.cmtrow input{flex:1;min-width:0;padding:8px 10px;font-size:16px}
-.weekimg{width:100%;border-radius:14px;box-shadow:var(--shadow);display:block}
 /* 말씀곁에서 */
 .w-intro{text-align:center;display:flex;flex-direction:column;gap:2px}
 .w-intro .big{font-family:var(--f-hand);font-size:38px;line-height:1.1}
@@ -353,7 +301,6 @@ textarea{min-height:92px;resize:vertical;line-height:1.5}
       <div class="mchips" id="mchips"></div>
     </section>
     <div class="hello" id="hello"></div>
-    <button class="teamline" type="button" id="teamLine" hidden></button>
     <section style="display:flex;flex-direction:column;gap:10px">
       <div class="card" id="todayCard"></div>
       <button class="bellhint" type="button" id="bellHint" hidden>🔔 아침·저녁 9시 알림 받기</button>
@@ -401,24 +348,20 @@ textarea{min-height:92px;resize:vertical;line-height:1.5}
   <!-- DASHBOARD -->
   <main id="dash" hidden>
     <div class="dhead"><div class="d" id="dDay"></div><div class="s">12월 31일까지 신약 260장 · 함께 완독</div></div>
-    <section class="teambox" id="teamBox" aria-label="우리 팀"></section>
+    <div class="lead" id="lead" hidden></div>
     <section style="display:flex;flex-direction:column;gap:10px">
-      <div class="label"><span>이정표</span><small>셋 다 끝나면 같이 축하하기</small></div>
-      <div class="miles" id="miles"></div>
+      <div class="label"><span>진행 현황</span><small>카드를 누르면 수정</small></div>
+      <div class="mlist" id="mlist"></div>
     </section>
     <section class="att" aria-labelledby="attT">
       <div class="label"><span id="attT">출석표</span><div class="wk"><button type="button" id="wkPrev" aria-label="이전 주">‹</button><span id="wkLabel" class="mono"></span><button type="button" id="wkNext" aria-label="다음 주">›</button></div></div>
       <div class="agrid" id="attGrid"></div>
       <div class="legend"><span><i style="background:var(--ink)"></i>기록함 (자동 출석)</span><span><i style="background:var(--bad-soft);border:1px solid var(--bad)"></i>기록 없음</span><span>✕ 칸을 누르면 그날 기록을 늦게라도 넣을 수 있어</span></div>
     </section>
-    <section style="display:flex;flex-direction:column;gap:10px" id="shareSec">
-      <div class="label"><span>나눔</span><small>🙏 아멘 · 💬 한마디</small></div>
+    <section style="display:flex;flex-direction:column;gap:10px">
+      <div class="label"><span>읽기 기록</span><small>눌러서 수정</small></div>
       <div class="filters" id="filters"></div>
       <div class="logs" id="logList"></div>
-    </section>
-    <section style="display:flex;flex-direction:column;gap:10px">
-      <div class="label"><span>개인 진행</span><small>카드를 누르면 수정</small></div>
-      <div class="mlist" id="mlist"></div>
     </section>
     <section class="card">
       <label class="lbl" for="newName2">멤버 추가</label>
@@ -474,38 +417,6 @@ const BOOKS=[["마태복음",28],["마가복음",16],["누가복음",24],["요�
 const OFFS=[];let _t=0;for(const[,c]of BOOKS){OFFS.push(_t);_t+=c}
 const TOTAL=_t;
 // 매일 자정에 바뀌는 독려 말씀 (개역한글)
-// 새 책을 시작할 때 보여주는 짧은 소개
-const INTROS=[
-"예수님이 구약에 약속된 메시아, 왕이심을 보여줘. 산상수훈 같은 큰 가르침 묶음이 다섯 번 나와.",
-"가장 짧고 빠른 복음서. 섬기러 오신 예수님의 발걸음이 '곧'이라는 말과 함께 숨가쁘게 이어져.",
-"의사 누가가 차례대로 정리한 기록. 가난한 사람, 여성, 이방인처럼 소외된 이들을 찾아오신 예수님.",
-"'믿고 생명을 얻게 하려고' 쓴 복음서. 일곱 표적과 '나는 ~이다' 말씀으로 예수님이 누구신지 보여줘.",
-"누가복음의 속편. 성령이 오신 뒤 복음이 예루살렘에서 땅끝까지 퍼져가. 베드로와 바울이 중심이야.",
-"복음의 핵심을 정리한 편지. 모두가 죄인이지만 믿음으로 의롭게 되고, 그 은혜로 살아가는 삶.",
-"갈등과 문제가 많던 고린도 교회에 보낸 편지. 13장 사랑장, 15장 부활장이 유명해.",
-"바울이 자신의 사역을 변호하며, 약할 때 오히려 드러나는 하나님의 능력을 고백해.",
-"율법이 아니라 그리스도를 믿는 믿음으로 자유를 얻는다는 힘 있는 편지. 5장 성령의 열매.",
-"그리스도 안에서 하나 된 교회가 누구인지, 어떻게 살아야 하는지. 6장 하나님의 전신갑주.",
-"감옥에서 쓴 기쁨의 편지. 낮아지신 그리스도(2장)와 어떤 형편에도 자족하는 비결.",
-"만물보다 뛰어나신 그리스도. 헛된 가르침에 흔들리지 말고 그분 안에 뿌리내리라는 권면.",
-"어려움 속에서도 믿음을 지킨 교회를 격려하며, 주님 다시 오심을 소망하게 해.",
-"주님 오실 날에 대한 오해를 바로잡고, 일상을 성실하게 살라고 권면해.",
-"젊은 지도자 디모데에게 교회를 세우고 돌보는 법을 알려준 편지.",
-"바울의 마지막 편지. 말씀을 전하고 끝까지 믿음을 지키라는 유언 같은 당부.",
-"그레데 섬의 디도에게, 바른 가르침과 선한 일에 힘쓰는 교회를 세우라고 해.",
-"도망친 종 오네시모를 형제로 받아달라는 짧은 편지. 복음이 관계를 바꾸는 모습.",
-"예수님이 천사, 모세, 대제사장보다 더 나으심을 보여주며 끝까지 믿음을 지키라고 해. 11장 믿음장.",
-"행함이 있는 믿음. 말, 차별, 시험 속의 인내 같은 아주 실제적인 지혜.",
-"고난받는 성도들에게 산 소망과 거룩한 삶을 이야기해.",
-"거짓 가르침을 경계하고, 주님 오심을 기억하며 은혜 안에서 자라라고 해.",
-"'하나님은 사랑이시라.' 빛 가운데 걷고 서로 사랑하는 것이 하나님을 아는 증거.",
-"진리 안에서 서로 사랑하되, 거짓 가르침은 받아들이지 말라는 짧은 편지.",
-"순회 전도자들을 따뜻하게 대접한 가이오를 칭찬하는 짧은 편지.",
-"믿음을 위해 힘써 싸우라는 짧고 강한 편지. 마지막 찬양이 아름다워.",
-"고난받는 교회에 보여준 마지막 승리의 환상. 어린양 예수님이 결국 이기셔."
-];
-// 이정표: 신약을 다섯 구간으로
-const SECTIONS=[["gospels","복음서","마태~요한",0,88],["acts","사도행전","",89,116],["paul","바울서신","로마서~빌레몬서",117,203],["general","일반서신","히브리서~유다서",204,237],["rev","요한계시록","",238,259]];
 const VERSES=[
 ["주의 말씀은 내 발에 등이요 내 길에 빛이니이다","시편 119:105"],
 ["사람이 떡으로만 살 것이 아니요 하나님의 입으로 나오는 모든 말씀으로 살 것이라","마태복음 4:4"],
@@ -561,7 +472,7 @@ const NOTE_COLORS=["var(--note)","var(--note2)","var(--note3)","#c9dcf7","#f3c1d
 setTimeout(()=>location.reload(),new Date(NOW.getFullYear(),NOW.getMonth(),NOW.getDate()+1,0,0,5)-NOW);
 
 // ---------- state ----------
-let members=[],logs=[],priors={},att={},reactions=[],teamCfg={},db=null,weekOffset=0,filter="all",view="home",openCmts=new Set();
+let members=[],logs=[],priors={},att={},db=null,weekOffset=0,filter="all",view="home";
 let me=null;try{me=localStorage.getItem("nt-me")}catch(e){}
 function setMe(id){me=id;try{id?localStorage.setItem("nt-me",id):localStorage.removeItem("nt-me")}catch(e){}if(id)syncPushMember()}
 const sortedMembers=()=>[...members].sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
@@ -615,7 +526,6 @@ function makeForm(p){
       '<div class="rng"><select id="'+p+'FB" aria-label="시작 책"></select><select id="'+p+'FC" aria-label="시작 장"></select><span class="sfx">부터</span></div>'+
       '<div class="rng"><select id="'+p+'TB" aria-label="끝 책"></select><select id="'+p+'TC" aria-label="끝 장"></select><span class="sfx">까지</span></div>'+
       '<div class="pv" id="'+p+'PV"></div></div>'+
-    '<label class="chk"><input type="checkbox" id="'+p+'Listen"><span>🎧 들으면서 읽었어 (듣기도 인정!)</span></label>'+
     '<div><label class="lbl" for="'+p+'Note">느낀점</label><textarea id="'+p+'Note" maxlength="2000" placeholder="오늘 마음에 남은 말씀 한 줄"></textarea></div>'+
     '<button class="btn primary" id="'+p+'Save" type="submit">기록하기</button>';
   const q=s=>el.querySelector("#"+p+s);
@@ -639,8 +549,8 @@ function makeForm(p){
   F.reset=(memberId,log)=>{
     F.member=memberId;F.editing=log||null;
     q("Save").textContent=log?"수정 저장":"기록하기";
-    if(log){q("Date").value=log.date;q("Note").value=log.note||"";q("Listen").checked=log.mode==="listen";F.setRange(log.start,log.end);return}
-    q("Date").value=TODAY;q("Note").value="";q("Listen").checked=false;
+    if(log){q("Date").value=log.date;q("Note").value=log.note||"";F.setRange(log.start,log.end);return}
+    q("Date").value=TODAY;q("Note").value="";
     const m=members.find(x=>x.id===memberId);const s=m?stats(m):null;
     const a=!s||s.next<0?0:s.next;const len=s?Math.max(1,s.todayLeft||s.quota||1):3;
     F.setRange(a,Math.min(TOTAL-1,a+len-1));
@@ -648,14 +558,11 @@ function makeForm(p){
   el.addEventListener("submit",async e=>{
     e.preventDefault();if(!db)return fail();
     const[a,z]=F.range();if(z<a)return;
-    const data={member:F.member,date:q("Date").value||TODAY,start:a,end:z,note:q("Note").value.trim(),mode:q("Listen").checked?"listen":"read",createdAt:F.editing?(F.editing.createdAt||Date.now()):Date.now()};
+    const data={member:F.member,date:q("Date").value||TODAY,start:a,end:z,note:q("Note").value.trim(),createdAt:Date.now()};
     q("Save").disabled=true;
     try{
-      if(F.editing){
-        // 같은 기록을 고쳐서 아멘·댓글이 그대로 남게 한다
-        try{await db.collection("logs").doc(F.editing.id).set(data)}
-        catch(e){await db.collection("logs").add(data);await db.collection("logs").doc(F.editing.id).delete()}
-      }else await db.collection("logs").add(data);
+      await db.collection("logs").add(data);
+      if(F.editing)await db.collection("logs").doc(F.editing.id).delete();
       toast(F.editing?"수정했어":rangeLabel(a,z)+" 기록 완료!");
       const was=F.editing;F.editing=null;if(F.onSaved)F.onSaved(was);
     }catch(err){fail(err)}
@@ -688,19 +595,6 @@ function render(){
   if(sheetMode)renderSheet();
 }
 
-// ---------- team ----------
-function dayMap(){const m=new Map();for(const l of logs){if(!m.has(l.date))m.set(l.date,new Set());m.get(l.date).add(l.member)}return m}
-function teamDay(d,dm){const act=members.filter(m=>(m.startDate||TODAY)<=d);const set=dm.get(d)||new Set();const done=act.filter(m=>set.has(m.id));return{act,done,all:act.length>0&&done.length===act.length}}
-function teamStreak(dm){let d=TODAY,n=0;if(!teamDay(d,dm).all)d=addDays(d,-1);const start=chStart();while(d>=start&&teamDay(d,dm).all&&n<500){n++;d=addDays(d,-1)}return n}
-function avatar(m,on,cls){return '<i class="'+(cls||'')+(on?'':' off')+'" style="background:'+colorOf(m.id)+'" title="'+esc(m.name)+'">'+esc(m.name.slice(0,1))+'</i>'}
-function listenUrl(i){return "https://www.youtube.com/results?search_query="+encodeURIComponent("성경 듣기 개역개정 "+label(i))}
-function myNewReactions(){
-  if(!me)return [];let seen=0;try{seen=+localStorage.getItem("nt-seen-"+me)||0}catch(e){}
-  const mine=new Set(logs.filter(l=>l.member===me).map(l=>l.id));
-  return reactions.filter(r=>mine.has(r.log)&&r.member!==me&&(r.createdAt||0)>seen);
-}
-function markSeen(){try{if(me)localStorage.setItem("nt-seen-"+me,String(Date.now()))}catch(e){}}
-
 // ---------- home ----------
 function renderVerse(){
   const day=Math.floor(Date.UTC(NOW.getFullYear(),NOW.getMonth(),NOW.getDate())/864e5);
@@ -722,22 +616,14 @@ function renderHome(m){
   else if(a.streak>0){big='<b>'+a.streak+'일 연속</b>, 오늘도 이어가자!';sub="오늘 "+s.todayLeft+"장 · "+label(s.next)+"부터"}
   else{big='오늘 <b>첫 장</b>을 펼쳐볼까?';sub="오늘 "+s.todayLeft+"장이면 돼 · "+label(s.next)+"부터"}
   $("hello").innerHTML='<div class="big">'+big+'</div><div class="sub mono">'+esc(sub)+'</div>';
-  const dm=dayMap(),td=teamDay(TODAY,dm),ts=teamStreak(dm),TL=$("teamLine");
-  if(members.length>1){
-    TL.innerHTML='<span class="avs">'+sortedMembers().map(x=>'<span class="av'+((dm.get(TODAY)||new Set()).has(x.id)?'':' off')+'" style="background:'+colorOf(x.id)+'">'+esc(x.name.slice(0,1))+'</span>').join("")+'</span>'+
-      '<span>오늘 우리 <b>'+td.done.length+'/'+td.act.length+'</b>'+(ts>0?' · 팀 연속 <b>'+ts+'일</b> 🔥':td.all?'':' · 다 같이 읽으면 팀 연속 시작!')+'</span>';
-    TL.hidden=false;TL.onclick=()=>go("dash");
-  }else TL.hidden=true;
   const C=$("todayCard");
   if(doneToday){
     const today=s.mine.filter(l=>l.date===TODAY).sort((x,y)=>(x.createdAt||0)-(y.createdAt||0));
     C.innerHTML='<div class="done"><div class="done-head"><div class="tick">✓</div><h3>오늘 기록 완료</h3></div>'+
       '<div class="done-list">'+today.map(l=>'<div>'+esc(rangeLabel(l.start,l.end))+'<span>'+(l.end-l.start+1)+'장</span></div>').join("")+'</div>'+
-      (()=>{const nr=myNewReactions();if(!nr.length)return'';const am=nr.filter(r=>r.type==="amen").length,cm=nr.length-am;return'<button class="newreact" type="button" id="newReact">내 나눔에 새 반응 · '+(am?'🙏 '+am+' ':'')+(cm?'💬 '+cm:'')+' →</button>'})()+
       '<div class="two"><button class="btn white" type="button" id="moreBtn">+ 추가로 등록하기</button><button class="btn primary" type="button" id="toDash">대시보드 보기</button></div>'+
       '<button class="homeword" type="button" id="homeWord"><span>💬 <b>말씀곁에서</b> · 오늘 읽은 '+esc(rangeLabel(today[0].start,today[0].end))+' 물어보기</span><span>→</span></button></div>';
     $("moreBtn").onclick=()=>openSheet("add");
-    if($("newReact"))$("newReact").onclick=()=>{filter=me;go("dash");setTimeout(()=>{const el=$("shareSec");if(el)el.scrollIntoView({block:"start"})},60)};
     $("toDash").onclick=()=>go("dash");
     $("homeWord").onclick=()=>{wSetPassage(today[today.length-1].start);go("word")};
     inlineFor=null;
@@ -745,9 +631,7 @@ function renderHome(m){
     // 기록 폼은 아래에서 올라오는 창으로만
     C.innerHTML='<div class="todo"><div class="todo-q"><span class="mono">오늘 분량</span><b>'+(s.remain===0?'완독!':s.todayLeft+'장')+'</b></div>'+
       '<div class="todo-r"><span class="mono">여기부터 · 전체 '+Math.round(s.read/TOTAL*100)+'%</span><b>'+(s.next<0?'—':esc(label(s.next)))+'</b></div></div>'+
-      (s.next>=0&&pos(s.next)[1]===1?'<div class="intro"><b>📖 '+BOOKS[pos(s.next)[0]][0]+' 시작!</b>'+esc(INTROS[pos(s.next)[0]])+'</div>':'')+
       '<button class="btn primary big" type="button" id="recBtn"><span aria-hidden="true">＋</span> 오늘 읽은 말씀 기록하기</button>'+
-      (s.next>=0?'<div class="todo-x"><span>바쁜 날은 1장만 읽어도 출석 ✓</span><a href="'+listenUrl(s.next)+'" target="_blank" rel="noopener">🎧 '+esc(label(s.next))+' 듣기</a></div>':'')+
       (s.next>=0?'<button class="homeword" type="button" id="homeWord2"><span>💬 읽다가 궁금하면 <b>말씀곁에서</b></span><span>→</span></button>':'');
     $("recBtn").onclick=()=>openSheet("add");
     if($("homeWord2"))$("homeWord2").onclick=()=>{wSetPassage(s.next);go("word")};
@@ -789,14 +673,21 @@ function paceChip(s){
 }
 function renderDash(){
   $("dDay").textContent="D-"+(DAYS_LEFT-1);
-  const rows=rankRows().sort((x,y)=>(x.m.createdAt||0)-(y.m.createdAt||0)),M=$("mlist");M.innerHTML="";
-  renderTeamBox(rows);renderMiles(rows);
+  const rows=rankRows(),M=$("mlist");M.innerHTML="";
+  const L=$("lead");
+  if(rows.length>1&&rows[0].s.read>0){
+    const top=rows[0],leaders=rows.filter(r=>r.rank===1).map(r=>esc(r.m.name)).join(", "),second=rows.find(r=>r.rank>1);
+    const wait=rows.filter(r=>!isRead(r.a.today)&&r.s.remain>0).map(r=>esc(r.m.name));
+    L.innerHTML='지금 1위 <b>'+leaders+'</b>'+(second?' · '+esc(second.m.name)+'보다 '+(top.s.read-second.s.read)+'장 앞섬':'')+
+      (wait.length?'<br><span style="color:var(--muted)">오늘 아직: '+wait.join(", ")+' — 같이 읽자!</span>':'<br><span style="color:var(--muted)">오늘 모두 출석 완료!</span>');
+    L.hidden=false;
+  }else L.hidden=true;
   if(!rows.length)M.innerHTML='<div class="empty">아직 멤버가 없어. 맨 아래에서 추가해줘.</div>';
-  for(const{m,s,a}of rows){
+  for(const{m,s,a,rank}of rows){
     const pct=s.read/TOTAL*100;
     const b=document.createElement("button");b.type="button";b.className="mcard";b.setAttribute("aria-label",m.name+" 수정");
     let eta=s.remain===0?md(s.eta)+" 완독":s.eta?(s.eta>END?'예상 완독 <b style="color:var(--bad)">12/31 넘김</b>':'예상 완독 <b>'+md(s.eta)+'</b>'):'예상 완독은 기록 3일째부터';
-    b.innerHTML='<div class="mname"><i class="sq" style="background:'+colorOf(m.id)+'"></i><span>'+esc(m.name)+'</span>'+(a.streak>=2?'<span class="chip streak">'+a.streak+'일 연속</span>':'')+'</div>'+
+    b.innerHTML='<div class="mname"><span class="rank">'+rank+'위</span><i class="sq" style="background:'+colorOf(m.id)+'"></i><span>'+esc(m.name)+'</span>'+(a.streak>=2?'<span class="chip streak">'+a.streak+'일 연속</span>':'')+'</div>'+
       '<div class="mpct">'+pct.toFixed(1)+'<small>%</small></div>'+
       '<div class="bar"><i style="width:'+pct.toFixed(2)+'%"></i><s style="left:calc('+(s.expectedPct*100).toFixed(2)+'% - 1px)"></s></div>'+
       '<div class="mrow"><span>'+(s.remain===0?'완독!':s.todayLeft?'오늘 <b>'+s.todayLeft+'장</b>'+(s.readToday?' 더':'')+' · '+esc(label(s.next))+'부터':'오늘 분량 끝')+'</span>'+paceChip(s)+'</div>'+
@@ -805,34 +696,6 @@ function renderDash(){
     M.appendChild(b);
   }
   renderAtt(rows);renderLogs();
-  if(filter===me)markSeen();
-}
-function renderTeamBox(rows){
-  const T=$("teamBox");
-  if(!rows.length){T.hidden=true;return}T.hidden=false;
-  const dm=dayMap(),td=teamDay(TODAY,dm),ts=teamStreak(dm),sum=rows.reduce((n,r)=>n+r.s.read,0),cap=TOTAL*rows.length;
-  const doneSet=dm.get(TODAY)||new Set();
-  const wait=rows.filter(r=>!doneSet.has(r.m.id)&&r.s.remain>0&&(r.m.startDate||TODAY)<=TODAY).map(r=>esc(r.m.name));
-  T.innerHTML='<div class="tb-top"><div><span class="mono">팀 연속</span><b>'+ts+'일</b></div>'+
-    '<div><span class="mono">오늘 우리</span><b>'+td.done.length+'/'+td.act.length+'</b><div class="tb-avs">'+rows.map(r=>avatar(r.m,doneSet.has(r.m.id))).join("")+'</div></div></div>'+
-    '<div class="tb-msg">'+(td.all?'<b>오늘 다 같이 읽었어!</b> 팀 연속 기록 이어가는 중 🙌':wait.length?'아직 <b>'+wait.join(", ")+'</b>. 1장이라도 같이 읽자!':'')+'</div>'+
-    '<div class="tb-gauge" role="img" aria-label="팀 전체 진행률">'+rows.map(r=>'<i style="width:'+(r.s.read/cap*100).toFixed(2)+'%;background:'+colorOf(r.m.id)+'"></i>').join("")+'</div>'+
-    '<div class="tb-sub mono"><span>셋이 함께 '+sum+'/'+cap+'장</span><span>'+(sum/cap*100).toFixed(1)+'%</span></div>'+
-    '<button class="btn white sm" type="button" id="weekBtn">📸 이번 주 요약 카드 만들기</button>';
-  $("weekBtn").onclick=()=>openSheet("week");
-}
-function sectionDone(m,sec){const s=stats(m).set;for(let i=sec[3];i<=sec[4];i++)if(!s.has(i))return false;return true}
-function renderMiles(rows){
-  const W=$("miles");W.innerHTML="";const rw=(teamCfg&&teamCfg.rewards)||{};
-  for(const sec of SECTIONS){
-    const done=rows.filter(r=>sectionDone(r.m,sec)),all=rows.length>0&&done.length===rows.length;
-    const d=document.createElement("div");d.className="mile"+(all?" done":"");
-    d.innerHTML='<h4>'+sec[1]+(sec[2]?'<small>'+sec[2]+'</small>':'')+'</h4>'+
-      '<div class="who">'+rows.map(r=>{const on=sectionDone(r.m,sec);return'<i class="'+(on?'on':'')+'" style="'+(on?'background:'+colorOf(r.m.id):'')+'" title="'+esc(r.m.name)+(on?' 완료':' 진행 중')+'">'+(on?'✓':esc(r.m.name.slice(0,1)))+'</i>'}).join("")+'</div>'+
-      '<button class="rw" type="button">'+(all?'🎉 달성! ':'셋 다 끝나면 · ')+(rw[sec[0]]?'<b>'+esc(rw[sec[0]])+'</b>':'<u>보상 정하기 +</u>')+'</button>';
-    d.querySelector(".rw").onclick=()=>openSheet("reward",sec[0]);
-    W.appendChild(d);
-  }
 }
 function weekStart(d){const x=parse(d);return addDays(d,-((x.getDay()+6)%7))}
 function chStart(){let s=TODAY;for(const m of members)if((m.startDate||TODAY)<s)s=m.startDate;for(const l of logs)if(l.date<s)s=l.date;return s}
@@ -872,38 +735,14 @@ function renderLogs(){
   if(!list.length){L.innerHTML='<div class="empty">아직 기록이 없어.</div>';return}
   for(const l of list.slice(0,150)){
     const m=members.find(x=>x.id===l.member);
-    const rs=reactions.filter(r=>r.log===l.id),amens=rs.filter(r=>r.type==="amen"),cms=rs.filter(r=>r.type==="comment").sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
-    const mine=!!me&&amens.some(r=>r.member===me),open=openCmts.has(l.id);
-    const d=document.createElement("div");d.className="log";
-    d.innerHTML='<div class="t"><span><i class="sq" style="background:'+colorOf(m.id)+'"></i>'+esc(m.name)+'</span><span class="mono">'+md(l.date)+' '+"일월화수목금토"[parse(l.date).getDay()]+'</span></div>'+
-      '<div class="r">'+(l.mode==="listen"?'🎧 ':'')+esc(rangeLabel(l.start,l.end))+' <span style="color:var(--muted);font-weight:400;font-size:13px">· '+(l.end-l.start+1)+'장</span></div>'+
-      (l.note?'<div class="nt">'+esc(l.note)+'</div>':'')+
-      '<div class="acts"><button class="rbtn" type="button" data-a="amen" aria-pressed="'+mine+'">🙏 아멘'+(amens.length?' '+amens.length:'')+'</button>'+
-      '<button class="rbtn" type="button" data-a="cmt" aria-expanded="'+open+'">💬 '+(cms.length||'한마디')+'</button>'+
-      '<button class="rbtn edit" type="button" data-a="edit">수정</button></div>'+
-      (open?'<div class="cmts">'+cms.map(c=>{const w=members.find(x=>x.id===c.member);return'<div class="cmt"><b>'+esc(w?w.name:"?")+'</b><span>'+esc(c.text)+'</span>'+(c.member===me?'<button type="button" data-del="'+c.id+'" aria-label="댓글 삭제">×</button>':'')+'</div>'}).join("")+
-        '<div class="cmtrow"><input maxlength="300" placeholder="'+(me?'한마디 남기기':'홈에서 내 이름을 먼저 골라줘')+'" aria-label="댓글"'+(me?'':' disabled')+'><button class="btn primary sm" type="button" data-a="send"'+(me?'':' disabled')+'>등록</button></div></div>':'');
-    d.querySelector('[data-a="amen"]').onclick=()=>toggleAmen(l.id,mine);
-    d.querySelector('[data-a="cmt"]').onclick=()=>{open?openCmts.delete(l.id):openCmts.add(l.id);render()};
-    d.querySelector('[data-a="edit"]').onclick=()=>openSheet("edit",l.id);
-    d.querySelectorAll('[data-del]').forEach(x=>x.onclick=()=>delReaction(x.dataset.del));
-    const send=d.querySelector('[data-a="send"]');
-    if(send){const inp=d.querySelector('.cmtrow input');const go2=()=>addComment(l.id,inp.value,send);send.onclick=go2;inp.onkeydown=e=>{if(e.key==="Enter"&&!e.isComposing)go2()}}
-    L.appendChild(d);
+    const b=document.createElement("button");b.type="button";b.className="log";
+    b.innerHTML='<div class="t"><span><i class="sq" style="background:'+colorOf(m.id)+'"></i>'+esc(m.name)+'</span><span class="mono">'+md(l.date)+' '+"일월화수목금토"[parse(l.date).getDay()]+'</span></div>'+
+      '<div class="r">'+esc(rangeLabel(l.start,l.end))+' <span style="color:var(--muted);font-weight:400;font-size:13px">· '+(l.end-l.start+1)+'장</span></div>'+
+      (l.note?'<div class="nt">'+esc(l.note)+'</div>':'');
+    b.onclick=()=>openSheet("edit",l.id);
+    L.appendChild(b);
   }
 }
-async function toggleAmen(logId,on){
-  if(!me)return toast("홈에서 내 이름을 먼저 골라줘");if(!db)return fail();
-  const id="amen_"+logId+"_"+me;
-  try{if(on)await db.collection("reactions").doc(id).delete();else await db.collection("reactions").doc(id).set({log:logId,member:me,type:"amen",createdAt:Date.now()})}catch(err){fail(err)}
-}
-async function addComment(logId,text,btn){
-  text=(text||"").trim();if(!text)return;if(!me)return toast("홈에서 내 이름을 먼저 골라줘");if(!db)return fail();
-  btn.disabled=true;
-  try{await db.collection("reactions").add({log:logId,member:me,type:"comment",text,createdAt:Date.now()});openCmts.add(logId)}catch(err){fail(err)}
-  btn.disabled=false;
-}
-async function delReaction(id){try{await db.collection("reactions").doc(id).delete()}catch(err){fail(err)}}
 
 // ---------- sheet ----------
 let sheetMode=null,sheetArg=null,sheetConfirm=false;
@@ -939,29 +778,6 @@ function renderSheet(first){
     if($("dl"))$("dl").onclick=()=>{sheetConfirm=true;renderSheet()};
     if($("dlN"))$("dlN").onclick=()=>{sheetConfirm=false;renderSheet()};
     if($("dlY"))$("dlY").onclick=async()=>{try{await db.collection("logs").doc(l.id).delete();toast("삭제했어");closeSheet()}catch(err){fail(err)}};
-  }else if(sheetMode==="reward"){
-    const sec=SECTIONS.find(x=>x[0]===sheetArg);if(!sec){closeSheet();return}
-    $("sTitle").textContent=sec[1]+" 보상";
-    if(first){
-      const cur=((teamCfg&&teamCfg.rewards)||{})[sec[0]]||"";
-      B.innerHTML='<p class="pcount" style="margin:0">셋 다 '+sec[1]+'을(를) 끝내면 같이 할 일을 정해줘. 모두에게 보여.</p>'+
-        '<input id="rwIn" maxlength="40" placeholder="예: 같이 떡볶이 먹기">'+
-        '<div class="two"><button class="btn ghost" type="button" id="rwClr">비우기</button><button class="btn primary" type="button" id="rwSave">저장</button></div>';
-      $("rwIn").value=cur;
-      const save=async v=>{if(!db)return fail();const rewards={...((teamCfg&&teamCfg.rewards)||{})};if(v)rewards[sec[0]]=v;else delete rewards[sec[0]];
-        try{await db.collection("team").doc("settings").set({rewards,updatedAt:Date.now()});toast(v?"보상을 정했어":"비웠어");closeSheet()}catch(err){fail(err)}};
-      $("rwSave").onclick=()=>save($("rwIn").value.trim());$("rwClr").onclick=()=>save("");
-    }
-  }else if(sheetMode==="week"){
-    $("sTitle").textContent="이번 주 요약";
-    if(first){B.innerHTML='<div class="empty" style="border:0">카드 만드는 중…</div>';buildWeekCard().then(url=>{if(sheetMode!=="week")return;
-      B.innerHTML='<img class="weekimg" id="weekImg" alt="이번 주 우리 팀 요약 카드">'+
-        '<p class="pcount" style="margin:0">이미지를 <b style="color:var(--ink)">길게 눌러 저장</b>하거나 아래 버튼으로 카톡에 공유해줘.</p>'+
-        '<button class="btn primary" type="button" id="weekShare">카톡으로 공유하기</button>';
-      $("weekImg").src=url;
-      $("weekShare").onclick=async()=>{try{const blob=await (await fetch(url)).blob();const file=new File([blob],"신약1독-이번주.png",{type:"image/png"});
-        if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:"이번 주 우리 팀"});else toast("이미지를 길게 눌러 저장해줘")}catch(e){if(e&&e.name!=="AbortError")toast("이미지를 길게 눌러 저장해줘")}};
-    }).catch(()=>{B.innerHTML='<div class="empty">카드를 만들지 못했어. 다시 시도해줘.</div>'})}
   }else if(sheetMode==="push"){
     $("sTitle").textContent="알림 설정";renderPushSheet(B);
   }else if(sheetMode==="member"){
@@ -1223,58 +1039,6 @@ $("wCode").onkeydown=e=>{if(e.key==="Enter")$("wCodeSave").click()};
 $("wClear").onclick=()=>{wThread=[];wSave();render()};
 $("wSetBtn").onclick=()=>{wShowSet=!wShowSet;if(!wShowSet&&$("wSetBox"))$("wSetBox").remove();render();if(wShowSet)document.querySelector(".app").scrollTo({top:0,behavior:"smooth"})};
 
-// ---------- weekly summary card ----------
-function weekData(){
-  const ws=weekStart(TODAY),days=[...Array(7)].map((_,i)=>addDays(ws,i)),dm=dayMap();
-  const ms=sortedMembers();let att=0,possible=0,ch=0;
-  const per=ms.map(m=>{const dots=days.map(d=>{if(d>TODAY||d<(m.startDate||TODAY))return null;const r=(dm.get(d)||new Set()).has(m.id);return d===TODAY&&!r?null:r});
-    const n=logs.filter(l=>l.member===m.id&&l.date>=ws&&l.date<=TODAY).reduce((k,l)=>k+l.end-l.start+1,0);
-    dots.forEach(x=>{if(x!==null){possible++;if(x)att++}});ch+=n;return{m,dots,n}});
-  const wl=logs.filter(l=>l.date>=ws&&l.date<=TODAY&&l.note&&members.some(m=>m.id===l.member));
-  const score=l=>reactions.filter(r=>r.log===l.id&&r.type==="amen").length;
-  wl.sort((a,b)=>score(b)-score(a)||b.date.localeCompare(a.date)||(b.createdAt||0)-(a.createdAt||0));
-  return{ws,days,per,att,possible,ch,quote:wl[0]||null,streak:teamStreak(dm)};
-}
-async function buildWeekCard(){
-  try{await Promise.all(['48px "Nanum Pen Script"','600 30px "IBM Plex Sans KR"','400 26px "IBM Plex Sans KR"','500 26px "IBM Plex Mono"'].map(f=>document.fonts.load(f)))}catch(e){}
-  const W=1080,H=1350,c=document.createElement("canvas");c.width=W;c.height=H;const g=c.getContext("2d");
-  const HAND='"Nanum Pen Script",cursive',BODY='"IBM Plex Sans KR","Apple SD Gothic Neo",sans-serif',MONO='"IBM Plex Mono",monospace';
-  const w=weekData(),ink="#191919",muted="#8b8b88";
-  g.fillStyle="#f7f7f6";g.fillRect(0,0,W,H);
-  // header note
-  g.save();g.translate(540,170);g.rotate(-0.02);g.fillStyle="#c9ee98";g.fillRect(-420,-105,840,220);g.fillStyle="#f9e77a";g.fillRect(-430,-120,840,220);g.fillStyle="#fcf0a6";g.fillRect(-430,-120,840,44);
-  g.fillStyle=ink;g.textAlign="center";g.font="88px "+HAND;g.fillText("이번 주 우리 팀",-10,30);g.font="500 28px "+MONO;g.fillStyle="#6f6847";g.fillText(md(w.ws)+" – "+md(addDays(w.ws,6))+" · D-"+(DAYS_LEFT-1),-10,78);g.restore();
-  g.fillStyle="#1b1b1b";g.beginPath();g.arc(540,48,14,0,7);g.fill();g.fillRect(538,58,4,30);
-  // stats
-  const stat=(x,lbl,val)=>{g.fillStyle="#ffffff";roundRect(g,x,330,300,170,24);g.fill();g.textAlign="left";g.fillStyle=muted;g.font="400 26px "+BODY;g.fillText(lbl,x+28,378);g.fillStyle=ink;g.font="76px "+HAND;g.fillText(val,x+28,465)};
-  stat(60,"출석",w.att+"/"+w.possible);stat(390,"읽은 장",w.ch+"장");stat(720,"팀 연속",w.streak+"일");
-  // members
-  let y=560;g.textAlign="left";
-  for(const p of w.per){
-    g.fillStyle="#ffffff";roundRect(g,60,y,960,110,24);g.fill();
-    g.fillStyle=colorHex(p.m.id);roundRect(g,88,y+30,50,50,12);g.fill();g.fillStyle="#2b281b";g.font="600 26px "+BODY;g.textAlign="center";g.fillText(p.m.name.slice(0,1),113,y+65);
-    g.textAlign="left";g.fillStyle=ink;g.font="600 30px "+BODY;g.fillText(p.m.name,158,y+66);
-    p.dots.forEach((x,i)=>{const cx=470+i*58,cy=y+55;g.beginPath();g.arc(cx,cy,20,0,7);if(x===true){g.fillStyle=ink;g.fill();g.fillStyle="#fff";g.font="600 22px "+BODY;g.textAlign="center";g.fillText("✓",cx,cy+8)}else if(x===false){g.strokeStyle="#e0a39d";g.lineWidth=3;g.stroke()}else{g.fillStyle="#ebebe8";g.fill()}g.textAlign="left"});
-    g.fillStyle=muted;g.font="500 22px "+MONO;"월화수목금토일".split("").forEach((d,i)=>{g.textAlign="center";g.fillText(d,470+i*58,y+102)});
-    g.textAlign="right";g.fillStyle=ink;g.font="500 30px "+MONO;g.fillText(p.n+"장",995,y+66);g.textAlign="left";
-    y+=126;
-  }
-  // quote
-  if(w.quote){
-    const qy=Math.max(y+20,980);const who=members.find(m=>m.id===w.quote.member);
-    g.save();g.translate(540,qy+130);g.rotate(0.012);g.fillStyle="#f9e77a";g.fillRect(-460,-130,920,260);g.restore();
-    g.fillStyle="#6f6847";g.font="500 24px "+MONO;g.textAlign="left";g.fillText("이번 주 한 줄 · "+(who?who.name:""),110,qy+40);
-    g.fillStyle="#2b281b";g.font="52px "+HAND;wrapText(g,w.quote.note,110,qy+110,860,58,3);
-  }
-  g.fillStyle=muted;g.font="500 24px "+MONO;g.textAlign="center";g.fillText("신약 1독 체크표 · 12/31까지 같이 완독",540,H-40);
-  return c.toDataURL("image/png");
-}
-function roundRect(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
-function colorHex(id){const v=colorOf(id);return{"var(--note)":"#f9e77a","var(--note2)":"#f3c277","var(--note3)":"#c9ee98"}[v]||v}
-function wrapText(g,text,x,y,maxW,lh,maxLines){const words=String(text).replace(/\s+/g," ").split("");let line="",n=0;
-  for(let i=0;i<words.length;i++){const t=line+words[i];if(g.measureText(t).width>maxW&&line){g.fillText(line,x,y);y+=lh;n++;line=words[i];if(n===maxLines-1){let rest=words.slice(i).join("");while(g.measureText(rest+"…").width>maxW&&rest.length)rest=rest.slice(0,-1);g.fillText(rest+(rest.length<words.length-i?"…":""),x,y);return}}else line=t}
-  if(line)g.fillText(line,x,y)}
-
 // ---------- util ----------
 let tt;function toast(msg){const T=$("toast");T.textContent=msg;T.hidden=false;clearTimeout(tt);tt=setTimeout(()=>T.hidden=true,2200)}
 function fail(err){const c=err&&err.code;toast(!db||c==="permission-denied"?"저장 권한이 없어. Firestore 규칙을 확인해줘":"저장에 실패했어. 잠시 후 다시 해줘")}
@@ -1293,8 +1057,6 @@ render();
   const done=n=>{got.add(n);if(need.every(x=>got.has(x)))dbReady=true;render()};
   db.collection("members").onSnapshot(s=>{members=s.docs.map(d=>({id:d.id,...d.data()}));done("members")},()=>notice("멤버를 불러오지 못했어. 새로고침해줘."));
   db.collection("logs").onSnapshot(s=>{logs=s.docs.map(d=>({id:d.id,...d.data()}));done("logs")},()=>notice("기록을 불러오지 못했어. 새로고침해줘."));
-  db.collection("reactions").onSnapshot(s=>{reactions=s.docs.map(d=>({id:d.id,...d.data()}));render()},()=>{});
-  db.collection("team").doc("settings").onSnapshot(d=>{teamCfg=d.exists?d.data():{};render()},()=>{});
   db.collection("prior").onSnapshot(s=>{const p={};for(const d of s.docs){const c=d.data().chapters;if(Array.isArray(c))p[d.id]=c}priors=p;done("prior")},()=>notice("이미 읽은 분량을 불러오지 못했어."));
   db.collection("attendance").onSnapshot(s=>{const a={};for(const d of s.docs){const x=d.data().days;if(x&&typeof x==="object")a[d.id]=x}att=a;done("attendance")},()=>notice("출석표를 불러오지 못했어."));
 })();
