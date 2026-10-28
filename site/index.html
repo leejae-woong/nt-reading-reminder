@@ -1027,7 +1027,7 @@ async function wAsk(mode,title,preset){
     const cont=round>0;let got="",status="";
     try{
       const body=cont
-        ?{code,mode:"free",question:"방금 답이 분량 때문에 중간에 끊겼어. 끊긴 글자 바로 다음부터 이어서 써줘. 앞부분은 반복하지 말고, 인사나 설명 없이 바로 이어서.",passage,history:[...history,{role:"user",content:sent},{role:"assistant",content:ans.content}],name:m.name,profile:wGet("nt-profile-"+me)}
+        ?{code,mode:"free",cont:true,question:"방금 답이 분량 때문에 중간에 끊겼어. 끊긴 글자 바로 다음부터 이어서 써줘. 앞부분은 반복하지 말고, 인사나 설명 없이 바로 이어서.",passage,history:[...history,{role:"user",content:sent},{role:"assistant",content:ans.content}],name:m.name,profile:wGet("nt-profile-"+me)}
         :{code,mode,question:q,passage,history,name:m.name,profile:wGet("nt-profile-"+me)};
       const res=await fetch("/api/ask",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
       if(!res.ok){let e="답을 받지 못했어";try{e=(await res.json()).error||e}catch(_){}
