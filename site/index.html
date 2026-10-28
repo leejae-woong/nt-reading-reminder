@@ -250,8 +250,6 @@ textarea{min-height:92px;resize:vertical;line-height:1.5}
 @keyframes wblink{0%,100%{opacity:.2}50%{opacity:1}}
 .w-note{font-size:12px;color:var(--muted);text-align:center}
 .w-set{display:flex;flex-direction:column;gap:10px}
-.homeword{appearance:none;border:0;background:var(--app);border-radius:12px;padding:10px 12px;font-size:13.5px;cursor:pointer;text-align:left;color:var(--ink);display:flex;justify-content:space-between;gap:8px;align-items:center}
-.homeword b{font-weight:600}
 @media (prefers-reduced-motion:reduce){.w-wait i{animation:none}}
 .empty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--muted);font-size:14px}
 .notice{background:var(--bad-soft);color:var(--bad);border-radius:12px;padding:10px 12px;font-size:14px}
@@ -621,20 +619,16 @@ function renderHome(m){
     const today=s.mine.filter(l=>l.date===TODAY).sort((x,y)=>(x.createdAt||0)-(y.createdAt||0));
     C.innerHTML='<div class="done"><div class="done-head"><div class="tick">✓</div><h3>오늘 기록 완료</h3></div>'+
       '<div class="done-list">'+today.map(l=>'<div>'+esc(rangeLabel(l.start,l.end))+'<span>'+(l.end-l.start+1)+'장</span></div>').join("")+'</div>'+
-      '<div class="two"><button class="btn white" type="button" id="moreBtn">+ 추가로 등록하기</button><button class="btn primary" type="button" id="toDash">대시보드 보기</button></div>'+
-      '<button class="homeword" type="button" id="homeWord"><span>💬 <b>말씀곁에서</b> · 오늘 읽은 '+esc(rangeLabel(today[0].start,today[0].end))+' 물어보기</span><span>→</span></button></div>';
+      '<div class="two"><button class="btn white" type="button" id="moreBtn">+ 추가로 등록하기</button><button class="btn primary" type="button" id="toDash">대시보드 보기</button></div></div>';
     $("moreBtn").onclick=()=>openSheet("add");
     $("toDash").onclick=()=>go("dash");
-    $("homeWord").onclick=()=>{wSetPassage(today[today.length-1].start);go("word")};
     inlineFor=null;
   }else{
     // 기록 폼은 아래에서 올라오는 창으로만
     C.innerHTML='<div class="todo"><div class="todo-q"><span class="mono">오늘 분량</span><b>'+(s.remain===0?'완독!':s.todayLeft+'장')+'</b></div>'+
       '<div class="todo-r"><span class="mono">여기부터 · 전체 '+Math.round(s.read/TOTAL*100)+'%</span><b>'+(s.next<0?'—':esc(label(s.next)))+'</b></div></div>'+
-      '<button class="btn primary big" type="button" id="recBtn"><span aria-hidden="true">＋</span> 오늘 읽은 말씀 기록하기</button>'+
-      (s.next>=0?'<button class="homeword" type="button" id="homeWord2"><span>💬 읽다가 궁금하면 <b>말씀곁에서</b></span><span>→</span></button>':'');
+      '<button class="btn primary big" type="button" id="recBtn"><span aria-hidden="true">＋</span> 오늘 읽은 말씀 기록하기</button>';
     $("recBtn").onclick=()=>openSheet("add");
-    if($("homeWord2"))$("homeWord2").onclick=()=>{wSetPassage(s.next);go("word")};
   }
 }
 
