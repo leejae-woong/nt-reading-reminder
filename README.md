@@ -21,3 +21,11 @@ Actions → 성경 읽기 알림 → Run workflow → test 체크 → Run
   (본문 `{"ref":"main","inputs":{"slot":"morning"}}` / `evening`, 헤더에 GitHub 토큰 · 2027-01-31 만료).
 - **백업:** GitHub 예약 실행(09:20, 21:20). 너무 늦게 돌면 스스로 건너뛰어.
 - **중복 방지:** 보낸 기록을 `sent/날짜-아침저녁` 파일로 남겨서 같은 알림은 하루 한 번만 가.
+
+## 사이트 (site/) · 말씀곁에서
+- `site/` 폴더가 체크표 사이트 자체다. Netlify 사이트(bible-practice, bible-main)를 이 저장소에 연결하면 push할 때마다 자동 배포된다. (`sent/`만 바뀐 알림 기록 커밋은 배포를 건너뛴다)
+- `netlify/functions/ask.mjs` 는 "말씀곁에서"가 질문을 Claude에게 전달하는 서버 기능이다 (`/api/ask`).
+- Netlify → Site configuration → Environment variables 에 넣을 값
+  - `ANTHROPIC_API_KEY` : console.anthropic.com 에서 만든 API 키
+  - `GROUP_CODE` : 우리끼리 코드 (재웅·동규·준호만 알게)
+  - `MODEL` (선택) : 기본 `claude-sonnet-5-5`

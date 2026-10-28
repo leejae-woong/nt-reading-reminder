@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 멤버: 이름(1~20자), 시작일
+    match /members/{id} {
+      allow read: if true;
+      allow delete: if true;
+      allow create, update: if request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 20;
+    }
+
+    // 읽기 기록: 범위(0~259 장 번호), 날짜, 느낀점
+    match /logs/{id} {
+      allow read: if true;
+      allow delete: if true;
+      allow create, update: if request.resource.data.member is string
+        && request.resource.data.start is int
+        && request.resource.data.end is int
+        && request.resource.data.start >= 0
+        && request.resource.data.end <= 259
+        && request.resource.data.start <= request.resource.data.end
+        && request.resource.data.note is string
+        && request.resource.data.note.size() <= 2000;
+    }
+
+    // 이미 읽은 분량: 멤버별 장 번호 목록
+    match /prior/{memberId} {
+      allow read: if true;
+      allow delete: if true;
+      allow create, update: if request.resource.data.chapters is list
+        && request.resource.data.chapters.size() <= 260;
+    }
+
+    // 출석표: 멤버별 { days: { "2026-10-19": "read" | "skip" } }
+    match /attendance/{memberId} {
+      allow read: if true;
+      allow delete: if true;
+      allow create, update: if request.resource.data.days is map
+        && request.resource.data.days.size() <= 120;
+    }
+
+    // 알림 구독: 휴대폰별 웹 푸시 주소 (보내는 키는 GitHub에만 있음)
+    match /push/{id} {
+      allow read: if true;
+      allow delete: if true;
+      allow create, update: if request.resource.data.member is string
+        && request.resource.data.endpoint is string
+        && request.resource.data.endpoint.matches('https://.*')
+        && request.resource.data.endpoint.size() < 1000
+        && request.resource.data.p256dh is string
+        && request.resource.data.auth is string;
+    }
+
+    // 나눔 반응: 🙏 아멘 / 💬 한마디
+    match /reactions/{id} {
+      allow read: if true;
+      allow delete: if true;
+      allow create: if request.resource.data.log is string
+        && request.resource.data.member is string
+        && request.resource.data.type in ['amen', 'comment']
+        && (request.resource.data.type == 'amen'
+            || (request.resource.data.text is string
+                && request.resource.data.text.size() > 0
+                && request.resource.data.text.size() <= 300));
+    }
+
+    // 팀 설정: 이정표 보상
+    match /team/{id} {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['rewards', 'updatedAt'])
+        && request.resource.data.rewards is map
+        && request.resource.data.rewards.size() <= 10;
+    }
+
+    // 그 밖의 경로는 모두 막음
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
