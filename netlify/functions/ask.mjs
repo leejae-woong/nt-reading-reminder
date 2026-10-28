@@ -94,7 +94,11 @@ export default async (req) => {
     headers: { "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
     body: JSON.stringify({
       model: process.env.MODEL || "claude-sonnet-5-5",
-      max_tokens: mode === "full" ? 3500 : mode === "free" ? 2200 : 1400,
+      // Sonnet 5.5는 기본으로 생각(thinking)을 먼저 하는데, 그 분량도 max_tokens를 쓴다.
+      // 대화형 답변이라 생각은 끄고(between_tools) 답 자체에 분량을 준다.
+      thinking: { type: "between_tools" },
+      output_config: { effort: "medium" },
+      max_tokens: mode === "full" ? 4000 : mode === "free" ? 3000 : 2000,
       stream: true,
       system: sys,
       messages: [...history, { role: "user", content: userMsg }]
@@ -122,10 +126,10 @@ export default async (req) => {
             let d; try { d = JSON.parse(line.slice(5)); } catch { continue; }
             if (d.type === "content_block_delta" && d.delta && d.delta.type === "text_delta") ctrl.enqueue(enc.encode(d.delta.text));
             else if (d.type === "error") ctrl.enqueue(enc.encode(`\n\n(오류: ${(d.error && d.error.message) || "알 수 없음"})`));
-            else if (d.type === "message_delta" && d.delta && d.delta.stop_reason === "max_tokens") ctrl.enqueue(enc.encode("\n\n(답이 길어서 여기서 끊겼어. '이어서'라고 물어봐줘.)"));
+            else if (d.type === "message_delta" && d.delta && d.delta.stop_reason === "max_tokens") ctrl.enqueue(enc.encode("\n\n(답이 길어서 여기서 끊겼어. 아래 '이어서 보기'를 눌러줘.)"));
           }
         }
-      } catch (e) { ctrl.enqueue(enc.encode("\n\n(연결이 끊겼어. 다시 시도해줘.)")); }
+      } catch (e) { ctrl.enqueue(enc.encode("\n\n(연결이 끊겼어. 아래 '이어서 보기'를 눌러줘.)")); }
       ctrl.close();
     }
   });

@@ -1001,22 +1001,24 @@ function wRenderThread(){
     if(x.role==="user"){const q=document.createElement("div");q.className="w-q";q.innerHTML="<small>"+esc(x.passage||"")+"</small>"+esc(x.label||x.content);T.appendChild(q)}
     else{const a=document.createElement("div");a.className="w-a";
       a.innerHTML=x.content?mdLite(x.content):'<div class="w-wait"><i></i><i></i><i></i> 말씀을 살펴보는 중…</div>';
-      if(x.content&&!x.pending&&!x.error){const tl=document.createElement("div");tl.className="tools";tl.innerHTML='<button type="button">📋 복사</button>';
-        tl.querySelector("button").onclick=async()=>{try{await navigator.clipboard.writeText(x.content);toast("복사했어")}catch(e){toast("길게 눌러서 복사해줘")}};a.appendChild(tl)}
+      if(x.content&&!x.pending&&!x.error){const tl=document.createElement("div");tl.className="tools";const cut=i===wThread.length-1&&/(끊겼어\. 아래 '이어서 보기')/.test(x.content);
+        tl.innerHTML=(cut?'<button type="button" class="wmore">▶ 이어서 보기</button>':'')+'<button type="button" class="wcopy">📋 복사</button>';
+        if(cut)tl.querySelector(".wmore").onclick=()=>wAsk("free","","끊긴 곳 바로 다음부터 이어서 써줘. 앞부분은 반복하지 마.");
+        tl.querySelector(".wcopy").onclick=async()=>{try{await navigator.clipboard.writeText(x.content);toast("복사했어")}catch(e){toast("길게 눌러서 복사해줘")}};a.appendChild(tl)}
       T.appendChild(a)}
   });
   $("wClear").hidden=!wThread.length||wBusy;
 }
-async function wAsk(mode,title){
+async function wAsk(mode,title,preset){
   if(wBusy)return;const m=members.find(x=>x.id===me);if(!m)return toast("홈에서 내 이름을 먼저 골라줘");
   const code=wGet("nt-code");if(!code){render();return}
-  const q=mode==="free"?$("wQ").value.trim():"";if(mode==="free"&&!q)return toast("궁금한 걸 적어줘");
+  const q=mode==="free"?(preset||$("wQ").value.trim()):"";if(mode==="free"&&!q)return toast("궁금한 걸 적어줘");
   const passage={label:wLabel(),text:$("wPaste").hidden?"":$("wPaste").value.trim()};
   const history=wThread.filter(x=>!x.pending&&x.content&&!x.error).map(x=>({role:x.role,content:x.role==="user"?(x.sent||x.content):x.content}));
   const sent="[본문] "+passage.label+"\n"+(mode==="free"?"[질문] "+q:"[요청] "+title);
-  wThread.push({role:"user",content:q||title,label:mode==="free"?q:title,passage:passage.label,sent});
+  wThread.push({role:"user",content:preset?"이어서":(q||title),label:preset?"▶ 이어서":(mode==="free"?q:title),passage:passage.label,sent});
   const ans={role:"assistant",content:"",pending:true};wThread.push(ans);
-  wBusy=true;if(mode==="free")$("wQ").value="";render();
+  wBusy=true;if(mode==="free"&&!preset)$("wQ").value="";render();
   setTimeout(()=>{const el=$("wThread").lastElementChild;if(el)el.scrollIntoView({block:"start",behavior:"smooth"})},50);
   let last=0;
   try{
@@ -1028,7 +1030,7 @@ async function wAsk(mode,title){
     for(;;){const{done,value}=await rd.read();if(done)break;ans.content+=dec.decode(value,{stream:true});
       const now=Date.now();if(now-last>120){last=now;const el=$("wThread").lastElementChild;if(el)el.innerHTML=mdLite(ans.content)}}
     if(!ans.content.trim())throw new Error("빈 답이 왔어. 다시 시도해줘");
-  }catch(err){ans.content="⚠️ "+(err.message||"연결에 실패했어");ans.error=true}
+  }catch(err){if(ans.content.trim())ans.content+="\n\n(연결이 끊겼어. 아래 '이어서 보기'를 눌러줘.)";else{ans.content="⚠️ "+(err.message||"연결에 실패했어");ans.error=true}}
   ans.pending=false;wBusy=false;wSave();render();
 }
 $("wSend").onclick=()=>wAsk("free");
