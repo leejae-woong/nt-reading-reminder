@@ -1001,7 +1001,7 @@ function wRenderThread(){
     if(x.role==="user"){const q=document.createElement("div");q.className="w-q";q.innerHTML="<small>"+esc(x.passage||"")+"</small>"+esc(x.label||x.content);T.appendChild(q)}
     else{const a=document.createElement("div");a.className="w-a";
       a.innerHTML=x.content?mdLite(x.content):'<div class="w-wait"><i></i><i></i><i></i> 말씀을 살펴보는 중…</div>';
-      if(x.content&&!x.pending&&!x.error){const tl=document.createElement("div");tl.className="tools";const cut=i===wThread.length-1&&/(끊겼어\. 아래 '이어서 보기')/.test(x.content);
+      if(x.content&&!x.pending&&!x.error){const tl=document.createElement("div");tl.className="tools";const cut=i===wThread.length-1&&/(멈췄어|끊겼어)\. 아래 '이어서 보기'/.test(x.content);
         tl.innerHTML=(cut?'<button type="button" class="wmore">▶ 이어서 보기</button>':'')+'<button type="button" class="wcopy">📋 복사</button>';
         if(cut)tl.querySelector(".wmore").onclick=()=>wAsk("free","","끊긴 곳 바로 다음부터 이어서 써줘. 앞부분은 반복하지 마.");
         tl.querySelector(".wcopy").onclick=async()=>{try{await navigator.clipboard.writeText(x.content);toast("복사했어")}catch(e){toast("길게 눌러서 복사해줘")}};a.appendChild(tl)}
@@ -1020,17 +1020,30 @@ async function wAsk(mode,title,preset){
   const ans={role:"assistant",content:"",pending:true};wThread.push(ans);
   wBusy=true;if(mode==="free"&&!preset)$("wQ").value="";render();
   setTimeout(()=>{const el=$("wThread").lastElementChild;if(el)el.scrollIntoView({block:"start",behavior:"smooth"})},50);
-  let last=0;
-  try{
-    const res=await fetch("/api/ask",{method:"POST",headers:{"content-type":"application/json"},
-      body:JSON.stringify({code,mode,question:q,passage,history,name:m.name,profile:wGet("nt-profile-"+me)})});
-    if(!res.ok){let e="답을 받지 못했어";try{e=(await res.json()).error||e}catch(_){}
-      if(res.status===401){wPut("nt-code","");e+=" 다시 입력해줘."}if(res.status===404)e="서버 기능이 아직 연결되지 않았어 (Netlify 설정 확인)";throw new Error(e)}
-    const rd=res.body.getReader(),dec=new TextDecoder();
-    for(;;){const{done,value}=await rd.read();if(done)break;ans.content+=dec.decode(value,{stream:true});
-      const now=Date.now();if(now-last>120){last=now;const el=$("wThread").lastElementChild;if(el)el.innerHTML=mdLite(ans.content)}}
-    if(!ans.content.trim())throw new Error("빈 답이 왔어. 다시 시도해줘");
-  }catch(err){if(ans.content.trim())ans.content+="\n\n(연결이 끊겼어. 아래 '이어서 보기'를 눌러줘.)";else{ans.content="⚠️ "+(err.message||"연결에 실패했어");ans.error=true}}
+  let last=0;const MARK=/\[\[(END|CUT)\]\]\s*$/;
+  const paint=()=>{const now=Date.now();if(now-last>120){last=now;const el=$("wThread").lastElementChild;if(el)el.innerHTML=mdLite(ans.content.replace(/\[\[(E|C)[A-Z]*\]?\]?$/,""))}};
+  // 답이 길어서(또는 연결 시간 때문에) 끊기면 알아서 이어 받아 한 답으로 붙인다 (최대 4번)
+  for(let round=0;round<5;round++){
+    const cont=round>0;let got="",status="";
+    try{
+      const body=cont
+        ?{code,mode:"free",question:"방금 답이 분량 때문에 중간에 끊겼어. 끊긴 글자 바로 다음부터 이어서 써줘. 앞부분은 반복하지 말고, 인사나 설명 없이 바로 이어서.",passage,history:[...history,{role:"user",content:sent},{role:"assistant",content:ans.content}],name:m.name,profile:wGet("nt-profile-"+me)}
+        :{code,mode,question:q,passage,history,name:m.name,profile:wGet("nt-profile-"+me)};
+      const res=await fetch("/api/ask",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
+      if(!res.ok){let e="답을 받지 못했어";try{e=(await res.json()).error||e}catch(_){}
+        if(res.status===401){wPut("nt-code","");e+=" 다시 입력해줘."}if(res.status===404)e="서버 기능이 아직 연결되지 않았어 (Netlify 설정 확인)";throw new Error(e)}
+      const rd=res.body.getReader(),dec=new TextDecoder(),base=ans.content;
+      for(;;){const{done,value}=await rd.read();if(done)break;got+=dec.decode(value,{stream:true});ans.content=base+got;paint()}
+      const mk=got.match(MARK);status=mk?mk[1]:"CUT";got=got.replace(MARK,"");ans.content=base+got;
+    }catch(err){
+      if(!ans.content.trim()){ans.content="⚠️ "+(err.message||"연결에 실패했어");ans.error=true;break}
+      status="CUT";
+    }
+    if(status==="END")break;
+    if(!got.trim()&&cont)break;
+    if(round===4)ans.content+="\n\n(답이 아주 길어서 여기서 멈췄어. 아래 '이어서 보기'를 눌러줘.)";
+  }
+  if(!ans.error&&!ans.content.trim()){ans.content="⚠️ 빈 답이 왔어. 다시 시도해줘";ans.error=true}
   ans.pending=false;wBusy=false;wSave();render();
 }
 $("wSend").onclick=()=>wAsk("free");

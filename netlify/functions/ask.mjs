@@ -114,7 +114,7 @@ export default async (req) => {
   const enc = new TextEncoder(), dec = new TextDecoder();
   const body = new ReadableStream({
     async start(ctrl) {
-      const reader = res.body.getReader(); let buf = "";
+      const reader = res.body.getReader(); let buf = "", cut = false, ended = false;
       try {
         for (;;) {
           const { done, value } = await reader.read(); if (done) break;
@@ -126,10 +126,13 @@ export default async (req) => {
             let d; try { d = JSON.parse(line.slice(5)); } catch { continue; }
             if (d.type === "content_block_delta" && d.delta && d.delta.type === "text_delta") ctrl.enqueue(enc.encode(d.delta.text));
             else if (d.type === "error") ctrl.enqueue(enc.encode(`\n\n(오류: ${(d.error && d.error.message) || "알 수 없음"})`));
-            else if (d.type === "message_delta" && d.delta && d.delta.stop_reason === "max_tokens") ctrl.enqueue(enc.encode("\n\n(답이 길어서 여기서 끊겼어. 아래 '이어서 보기'를 눌러줘.)"));
+            else if (d.type === "message_delta" && d.delta && d.delta.stop_reason === "max_tokens") cut = true;
+            else if (d.type === "message_stop") ended = true;
           }
         }
-      } catch (e) { ctrl.enqueue(enc.encode("\n\n(연결이 끊겼어. 아래 '이어서 보기'를 눌러줘.)")); }
+      } catch (e) { cut = true; }
+      // 사이트가 알아서 이어 받도록 끝 표시를 붙인다: 다 썼으면 [[END]], 분량·연결 때문에 끊겼으면 [[CUT]]
+      ctrl.enqueue(enc.encode(ended && !cut ? "[[END]]" : "[[CUT]]"));
       ctrl.close();
     }
   });
