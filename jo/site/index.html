@@ -86,7 +86,6 @@ input,textarea,select{font-size:16px}
 .btn:disabled{opacity:.5;cursor:default}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .linkbtn{appearance:none;border:0;background:none;color:var(--muted);font-size:13.5px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px}
-.freebtn{align-self:center;margin-top:-4px}
 .verse{background:linear-gradient(160deg,#ffffff 0%,var(--blue-mist) 100%);border:1px solid var(--line);border-radius:22px;padding:26px 22px;text-align:center}
 .verse p{font-family:var(--f-serif);font-size:20px;line-height:1.7;margin:0 0 10px;word-break:keep-all;text-wrap:balance}
 .verse span{font-size:12.5px;color:var(--muted)}
@@ -372,6 +371,7 @@ const VERSES=[
 ["그리스도의 말씀이 너희 속에 풍성히 거하여 모든 지혜로 피차 가르치며 권면하고","골로새서 3:16"]
 ];
 const {BIBLE,OFF,TOTAL,PLANS,pos,chLabel}=BIBLE_DATA;
+PLANS.free={name:"자유롭게 읽기",short:"자유롭게",kind:"free"};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
 const pad=n=>String(n).padStart(2,"0");
@@ -409,13 +409,17 @@ const PLAN_INFO={
     emph:"마태복음 다음 히브리서·야고보서, 누가복음 다음 사도행전·바울서신처럼 서로 연결된 책을 붙여 읽어서 내용이 한눈에 들어와요.",
     rec:"처음 통독을 시작하거나, 끝까지 포기하지 않고 읽고 싶을 때",
     small:"신약 순서는 유튜브 @wonaver \"100% 효과보는 성경읽기 방법\"을 참고했어요. 욥기·요엘의 연대, 마가복음과 베드로를 잇는 이야기는 전승이나 추정이에요."},
+  free:{who:"내 방식대로",load:"분량 자유",
+    purpose:"정해진 읽기표 없이 내가 읽은 책과 장을 직접 기록해요. 혼자 읽어오던 곳에서 그대로 이어 갈 수 있어요.",
+    emph:"마지막으로 읽은 곳을 기억해서 다음 장을 바로 이어 기록하게 도와줘요. 출석과 연속 일수, 나눔은 다른 읽기표와 똑같아요.",
+    rec:"이미 혼자 성경을 읽고 있었거나, 교회 진도·큐티 본문처럼 다른 순서로 읽고 있을 때"},
   horner:{who:"그랜트 호너 교수",load:"하루 10장",
     purpose:"성경을 10개 묶음(복음서, 모세오경, 서신서 둘, 지혜서, 시편, 잠언, 역사서, 선지서, 사도행전)으로 나눠 매일 묶음마다 한 장씩 읽어요.",
     emph:"묶음마다 길이가 달라 매일 다른 조합이 만나요. 성경이 성경을 설명하는 연결을 스스로 발견해요.",
     rec:"많이, 빠르게 읽는 훈련을 하고 싶을 때 (강도 높음)"}
 };
-const PLAN_ORDER=["mcheyne","chrono","nt","canon","horner","paired"];
-const PLAN_SHORT={mcheyne:"하루 4장 · 구약과 신약을 나란히",canon:"창세기부터 요한계시록까지 · 성경 전체의 구조",chrono:"사건이 일어난 순서 · 구원 역사의 흐름",nt:"그리스도를 먼저, 그 빛으로 구약을",horner:"하루 10장 · 성경으로 성경을 연결하며",paired:"짧은 서신부터, 연결된 책끼리 짝지어 14단계"};
+const PLAN_ORDER=["mcheyne","chrono","nt","canon","horner","paired","free"];
+const PLAN_SHORT={mcheyne:"하루 4장 · 구약과 신약을 나란히",canon:"창세기부터 요한계시록까지 · 성경 전체의 구조",chrono:"사건이 일어난 순서 · 구원 역사의 흐름",nt:"그리스도를 먼저, 그 빛으로 구약을",horner:"하루 10장 · 성경으로 성경을 연결하며",paired:"짧은 서신부터, 연결된 책끼리 짝지어 14단계",free:"정해진 순서 없이, 읽은 만큼 직접 기록"};
 
 // ---------- 상태 ----------
 let db=null,members=[],logs=[],prayers=[],hearts=[],ready={m:false,l:false};
@@ -433,6 +437,14 @@ function chaptersOf(mid){let n=0;for(const l of logs)if(l.member===mid)n+=l.chap
 function progress(m){
   const P=PLANS[m&&m.plan];if(!P)return null;
   const done=doneSet(m.id);
+  if(P.kind==="free"){
+    const read=new Set();let last=null;
+    for(const l of logs){if(l.member!==m.id||l.plan!=="free")continue;
+      for(const it of l.items||[]){const r=/^f(\d+)-(\d+)$/.exec(it);if(r)for(let c=+r[1];c<=+r[2];c++)read.add(c)}
+      if(!last||(l.date+l.createdAt)>(last.date+last.createdAt))last=l}
+    let next=null;if(last){const r=/^f(\d+)-(\d+)$/.exec((last.items||[])[0]||"");if(r&&+r[2]+1<TOTAL)next=+r[2]+1}
+    return{P,portions:[],free:true,next,pct:read.size/TOTAL,complete:false,sub:"지금까지 "+read.size+"장 · 전체의 "+Math.floor(read.size/TOTAL*100)+"%"};
+  }
   if(P.kind==="seq"){
     const pace=Math.max(1,Math.min(10,+m.pace||3));let cnt=0,firstK=-1;const portions=[];
     P.order.forEach((ch,k)=>{if(done.has("c"+ch)){cnt++;return}if(firstK<0)firstK=k;if(portions.length<pace)portions.push({id:"c"+ch,label:chLabel(ch),chapters:[ch],tag:""})});
@@ -485,18 +497,28 @@ function renderHome(){
     :'<div class="big">'+esc(m.name)+', 오늘<br><b>한 걸음</b> 시작해요</div><div class="sub">하루 한 장도 좋아요</div>';
   C.hidden=false;
   const pr=progress(m);
-  if(!pr){C.innerHTML='<span class="lbl">읽는 순서</span><p class="note" style="font-size:14.5px;color:var(--ink)">어떤 순서로 읽을지 먼저 골라주세요. 고른 순서대로 매일 읽을 말씀을 알려줄게요.</p><button class="btn primary" type="button" id="pickBtn">읽는 순서 고르기</button><button class="linkbtn freebtn" type="button" id="freeBtn">읽기표 말고 다른 말씀 직접 기록하기</button>';
-    $("pickBtn").onclick=()=>openSheet("pick");$("freeBtn").onclick=()=>openSheet("record",{mode:"free"});return}
+  if(!pr){C.innerHTML='<span class="lbl">읽는 순서</span><p class="note" style="font-size:14.5px;color:var(--ink)">어떤 순서로 읽을지 먼저 골라주세요. 고른 순서대로 매일 읽을 말씀을 알려줄게요.</p><button class="btn primary" type="button" id="pickBtn">읽는 순서 고르기</button>';
+    $("pickBtn").onclick=()=>openSheet("pick");return}
+  if(pr.free){
+    const todayLogs=logs.filter(l=>l.member===m.id&&l.date===TODAY);
+    let h='<button class="plan" type="button" id="planBox"><div><b>'+esc(pr.P.name)+'</b><br><span>'+esc(pr.sub)+'</span></div><span class="go">바꾸기</span></button><div class="bar"><i style="width:'+Math.max(2,Math.round(pr.pct*100))+'%"></i></div>';
+    if(todayLogs.length){const labels=todayLogs.flatMap(l=>l.labels||[]);h+='<div class="done-note">✓ <span>오늘 <b>'+esc(labels[0]||"")+'</b>'+(labels.length>1?" 외 "+(labels.length-1):"")+' 기록했어요</span></div>'}
+    h+=pr.next!=null?'<div class="row"><span class="lbl">이어서 읽기</span></div><button class="portion" type="button" id="nextBtn"><span class="t">'+esc(chLabel(pr.next))+'부터</span><span class="tag">마지막 기록 다음 장</span></button>'
+      :'<p class="note" style="font-size:14.5px;color:var(--ink)">지금 읽고 있는 곳부터 기록해 보세요. 다음부터는 이어서 읽을 곳을 알려줄게요.</p>';
+    h+='<button class="btn primary" type="button" id="recBtn">읽은 말씀 기록하기</button>';
+    C.innerHTML=h;$("planBox").onclick=()=>openSheet("pick");
+    const startFree=()=>{const o={mode:"free"};if(pr.next!=null){const[b,c]=pos(pr.next);o.fb=b;o.f1=c;o.f2=c}openSheet("record",o)};
+    $("recBtn").onclick=startFree;if($("nextBtn"))$("nextBtn").onclick=startFree;return;
+  }
   const key=m.id+"|"+TODAY+"|"+pr.portions.map(p=>p.id).join(",");if(key!==ticksKey){ticksKey=key;ticks=new Set([...ticks].filter(id=>pr.portions.some(p=>p.id===id)))}
   const todayLogs=logs.filter(l=>l.member===m.id&&l.date===TODAY);
   let h='<button class="plan" type="button" id="planBox"><div><b>'+esc(pr.P.name)+'</b><br><span>'+esc(pr.sub)+'</span></div><span class="go">바꾸기</span></button>';
   if(pr.pct!=null)h+='<div class="bar"><i style="width:'+Math.max(2,Math.round(pr.pct*100))+'%"></i></div>';
   if(todayLogs.length){const labels=todayLogs.flatMap(l=>l.labels||[]);h+='<div class="done-note">✓ <span>오늘 <b>'+esc(labels[0]||"")+'</b>'+(labels.length>1?" 외 "+(labels.length-1):"")+' 기록했어요</span></div>'}
-  if(pr.complete){h+='<p class="note" style="font-size:15px;color:var(--ink);text-align:center">이 읽기표를 끝까지 읽었어요. 수고했어요!<br>다른 순서로 다시 걸어볼까요?</p><button class="btn ghost" type="button" id="pickBtn2">다른 순서 고르기</button><button class="linkbtn freebtn" type="button" id="freeBtn">읽기표 말고 다른 말씀 직접 기록하기</button>';C.innerHTML=h;$("planBox").onclick=()=>openSheet("pick");$("pickBtn2").onclick=()=>openSheet("pick");$("freeBtn").onclick=()=>openSheet("record",{mode:"free"});return}
+  if(pr.complete){h+='<p class="note" style="font-size:15px;color:var(--ink);text-align:center">이 읽기표를 끝까지 읽었어요. 수고했어요!<br>다른 순서로 다시 걸어볼까요?</p><button class="btn ghost" type="button" id="pickBtn2">다른 순서 고르기</button>';C.innerHTML=h;$("planBox").onclick=()=>openSheet("pick");$("pickBtn2").onclick=()=>openSheet("pick");return}
   h+='<div class="row"><span class="lbl">'+(todayLogs.length?"이어서 읽을 말씀":"오늘 읽을 말씀")+'</span><span class="lbl">'+ticks.size+' / '+pr.portions.length+'</span></div><div class="portions" id="portions"></div>'+
-    '<button class="btn primary" type="button" id="recBtn">'+(ticks.size?"읽은 말씀 기록하기":"오늘 읽은 말씀 기록하기")+'</button>'+
-    '<button class="linkbtn freebtn" type="button" id="freeBtn">읽기표 말고 다른 말씀 직접 기록하기</button>';
-  C.innerHTML=h;$("freeBtn").onclick=()=>openSheet("record",{mode:"free"});
+    '<button class="btn primary" type="button" id="recBtn">'+(ticks.size?"읽은 말씀 기록하기":"오늘 읽은 말씀 기록하기")+'</button>';
+  C.innerHTML=h;
   const P=$("portions");
   for(const p of pr.portions){const b=document.createElement("button");b.type="button";b.className="portion"+(ticks.has(p.id)?" on":"");
     b.innerHTML='<span class="tick"></span><span class="t">'+esc(p.label)+'</span>'+(p.tag?'<span class="tag">'+esc(p.tag)+'</span>':"");
@@ -604,7 +626,7 @@ function renderSheet(first){
     const P=PLANS[sheetData.plan];
     S.innerHTML=head("읽는 순서 고르기","바꿔도 지금까지 읽은 기록은 그대로 남아요")+PLAN_ORDER.map(k=>'<button type="button" class="opt'+(k===sheetData.plan?" on":"")+'" data-p="'+k+'"><span class="r"></span><div><b>'+esc(PLANS[k].name)+'</b><div>'+esc(PLAN_SHORT[k])+'</div></div></button>').join("")+
       (P.kind==="seq"?'<span class="lbl">하루 분량</span><div class="pace">'+[1,2,3,4,5].map(n=>'<button type="button" data-n="'+n+'" class="'+(n===sheetData.pace?"on":"")+'">'+n+'장</button>').join("")+'</div>'
-        :'<span class="lbl">'+esc(P.name)+'은 하루 '+P.fixed+'장으로 정해져 있어요</span>')+
+        :P.kind==="free"?'<span class="lbl">정해진 분량 없이 읽은 만큼 기록해요</span>':'<span class="lbl">'+esc(P.name)+'은 하루 '+P.fixed+'장으로 정해져 있어요</span>')+
       '<button class="btn primary" type="button" id="pickSave">'+(m.plan?"이 순서로 읽기":"이 순서로 시작하기")+'</button>';
     S.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{sheetData.plan=b.dataset.p;renderSheet(true)});
     S.querySelectorAll(".pace button").forEach(b=>b.onclick=()=>{sheetData.pace=+b.dataset.n;renderSheet(true)});
@@ -613,7 +635,7 @@ function renderSheet(first){
   }
   if(sheetMode==="record"){
     if(!m){closeSheet();return}
-    const pr=progress(m),hasPlan=!!(pr&&!pr.complete);
+    const pr=progress(m),hasPlan=!!(pr&&!pr.complete&&!pr.free);
     if(!hasPlan)sheetData.mode="free";if(!sheetData.mode)sheetData.mode="plan";
     if(!sheetData.date)sheetData.date=TODAY;
     const free=sheetData.mode==="free";
@@ -626,12 +648,12 @@ function renderSheet(first){
       const opts=(from,sel)=>Array.from({length:n-from+1},(_,i)=>i+from).map(c=>'<option value="'+c+'"'+(c===sel?" selected":"")+'>'+c+'장</option>').join("");
       body='<span class="lbl">읽은 말씀</span><select id="fBook">'+BIBLE.map((x,i)=>'<option value="'+i+'"'+(i===sheetData.fb?" selected":"")+'>'+x[0]+'</option>').join("")+'</select>'+
         '<div class="frange"><select id="fFrom">'+opts(1,sheetData.f1)+'</select><span>부터</span><select id="fTo">'+opts(sheetData.f1,sheetData.f2)+'</select><span>까지</span></div>'+
-        '<p class="note">읽기표 진도와는 따로 기록돼요. 출석과 연속 일수, 나눔에는 똑같이 들어가요.</p>';
+        (pr&&pr.free?"":'<p class="note">읽기표 진도와는 따로 기록돼요. 출석과 연속 일수, 나눔에는 똑같이 들어가요.</p>');
     }else{
       if(!sheetData.sel)sheetData.sel=new Set(ticks.size?ticks:pr.portions.map(p=>p.id));
       body='<span class="lbl">읽은 말씀</span><div>'+pr.portions.map(p=>'<button type="button" class="check'+(sheetData.sel.has(p.id)?" on":"")+'" data-id="'+esc(p.id)+'"><span class="tick"></span>'+esc(p.label)+'</button>').join("")+'</div>';
     }
-    S.innerHTML=head("읽은 말씀 기록",esc(m.name)+(free?" · 직접 기록":" · "+esc(pr.P.name)))+
+    S.innerHTML=head("읽은 말씀 기록",esc(m.name)+(free?" · "+(pr&&pr.free?esc(pr.P.name):"직접 기록"):" · "+esc(pr.P.name)))+
       (hasPlan?'<div class="seg"><button type="button" id="rmPlan" aria-pressed="'+!free+'">읽기표 말씀</button><button type="button" id="rmFree" aria-pressed="'+free+'">직접 고르기</button></div>':"")+body+
       '<span class="lbl">읽은 날</span><input class="field" type="date" id="rDate" max="'+TODAY+'" value="'+sheetData.date+'">'+
       '<span class="lbl">느낀 점 (선택 · 대시보드 나눔에 보여요)</span><textarea class="field" id="rNote" maxlength="1000" placeholder="마음에 남은 한 구절, 한 줄이면 충분해요"></textarea>'+

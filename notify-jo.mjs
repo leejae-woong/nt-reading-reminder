@@ -74,6 +74,11 @@ const josa = (w, a, b) => { const c = w.charCodeAt(w.length - 1); return c >= 0x
 const readOn = d => new Set(logs.filter(l => l.date === d).map(l => l.member));
 function streakUntilYesterday(id) { let d = addDay(TODAY, -1), n = 0; const s = new Set(logs.filter(l => l.member === id).map(l => l.date)); while (s.has(d) && n < 3650) { n++; d = addDay(d, -1); } return n; }
 function nextLabel(m) {
+  if (m.plan === "free") { // 자유롭게 읽기: 마지막 기록 다음 장
+    const last = logs.filter(l => l.member === m.id && l.plan === "free").sort((a, b) => (b.date + b.createdAt).localeCompare(a.date + a.createdAt))[0];
+    const r = last && /^f(\d+)-(\d+)$/.exec((last.items || [])[0] || "");
+    return r && +r[2] + 1 < 1189 ? chLabel(+r[2] + 1) : "";
+  }
   const P = PLANS[m.plan]; if (!P) return "";
   const done = new Set(logs.filter(l => l.member === m.id).flatMap(l => l.items || []));
   if (P.kind === "seq") { const ch = P.order.find(c => !done.has("c" + c)); return ch == null ? "" : chLabel(ch); }
