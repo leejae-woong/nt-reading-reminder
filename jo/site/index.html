@@ -199,6 +199,9 @@ textarea.field{min-height:110px;resize:vertical;line-height:1.55}
 .pc dt{color:var(--muted);font-size:12.5px;padding-top:2px}
 .pc dd{margin:0;word-break:keep-all}
 .pc .cta{appearance:none;border:0;background:none;font-size:14px;font-weight:600;color:var(--blue-deep);align-self:flex-end;cursor:pointer;padding:4px}
+.tipcard{background:var(--gold-soft);border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:6px}
+.tipcard b{color:#6d5622}.tipcard p{margin:0;font-size:14px;line-height:1.65;color:#5f5130}
+.tipcard .cta{appearance:none;border:0;background:none;align-self:flex-end;font-size:14px;font-weight:600;color:#8a6a24;cursor:pointer;padding:4px}
 .cur-tag{font-size:12px;font-weight:700;color:#fff;background:var(--blue);padding:3px 9px;border-radius:99px;white-space:nowrap}
 .pc small{font-size:12px;color:var(--muted);line-height:1.5}
 /* sheet */
@@ -311,6 +314,7 @@ textarea.field{min-height:110px;resize:vertical;line-height:1.55}
   <main class="view" id="vPlans" hidden>
     <div class="top"><div class="brand"><i></i>말씀 동행</div></div>
     <h1 class="ptitle">어떻게 읽을까<small>믿음의 선배들이 만든 성경 읽는 순서예요. 목적이 다르니 나에게 맞는 걸 골라요.</small></h1>
+    <section class="tipcard"><b>새 책을 시작할 때</b><p>처음 펼치는 책이라면 <b>말씀곁에서 → 성경 묻기 → 한 번에 정리</b>로 그 책이 왜 쓰였는지, 무엇을 두고 읽으면 좋은지 먼저 보고 읽어요. 숲을 보고 나무를 보면 훨씬 잘 들어와요.</p><button type="button" class="cta" id="tipAsk">말씀곁에서 열기</button></section>
     <div class="view" id="planCards" style="gap:16px"></div>
   </main>
 
@@ -398,13 +402,18 @@ const PLAN_INFO={
     purpose:"성경이 놓인 순서 그대로 처음부터 끝까지 읽어요.",
     emph:"율법서·역사서·시가서·선지서, 복음서·역사서·서신서·예언서로 이어지는 성경 전체의 구조가 몸에 익어요.",
     rec:"성경 전체를 한 번 제대로 통독하고 싶을 때"},
+  paired:{who:"짝지어 읽기 · 14단계",load:"하루 분량 선택",
+    purpose:"신약은 짧은 서신으로 가볍게 시작해 복음서마다 짝이 되는 책을 이어 읽고, 구약은 이야기 흐름 속에 시·지혜서·선지서를 제자리에 끼워 읽어요.",
+    emph:"마태복음 다음 히브리서·야고보서, 누가복음 다음 사도행전·바울서신처럼 서로 연결된 책을 붙여 읽어서 내용이 한눈에 들어와요.",
+    rec:"처음 통독을 시작하거나, 끝까지 포기하지 않고 읽고 싶을 때",
+    small:"신약 순서는 유튜브 @wonaver \"100% 효과보는 성경읽기 방법\"을 참고했어요. 욥기·요엘의 연대, 마가복음과 베드로를 잇는 이야기는 전승이나 추정이에요."},
   horner:{who:"그랜트 호너 교수",load:"하루 10장",
     purpose:"성경을 10개 묶음(복음서, 모세오경, 서신서 둘, 지혜서, 시편, 잠언, 역사서, 선지서, 사도행전)으로 나눠 매일 묶음마다 한 장씩 읽어요.",
     emph:"묶음마다 길이가 달라 매일 다른 조합이 만나요. 성경이 성경을 설명하는 연결을 스스로 발견해요.",
     rec:"많이, 빠르게 읽는 훈련을 하고 싶을 때 (강도 높음)"}
 };
-const PLAN_ORDER=["mcheyne","chrono","nt","canon","horner"];
-const PLAN_SHORT={mcheyne:"하루 4장 · 구약과 신약을 나란히",canon:"창세기부터 요한계시록까지 · 성경 전체의 구조",chrono:"사건이 일어난 순서 · 구원 역사의 흐름",nt:"그리스도를 먼저, 그 빛으로 구약을",horner:"하루 10장 · 성경으로 성경을 연결하며"};
+const PLAN_ORDER=["mcheyne","chrono","nt","canon","horner","paired"];
+const PLAN_SHORT={mcheyne:"하루 4장 · 구약과 신약을 나란히",canon:"창세기부터 요한계시록까지 · 성경 전체의 구조",chrono:"사건이 일어난 순서 · 구원 역사의 흐름",nt:"그리스도를 먼저, 그 빛으로 구약을",horner:"하루 10장 · 성경으로 성경을 연결하며",paired:"짧은 서신부터, 연결된 책끼리 짝지어 14단계"};
 
 // ---------- 상태 ----------
 let db=null,members=[],logs=[],prayers=[],hearts=[],ready={m:false,l:false};
@@ -423,9 +432,10 @@ function progress(m){
   const P=PLANS[m&&m.plan];if(!P)return null;
   const done=doneSet(m.id);
   if(P.kind==="seq"){
-    const pace=Math.max(1,Math.min(10,+m.pace||3));let cnt=0;const portions=[];
-    for(const ch of P.order){if(done.has("c"+ch)){cnt++;continue}if(portions.length<pace)portions.push({id:"c"+ch,label:chLabel(ch),chapters:[ch],tag:""})}
-    return{P,portions,pct:cnt/TOTAL,complete:!portions.length,sub:"하루 "+pace+"장 · 전체의 "+Math.floor(cnt/TOTAL*100)+"%"};
+    const pace=Math.max(1,Math.min(10,+m.pace||3));let cnt=0,firstK=-1;const portions=[];
+    P.order.forEach((ch,k)=>{if(done.has("c"+ch)){cnt++;return}if(firstK<0)firstK=k;if(portions.length<pace)portions.push({id:"c"+ch,label:chLabel(ch),chapters:[ch],tag:""})});
+    let step="";if(P.steps&&firstK>=0){let i=0;while(i<P.steps.length-1&&P.steps[i+1][1]<=firstK)i++;step=(i+1)+"단계 "+P.steps[i][0]+" · "}
+    return{P,portions,pct:cnt/TOTAL,complete:!portions.length,sub:step+"하루 "+pace+"장 · 전체의 "+Math.floor(cnt/TOTAL*100)+"%"};
   }
   const lim=P.days===Infinity?100000:P.days;let d=1;
   while(d<=lim&&P.day(d).every(p=>done.has(p.id)))d++;
@@ -559,6 +569,7 @@ async function toggleHeart(p,btn){
 async function savePrayer(p,patch){const{id,...rest}=p;try{await col("prayers").doc(id).set({...rest,...patch})}catch(e){toast("저장하지 못했어요")}}
 $("prSend").onclick=async()=>{const t=$("prText").value.trim();if(!t)return toast("기도제목을 적어주세요");if(!db||!meM())return;
   $("prSend").disabled=true;try{await col("prayers").add({member:me,text:t,createdAt:Date.now(),answered:false,answer:"",answeredAt:null});$("prText").value="";prTab="open";toast("함께 기도할게요")}catch(e){toast("나누지 못했어요")}$("prSend").disabled=false;render()};
+$("tipAsk").onclick=()=>go("ask");
 $("prTabOpen").onclick=()=>{prTab="open";renderPray()};$("prTabDone").onclick=()=>{prTab="done";renderPray()};
 
 // ---------- 읽기표 ----------
