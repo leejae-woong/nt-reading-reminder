@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#f2f7fc">
+<meta name="color-scheme" content="light">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="말씀 동행">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<title>말씀 동행</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f2f7fc; --surface:#ffffff; --ink:#1f2d3d; --muted:#7b8ca0; --line:#dde7f1;
+  --blue:#4f86c6; --blue-deep:#2f5e95; --blue-soft:#e3eefa; --blue-mist:#eef5fc;
+  --gold:#c9a24e; --gold-soft:#f6efdc; --heart:#e0607e; --heart-soft:#fdeef2; --bad:#c45656;
+  --f-serif:"Gowun Batang",serif; --f-sans:"IBM Plex Sans KR",-apple-system,system-ui,sans-serif;
+  --shadow:0 1px 2px rgba(31,45,61,.04),0 8px 24px -12px rgba(47,94,149,.18);
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--f-sans);-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+button,input,textarea,select{font:inherit;color:inherit}
+input,textarea,select{font-size:16px}
+[hidden]{display:none!important}
+.app{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.wrap{max-width:430px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 6px) 18px calc(96px + var(--safe-b))}
+.view{display:flex;flex-direction:column;gap:18px}
+.top{display:flex;align-items:center;justify-content:space-between;padding:14px 2px 0;min-height:48px}
+.brand{font-family:var(--f-serif);font-weight:700;font-size:21px;letter-spacing:-.01em;color:var(--blue-deep);display:flex;align-items:center;gap:8px}
+.brand i{width:9px;height:14px;position:relative;display:inline-block}
+.brand i:before,.brand i:after{content:"";position:absolute;background:var(--gold);border-radius:1px}
+.brand i:before{left:3.5px;top:0;width:2px;height:14px}.brand i:after{left:0;top:4px;width:9px;height:2px}
+.top-r{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.iconbtn{appearance:none;border:0;background:none;padding:6px;border-radius:12px;color:var(--muted);cursor:pointer;display:grid;place-items:center;position:relative}
+.iconbtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.iconbtn.on{color:var(--blue-deep)}
+.iconbtn .pip{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--heart)}
+/* chips */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{appearance:none;flex:none;display:flex;align-items:center;gap:8px;padding:6px 14px 6px 6px;border-radius:99px;background:var(--surface);border:1px solid var(--line);font-size:14.5px;font-weight:500;cursor:pointer}
+.chip .av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;background:var(--blue-soft);color:var(--blue-deep)}
+.chip.on{background:var(--blue-deep);border-color:var(--blue-deep);color:#fff}
+.chip.on .av{background:#fff}
+.chip .ck{color:var(--blue);font-size:13px}
+.chip.on .ck{color:#cfe0f5}
+.chip.add{padding:6px 14px;color:var(--muted)}
+/* hello */
+.hello{text-align:center;padding:8px 0 0}
+.hello .big{font-family:var(--f-serif);font-size:29px;line-height:1.4;font-weight:700;word-break:keep-all}
+.hello .big b{color:var(--blue-deep);background:linear-gradient(transparent 62%,var(--gold-soft) 62%);padding:0 3px}
+.hello .sub{margin-top:6px;font-size:13.5px;color:var(--muted)}
+/* cards */
+.card{background:var(--surface);border-radius:22px;padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px}
+.lbl{font-size:12.5px;color:var(--muted);letter-spacing:.02em}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.plan{appearance:none;border:0;text-align:left;width:100%;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:16px;background:var(--blue-mist);cursor:pointer}
+.plan b{font-size:15px}
+.plan span{font-size:12.5px;color:var(--muted)}
+.plan .go{margin-left:auto;font-size:13px;color:var(--blue-deep);font-weight:600;white-space:nowrap}
+.bar{height:6px;border-radius:9px;background:var(--blue-soft);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--blue);border-radius:9px}
+.portions{display:flex;flex-direction:column}
+.portion{appearance:none;border:0;background:none;text-align:left;width:100%;display:flex;align-items:center;gap:12px;padding:13px 2px;border-bottom:1px solid var(--line);cursor:pointer}
+.portion:last-child{border-bottom:0}
+.tick{width:24px;height:24px;border-radius:50%;border:1.6px solid var(--line);flex:none;display:grid;place-items:center}
+.on>.tick{background:var(--blue);border-color:var(--blue)}
+.on>.tick:after{content:"";width:9px;height:5px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.portion .t{font-size:16px;font-weight:500}
+.portion .tag{margin-left:auto;font-size:12px;color:var(--muted);white-space:nowrap}
+.done-note{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--gold-soft);font-size:14px;color:#6d5622}
+.done-note b{font-weight:700}
+.btn{appearance:none;border:0;border-radius:16px;padding:15px;font-size:16px;font-weight:600;cursor:pointer;text-align:center}
+.btn.primary{background:var(--blue-deep);color:#fff}
+.btn.ghost{background:var(--blue-mist);color:var(--blue-deep)}
+.btn.line{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+.btn.danger{background:#fbeaea;color:var(--bad)}
+.btn.sm{padding:11px 16px;font-size:14.5px;border-radius:13px}
+.btn:disabled{opacity:.5;cursor:default}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.linkbtn{appearance:none;border:0;background:none;color:var(--muted);font-size:13.5px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px}
+.verse{background:linear-gradient(160deg,#ffffff 0%,var(--blue-mist) 100%);border:1px solid var(--line);border-radius:22px;padding:26px 22px;text-align:center}
+.verse p{font-family:var(--f-serif);font-size:20px;line-height:1.7;margin:0 0 10px;word-break:keep-all;text-wrap:balance}
+.verse span{font-size:12.5px;color:var(--muted)}
+.team{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--muted);justify-content:center}
+.dots{display:flex}
+.dots i{width:24px;height:24px;border-radius:50%;margin-left:-6px;border:2px solid var(--bg);background:var(--blue-soft);font-style:normal;font-size:11px;font-weight:700;display:grid;place-items:center;color:var(--blue-deep)}
+.dots i.no{background:#e9edf2;color:#a4b1c0}
+.dots i:first-child{margin-left:0}
+.ptitle{font-family:var(--f-serif);font-size:28px;line-height:1.35;font-weight:700;margin:4px 2px 0;word-break:keep-all}
+.ptitle small{display:block;font-family:var(--f-sans);font-size:13.5px;font-weight:400;color:var(--muted);margin-top:6px;line-height:1.5}
+.empty{padding:22px 16px;text-align:center;color:var(--muted);font-size:14px;line-height:1.6;border:1.5px dashed var(--line);border-radius:18px}
+/* dashboard */
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.stat{background:var(--surface);border-radius:18px;padding:14px 10px;box-shadow:var(--shadow);text-align:center}
+.stat b{display:block;font-family:var(--f-serif);font-size:24px;color:var(--blue-deep)}
+.stat span{font-size:12px;color:var(--muted);line-height:1.4;display:block}
+.mem{appearance:none;border:0;background:none;width:100%;text-align:left;display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.mem:last-child{border-bottom:0}
+.mem .av{width:38px;height:38px;border-radius:50%;background:var(--blue-soft);color:var(--blue-deep);font-weight:700;display:grid;place-items:center;flex:none}
+.mem .info{flex:1;min-width:0}
+.mem .info b{font-size:15px}
+.mem .info div{font-size:12.5px;color:var(--muted);margin-top:2px}
+.mem .str{font-size:13px;font-weight:600;color:var(--blue-deep);white-space:nowrap}
+.grid{display:grid;grid-template-columns:44px repeat(7,1fr);gap:6px;align-items:center;font-size:12px}
+.grid .h{color:var(--muted);text-align:center}
+.grid .h.today{color:var(--blue-deep);font-weight:700}
+.grid .n{font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grid .c{aspect-ratio:1;border-radius:8px;background:#edf1f5}
+.grid .c.y{background:var(--blue)}
+.grid .c.t{background:transparent;border:1.5px dashed var(--line)}
+.grid .c.f{background:transparent}
+.fchips{display:flex;gap:6px;overflow-x:auto;margin:2px 0 4px;scrollbar-width:none}
+.fchips::-webkit-scrollbar{display:none}
+.fchips button{appearance:none;border:0;flex:none;padding:6px 13px;border-radius:99px;font-size:13.5px;color:var(--muted);background:var(--blue-mist);cursor:pointer}
+.fchips button.on{background:var(--blue-deep);color:#fff;font-weight:600}
+.share{display:flex;flex-direction:column;gap:6px;padding:14px 0;border-bottom:1px solid var(--line)}
+.share:last-child{border-bottom:0}
+.share .who{font-size:12.5px;color:var(--muted);display:flex;gap:6px;align-items:baseline}
+.share .who b{color:var(--ink);font-weight:600}
+.share .who button{margin-left:auto;appearance:none;border:0;background:none;color:var(--muted);font-size:12.5px;text-decoration:underline;cursor:pointer;padding:0}
+.share p{margin:0;font-family:var(--f-serif);font-size:16px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+/* 말씀곁에서 */
+.seg{display:grid;grid-template-columns:1fr 1fr;background:#e6eef7;border-radius:99px;padding:4px;gap:4px}
+.seg button{appearance:none;border:0;background:transparent;border-radius:99px;padding:11px 8px;font-size:15px;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--blue-deep);font-weight:700;box-shadow:0 1px 4px rgba(47,94,149,.15)}
+.hint{font-size:13px;color:var(--muted);margin:-4px 4px 0;line-height:1.5}
+select,.field{width:100%;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--surface);outline:none}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 22px) 52%,calc(100% - 16px) 52%;background-size:6px 6px;background-repeat:no-repeat;padding-right:40px}
+textarea.field{min-height:110px;resize:vertical;line-height:1.55}
+.field:focus,select:focus{border-color:var(--blue)}
+.w-ask{display:flex;gap:10px;align-items:flex-end;border-bottom:2px solid var(--line);padding-bottom:4px}
+.w-ask:focus-within{border-bottom-color:var(--blue-deep)}
+.w-ask textarea{flex:1;min-width:0;height:32px;max-height:160px;resize:none;border:0;background:transparent;padding:4px 2px;font-size:18px;line-height:1.4;outline:none}
+.w-ask textarea::placeholder{color:#a7b5c5}
+.w-send{appearance:none;border:0;background:none;color:var(--blue-deep);padding:2px;margin-bottom:2px;cursor:pointer;display:grid;place-items:center}
+.w-send svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
+.w-send:disabled{color:var(--muted)}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{appearance:none;padding:9px 15px;border-radius:99px;border:1px solid var(--line);background:var(--surface);font-size:14.5px;cursor:pointer}
+.pill.main{background:var(--blue-deep);border-color:var(--blue-deep);color:#fff;font-weight:600}
+.pill:disabled{opacity:.45;cursor:default}
+.w-thread{display:flex;flex-direction:column;gap:12px}
+.w-q{align-self:flex-end;max-width:88%;background:var(--blue-deep);color:#fff;border-radius:18px 18px 4px 18px;padding:10px 14px;font-size:14.5px}
+.w-q small{display:block;opacity:.75;font-size:11.5px}
+.w-a{background:var(--surface);border-radius:4px 18px 18px 18px;padding:15px 16px;box-shadow:var(--shadow);font-size:15px;line-height:1.7;overflow-wrap:anywhere}
+.w-a h4{font-family:var(--f-serif);font-size:16.5px;margin:14px 0 4px;color:var(--blue-deep)}
+.w-a h4:first-child{margin-top:0}
+.w-a p{margin:6px 0}
+.w-a ul,.w-a ol{margin:6px 0;padding-left:20px}
+.w-a li{margin:3px 0}
+.w-a blockquote{margin:8px 0;padding:8px 12px;border-left:3px solid var(--gold);background:var(--gold-soft);border-radius:0 10px 10px 0;font-family:var(--f-serif)}
+.w-a code{font-size:13px;background:var(--blue-mist);padding:1px 4px;border-radius:4px}
+.w-a .tools{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+.w-a .tools button{appearance:none;border:0;background:var(--blue-mist);color:var(--blue-deep);border-radius:99px;padding:6px 12px;font-size:12.5px;cursor:pointer}
+.w-wait{color:var(--muted);font-size:13.5px}
+.w-wait i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--blue);margin-right:3px;animation:blink 1s infinite}
+.w-wait i:nth-child(2){animation-delay:.2s}.w-wait i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,100%{opacity:.2}50%{opacity:1}}
+.w-note{font-size:12px;color:var(--muted);text-align:center;line-height:1.6;margin:0}
+/* 기도 */
+.tabs{display:flex;gap:18px;border-bottom:1px solid var(--line);padding:0 4px}
+.tabs button{appearance:none;border:0;background:none;padding:10px 0;font-size:15px;color:var(--muted);font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer}
+.tabs button.on{color:var(--blue-deep);border-color:var(--blue-deep);font-weight:700}
+.compose textarea{min-height:84px;border:0;border-radius:14px;background:var(--blue-mist);padding:14px;font-size:15.5px;line-height:1.5;resize:vertical;outline:none;width:100%}
+.compose textarea::placeholder{color:#9aaabb}
+.pr{background:var(--surface);border-radius:20px;padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px}
+.pr .who{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.pr .who .av{width:26px;height:26px;border-radius:50%;background:var(--blue-soft);color:var(--blue-deep);font-weight:700;font-size:12px;display:grid;place-items:center}
+.pr .who b{color:var(--ink);font-weight:600}
+.pr p{margin:0;font-size:15.5px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.pr .act{display:flex;gap:8px;align-items:center}
+.heart{appearance:none;border:0;display:inline-flex;align-items:center;gap:6px;padding:7px 12px 7px 10px;border-radius:99px;background:var(--blue-mist);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer}
+.heart svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linejoin:round}
+.heart.on{color:var(--heart);background:var(--heart-soft)}
+.heart.on svg{fill:var(--heart);stroke:var(--heart)}
+.heart.pop svg{animation:pop .35s ease}
+@keyframes pop{50%{transform:scale(1.3)}}
+.pr .own{margin-left:auto;display:flex;gap:4px}
+.pr .own button{appearance:none;border:0;background:none;font-size:13px;color:var(--muted);cursor:pointer;padding:6px 6px}
+.pr .own button.ok{color:var(--blue-deep);font-weight:600}
+.answered{border-left:4px solid var(--gold)}
+.badge{display:inline-block;padding:3px 9px;border-radius:99px;background:var(--gold-soft);color:#8a6a24;font-size:12px;font-weight:600}
+.pr .reply{font-family:var(--f-serif);font-size:14.5px;color:#5c6b7c;background:var(--gold-soft);border-radius:12px;padding:10px 12px;line-height:1.6}
+/* 읽기표 */
+.pc{background:var(--surface);border-radius:22px;padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;border:1.5px solid transparent}
+.pc.cur{border-color:var(--blue)}
+.pc h3{margin:0;font-family:var(--f-serif);font-size:21px}
+.pc .meta{display:flex;flex-wrap:wrap;gap:6px}
+.pc .meta span{font-size:12px;padding:4px 9px;border-radius:99px;background:var(--blue-mist);color:var(--blue-deep)}
+.pc dl{margin:0;display:grid;grid-template-columns:52px 1fr;gap:8px 10px;font-size:14px;line-height:1.6}
+.pc dt{color:var(--muted);font-size:12.5px;padding-top:2px}
+.pc dd{margin:0;word-break:keep-all}
+.pc .cta{appearance:none;border:0;background:none;font-size:14px;font-weight:600;color:var(--blue-deep);align-self:flex-end;cursor:pointer;padding:4px}
+.cur-tag{font-size:12px;font-weight:700;color:#fff;background:var(--blue);padding:3px 9px;border-radius:99px;white-space:nowrap}
+.pc small{font-size:12px;color:var(--muted);line-height:1.5}
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(31,45,61,.35);z-index:20;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{width:100%;max-width:430px;max-height:88vh;overflow-y:auto;background:var(--surface);border-radius:26px 26px 0 0;padding:10px 18px calc(24px + var(--safe-b));display:flex;flex-direction:column;gap:14px;transform:translateY(30px);transition:transform .22s}
+.scrim.on .sheet{transform:none}
+.grab{width:40px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 2px;flex:none}
+.sheet h2{margin:0;font-family:var(--f-serif);font-size:22px}
+.sheet .sub{font-size:13px;color:var(--muted);margin:-8px 0 0;line-height:1.5}
+.opt{appearance:none;width:100%;text-align:left;background:var(--surface);display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:16px;border:1.5px solid var(--line);cursor:pointer}
+.opt.on{border-color:var(--blue);background:var(--blue-mist)}
+.opt .r{width:20px;height:20px;border-radius:50%;border:1.6px solid var(--line);flex:none;margin-top:2px;background:#fff}
+.opt.on .r{border:6px solid var(--blue)}
+.opt b{font-size:15.5px}.opt div div{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.5}
+.pace{display:flex;gap:8px}
+.pace button{appearance:none;flex:1;text-align:center;padding:11px 0;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-size:14.5px;cursor:pointer}
+.pace button.on{background:var(--blue-deep);color:#fff;border-color:var(--blue-deep);font-weight:600}
+.check{appearance:none;border:0;background:none;width:100%;display:flex;align-items:center;gap:12px;padding:10px 2px;text-align:left;font-size:15.5px;cursor:pointer;border-bottom:1px solid var(--line)}
+.check:last-child{border-bottom:0}
+.logrow{display:flex;flex-direction:column;gap:4px;padding:12px 0;border-bottom:1px solid var(--line)}
+.logrow:last-child{border-bottom:0}
+.logrow .h{display:flex;gap:8px;font-size:13px;color:var(--muted);align-items:baseline}
+.logrow .h b{color:var(--ink);font-weight:600;white-space:nowrap;flex:none}
+.logrow .h span{flex:1;min-width:0}
+.logrow .h button{appearance:none;border:0;background:none;color:var(--blue-deep);font-size:13px;cursor:pointer;padding:0;white-space:nowrap;flex:none}
+.logrow p{margin:0;font-family:var(--f-serif);font-size:15px;line-height:1.6;white-space:pre-wrap}
+.addrow{display:flex;gap:8px}.addrow .field{flex:1;min-width:0}
+.mlist{display:flex;flex-direction:column}
+.mrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:0}
+.mrow b{flex:1;font-size:15px}
+.mrow button{appearance:none;border:0;background:none;font-size:13px;color:var(--muted);cursor:pointer;padding:6px}
+.mrow button.del{color:var(--bad)}
+.pstate{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:16px;background:var(--blue-mist)}
+.pstate .dot{width:10px;height:10px;border-radius:50%;margin-top:6px;flex:none}
+.pstate strong{font-size:15px}.pstate p{margin:4px 0 0;font-size:13px;color:var(--muted);line-height:1.55}
+.steps{margin:0;padding-left:20px;font-size:14px;line-height:1.7}
+.note{font-size:13px;color:var(--muted);line-height:1.6;margin:0}
+/* tab bar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;justify-content:center;background:rgba(255,255,255,.95);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+.tabbar nav{width:100%;max-width:430px;display:grid;grid-template-columns:repeat(5,1fr);padding:8px 4px calc(8px + var(--safe-b))}
+.tabbar button{appearance:none;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:#9aa9ba;cursor:pointer;padding:2px 0}
+.tabbar svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button.on{color:var(--blue-deep);font-weight:700}
+.toast{position:fixed;left:50%;bottom:calc(96px + var(--safe-b));transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:99px;font-size:14px;z-index:30;max-width:86vw;text-align:center}
+.notice{background:#fff7e6;border:1px solid #f1dfb5;color:#7a5c1c;border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.5}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app"><div class="wrap">
+
+  <div class="notice" id="notice" hidden></div>
+
+  <!-- 홈 -->
+  <main class="view" id="vHome">
+    <div class="top"><div class="brand"><i></i>말씀 동행</div><div class="top-r"><span id="today"></span><button class="iconbtn" type="button" id="bellBtn" aria-label="알림 설정"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></button></div></div>
+    <div class="chips" id="chips"></div>
+    <div class="hello" id="hello"></div>
+    <section class="card" id="todayCard" hidden></section>
+    <div class="team" id="teamLine" hidden></div>
+    <div class="verse"><p id="vText"></p><span id="vRef"></span></div>
+  </main>
+
+  <!-- 대시보드 -->
+  <main class="view" id="vDash" hidden>
+    <div class="top"><div class="brand"><i></i>말씀 동행</div></div>
+    <h1 class="ptitle">함께 걷는 길<small>우리 조가 이번 주에 읽은 말씀</small></h1>
+    <div class="stats" id="stats"></div>
+    <section class="card"><span class="lbl">이번 주 출석</span><div class="grid" id="weekGrid"></div></section>
+    <section class="card" style="gap:0"><span class="lbl" style="margin-bottom:4px">조원 현황 · 이름을 누르면 기록을 볼 수 있어요</span><div id="memList"></div></section>
+    <section class="card" style="gap:0"><span class="lbl" style="margin-bottom:8px">나눔</span><div class="fchips" id="shareFilter"></div><div id="shareList"></div></section>
+    <div style="text-align:center"><button class="linkbtn" type="button" id="manageBtn">조원 관리</button></div>
+  </main>
+
+  <!-- 말씀곁에서 -->
+  <main class="view" id="vAsk" hidden>
+    <div class="top"><div class="brand"><i></i>말씀 동행</div></div>
+    <h1 class="ptitle">어떤 말씀이<br>궁금해요?</h1>
+    <section class="card" id="wCodeCard" hidden>
+      <span class="lbl">우리끼리 코드</span>
+      <p class="note">처음 한 번만 입력하면 돼요. 코드는 조장에게 물어보세요.</p>
+      <div class="addrow"><input class="field" id="wCode" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="코드 입력"><button class="btn primary sm" id="wCodeSave" type="button">확인</button></div>
+    </section>
+    <div class="view" id="wMain" style="gap:16px">
+      <div class="seg"><button type="button" id="wSrcPick" aria-pressed="true">성경 묻기</button><button type="button" id="wSrcPaste" aria-pressed="false">구절 묻기</button></div>
+      <p class="hint" id="wSrcHint"></p>
+      <select id="wBook" aria-label="성경"></select>
+      <textarea class="field" id="wPaste" hidden maxlength="8000" placeholder="성경 앱에서 구절을 복사해서 붙여넣어 주세요. 절 번호까지 같이 넣으면 더 정확해요."></textarea>
+      <div class="w-ask"><textarea id="wQ" rows="1" maxlength="1500" placeholder="" aria-label="질문"></textarea><button class="w-send" id="wSend" type="button" aria-label="묻기"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="M15.8 15.8 21 21"/></svg></button></div>
+      <span class="lbl">빠르게 물어보기</span>
+      <div class="pills" id="wBtns"></div>
+    </div>
+    <section class="w-thread" id="wThread" aria-live="polite"></section>
+    <div style="display:flex;justify-content:center;gap:14px"><button class="linkbtn" type="button" id="wClear" hidden>대화 새로 시작</button><button class="linkbtn" type="button" id="wSetBtn">내 소개 · 코드</button></div>
+    <p class="w-note">AI가 쓴 답이라 틀릴 수 있어요. 성경 본문과 함께 확인하고,<br>교회 안에서 판단이 필요한 일은 담임목사님과 상의해요.</p>
+  </main>
+
+  <!-- 기도제목 -->
+  <main class="view" id="vPray" hidden>
+    <div class="top"><div class="brand"><i></i>말씀 동행</div></div>
+    <h1 class="ptitle">서로를 위해<br>기도해요<small>나눈 기도제목은 우리 조원만 볼 수 있어요</small></h1>
+    <section class="card compose"><textarea id="prText" maxlength="600" placeholder="이번 주 기도제목을 나눠주세요"></textarea><button class="btn primary" type="button" id="prSend">나누기</button></section>
+    <div class="tabs"><button type="button" id="prTabOpen" class="on"></button><button type="button" id="prTabDone"></button></div>
+    <div class="view" id="prList" style="gap:14px"></div>
+  </main>
+
+  <!-- 읽기표 -->
+  <main class="view" id="vPlans" hidden>
+    <div class="top"><div class="brand"><i></i>말씀 동행</div></div>
+    <h1 class="ptitle">어떻게 읽을까<small>믿음의 선배들이 만든 성경 읽는 순서예요. 목적이 다르니 나에게 맞는 걸 골라요.</small></h1>
+    <div class="view" id="planCards" style="gap:16px"></div>
+  </main>
+
+</div></div>
+
+<div class="scrim" id="scrim"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<div class="tabbar"><nav>
+  <button type="button" data-v="home"><svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>홈</button>
+  <button type="button" data-v="dash"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20v-6"/></svg>대시보드</button>
+  <button type="button" data-v="ask"><svg viewBox="0 0 24 24"><path d="M4 5h6a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4z"/><path d="M20 5h-6a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h6z"/></svg>말씀곁에서</button>
+  <button type="button" data-v="pray"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-9.6A4 4 0 0 1 12 8a4 4 0 0 1 7 2.4C19 15.6 12 20 12 20z"/></svg>기도제목</button>
+  <button type="button" data-v="plans"><svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r=".6"/><circle cx="4" cy="12" r=".6"/><circle cx="4" cy="18" r=".6"/></svg>읽기표</button>
+</nav></div>
+
+<script src="plans.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+"use strict";
+const VERSES=[
+["주의 말씀은 내 발에 등이요 내 길에 빛이니이다","시편 119:105"],
+["사람이 떡으로만 살 것이 아니요 하나님의 입으로 나오는 모든 말씀으로 살 것이라","마태복음 4:4"],
+["풀은 마르고 꽃은 시드나 우리 하나님의 말씀은 영영히 서리라","이사야 40:8"],
+["천지는 없어지겠으나 내 말은 없어지지 아니하리라","마태복음 24:35"],
+["주의 말씀의 맛이 내게 어찌 그리 단지요 내 입에 꿀보다 더 다니이다","시편 119:103"],
+["내가 주께 범죄치 아니하려 하여 주의 말씀을 내 마음에 두었나이다","시편 119:11"],
+["내 눈을 열어서 주의 법의 기이한 것을 보게 하소서","시편 119:18"],
+["태초에 말씀이 계시니라 이 말씀이 하나님과 함께 계셨으니 이 말씀은 곧 하나님이시니라","요한복음 1:1"],
+["너희가 내 말에 거하면 참 내 제자가 되고 진리를 알지니 진리가 너희를 자유케 하리라","요한복음 8:31-32"],
+["그러므로 믿음은 들음에서 나며 들음은 그리스도의 말씀으로 말미암았느니라","로마서 10:17"],
+["너희는 도를 행하는 자가 되고 듣기만 하여 자신을 속이는 자가 되지 말라","야고보서 1:22"],
+["우리가 선을 행하되 낙심하지 말지니 피곤하지 아니하면 때가 이르매 거두리라","갈라디아서 6:9"],
+["믿음의 주요 또 온전케 하시는 이인 예수를 바라보자","히브리서 12:2"],
+["오히려 하나님의 말씀을 듣고 지키는 자가 복이 있느니라","누가복음 11:28"],
+["영생의 말씀이 계시매 우리가 뉘게로 가오리이까","요한복음 6:68"],
+["서로 돌아보아 사랑과 선행을 격려하며","히브리서 10:24"],
+["삼겹줄은 쉽게 끊어지지 아니하느니라","전도서 4:12"],
+["두 세 사람이 내 이름으로 모인 곳에는 나도 그들 중에 있느니라","마태복음 18:20"],
+["내가 주의 법을 어찌 그리 사랑하는지요 내가 그것을 종일 묵상하나이다","시편 119:97"],
+["내게 능력 주시는 자 안에서 내가 모든 것을 할 수 있느니라","빌립보서 4:13"],
+["너희는 먼저 그의 나라와 그의 의를 구하라 그리하면 이 모든 것을 너희에게 더하시리라","마태복음 6:33"],
+["내가 선한 싸움을 싸우고 나의 달려갈 길을 마치고 믿음을 지키었으니","디모데후서 4:7"],
+["오직 여호와를 앙망하는 자는 새 힘을 얻으리니 독수리의 날개치며 올라감 같을 것이요","이사야 40:31"],
+["모든 성경은 하나님의 감동으로 된 것으로 교훈과 책망과 바르게 함과 의로 교육하기에 유익하니","디모데후서 3:16"],
+["너희가 내 안에 거하고 내 말이 너희 안에 거하면 무엇이든지 원하는대로 구하라 그리하면 이루리라","요한복음 15:7"],
+["오직 여호와의 율법을 즐거워하여 그 율법을 주야로 묵상하는 자로다","시편 1:2"],
+["강하고 담대하라 두려워 말며 놀라지 말라 네가 어디로 가든지 네 하나님 여호와가 너와 함께 하느니라","여호수아 1:9"],
+["너는 마음을 다하여 여호와를 의뢰하고 네 명철을 의지하지 말라","잠언 3:5"],
+["무엇이든지 전에 기록한 바는 우리의 교훈을 위하여 기록된 것이니","로마서 15:4"],
+["그리스도의 말씀이 너희 속에 풍성히 거하여 모든 지혜로 피차 가르치며 권면하고","골로새서 3:16"]
+];
+const {BIBLE,OFF,TOTAL,PLANS,pos,chLabel}=BIBLE_DATA;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
+const pad=n=>String(n).padStart(2,"0");
+const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parseD=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+const addDays=(s,n)=>{const d=parseD(s);d.setDate(d.getDate()+n);return ymd(d)};
+const lsGet=k=>{try{return localStorage.getItem(k)||""}catch(e){return""}};
+const lsSet=(k,v)=>{try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}};
+const josa=(w,a,b)=>{const c=w.charCodeAt(w.length-1);return c>=0xac00&&c<=0xd7a3&&(c-0xac00)%28?a:b};
+const WD=["일","월","화","수","목","금","토"];
+let TODAY=ymd(new Date());
+const fmtDate=s=>{if(s===TODAY)return"오늘";if(s===addDays(TODAY,-1))return"어제";const d=parseD(s);return(d.getMonth()+1)+"월 "+d.getDate()+"일"};
+
+// ---------- 읽기표 설명 ----------
+const PLAN_INFO={
+  mcheyne:{who:"로버트 머리 맥체인 · 1842",load:"하루 4장 (가정 2 · 개인 2)",span:"1년",
+    purpose:"스코틀랜드 목사 맥체인이 교인들이 가정 예배와 개인 경건 시간에 같은 말씀을 함께 읽도록 만든 표예요.",
+    emph:"구약과 신약을 매일 나란히 읽어 약속과 성취를 함께 봐요. 1년에 구약은 한 번, 신약과 시편은 두 번 읽어요.",
+    rec:"성경 전체를 균형 있게, 매일의 습관으로 읽고 싶을 때"},
+  chrono:{who:"사건이 일어난 순서",load:"하루 분량 선택",
+    purpose:"성경을 시간 순서로 다시 배열해, 구원 역사가 흘러가는 큰 줄기를 따라가요.",
+    emph:"욥기가 족장 시대 곁에, 시편이 다윗 이야기 곁에, 선지서가 그 시대 왕들 곁에 놓여요. 서신서도 사도행전 속 바울의 발걸음 사이에 읽어요.",
+    rec:"성경 이야기의 앞뒤 흐름이 헷갈릴 때",
+    small:"책·단락 단위로 배열한 순서예요. 기록 연대가 학자마다 다르게 추정되는 책(욥기, 요엘 등)도 있어요."},
+  nt:{who:"마태복음 → 요한계시록 → 창세기",load:"하루 분량 선택",
+    purpose:"복음서로 예수 그리스도를 먼저 만나고, 그 빛으로 구약을 읽어요.",
+    emph:"구약 전체가 그리스도를 향한다는 구속사적 시선을 먼저 갖게 해요.",
+    rec:"성경을 처음 읽거나 다시 시작할 때"},
+  canon:{who:"창세기 → 요한계시록",load:"하루 분량 선택",
+    purpose:"성경이 놓인 순서 그대로 처음부터 끝까지 읽어요.",
+    emph:"율법서·역사서·시가서·선지서, 복음서·역사서·서신서·예언서로 이어지는 성경 전체의 구조가 몸에 익어요.",
+    rec:"성경 전체를 한 번 제대로 통독하고 싶을 때"},
+  horner:{who:"그랜트 호너 교수",load:"하루 10장",
+    purpose:"성경을 10개 묶음(복음서, 모세오경, 서신서 둘, 지혜서, 시편, 잠언, 역사서, 선지서, 사도행전)으로 나눠 매일 묶음마다 한 장씩 읽어요.",
+    emph:"묶음마다 길이가 달라 매일 다른 조합이 만나요. 성경이 성경을 설명하는 연결을 스스로 발견해요.",
+    rec:"많이, 빠르게 읽는 훈련을 하고 싶을 때 (강도 높음)"}
+};
+const PLAN_ORDER=["mcheyne","chrono","nt","canon","horner"];
+const PLAN_SHORT={mcheyne:"하루 4장 · 구약과 신약을 나란히",canon:"창세기부터 요한계시록까지 · 성경 전체의 구조",chrono:"사건이 일어난 순서 · 구원 역사의 흐름",nt:"그리스도를 먼저, 그 빛으로 구약을",horner:"하루 10장 · 성경으로 성경을 연결하며"};
+
+// ---------- 상태 ----------
+let db=null,members=[],logs=[],prayers=[],hearts=[],ready={m:false,l:false};
+let me=lsGet("jo-me")||null,view="home",ticks=new Set(),ticksKey="",shareFilter="all",prTab="open";
+const col=n=>db.collection("jo_"+n);
+const meM=()=>members.find(m=>m.id===me)||null;
+const nameOf=id=>{const m=members.find(x=>x.id===id);return m?m.name:"(지난 조원)"};
+const initial=n=>(n||"?").trim().charAt(0);
+
+// ---------- 진행 계산 ----------
+function doneSet(mid){const s=new Set();for(const l of logs)if(l.member===mid)for(const it of l.items||[])s.add(it);return s}
+function dayset(mid){const s=new Set();for(const l of logs)if(l.member===mid)s.add(l.date);return s}
+function streak(mid){const s=dayset(mid);let d=s.has(TODAY)?TODAY:addDays(TODAY,-1),n=0;while(s.has(d)&&n<3650){n++;d=addDays(d,-1)}return n}
+function chaptersOf(mid){let n=0;for(const l of logs)if(l.member===mid)n+=l.chapters||0;return n}
+function progress(m){
+  const P=PLANS[m&&m.plan];if(!P)return null;
+  const done=doneSet(m.id);
+  if(P.kind==="seq"){
+    const pace=Math.max(1,Math.min(10,+m.pace||3));let cnt=0;const portions=[];
+    for(const ch of P.order){if(done.has("c"+ch)){cnt++;continue}if(portions.length<pace)portions.push({id:"c"+ch,label:chLabel(ch),chapters:[ch],tag:""})}
+    return{P,portions,pct:cnt/TOTAL,complete:!portions.length,sub:"하루 "+pace+"장 · 전체의 "+Math.floor(cnt/TOTAL*100)+"%"};
+  }
+  const lim=P.days===Infinity?100000:P.days;let d=1;
+  while(d<=lim&&P.day(d).every(p=>done.has(p.id)))d++;
+  if(d>lim)return{P,portions:[],pct:1,complete:true,sub:"완주했어요"};
+  const portions=P.day(d).filter(p=>!done.has(p.id));
+  return{P,portions,day:d,pct:P.days===Infinity?null:(d-1)/P.days,complete:false,
+    sub:d+"일째"+(P.days===Infinity?" · 하루 "+P.fixed+"장":" · 전체의 "+Math.floor((d-1)/P.days*100)+"%")};
+}
+
+// ---------- 화면 전환 ----------
+const VIEWS={home:"vHome",dash:"vDash",ask:"vAsk",pray:"vPray",plans:"vPlans"};
+function go(v){view=VIEWS[v]?v:"home";try{history.replaceState(null,"","#"+(view==="home"?"":view))}catch(e){}render();$("app").scrollTop=0}
+function render(){
+  const nd=ymd(new Date());if(nd!==TODAY){TODAY=nd}
+  for(const k in VIEWS)$(VIEWS[k]).hidden=k!==view;
+  document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on",b.dataset.v===view));
+  if(view==="home")renderHome();else if(view==="dash")renderDash();else if(view==="ask")renderAsk();else if(view==="pray")renderPray();else renderPlans();
+  if(sheetMode)renderSheet();
+}
+document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>go(b.dataset.v));
+
+// ---------- 홈 ----------
+function renderVerse(){const d=new Date();const day=Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5);const[v,r]=VERSES[day%VERSES.length];$("vText").textContent=v;$("vRef").textContent=r}
+function renderChips(){
+  const C=$("chips");C.innerHTML="";
+  const readToday=new Set(logs.filter(l=>l.date===TODAY).map(l=>l.member));
+  for(const m of members){const b=document.createElement("button");b.type="button";b.className="chip"+(m.id===me?" on":"");
+    b.innerHTML='<span class="av">'+esc(initial(m.name))+'</span>'+esc(m.name)+(readToday.has(m.id)?' <span class="ck">✓</span>':"");
+    b.onclick=()=>{me=m.id;lsSet("jo-me",me);ticks.clear();syncPushMember();render()};C.appendChild(b)}
+  const a=document.createElement("button");a.type="button";a.className="chip add";a.textContent="+ 조원 추가";a.onclick=()=>openSheet("manage");C.appendChild(a);
+}
+function renderHome(){
+  const d=new Date();$("today").textContent=(d.getMonth()+1)+"월 "+d.getDate()+"일 "+WD[d.getDay()]+"요일";
+  $("bellBtn").classList.toggle("on",pushStatus==="on");
+  renderChips();renderVerse();
+  const m=meM(),H=$("hello"),C=$("todayCard");
+  if(!ready.m){H.innerHTML='<div class="big">말씀과 함께</div><div class="sub">불러오는 중…</div>';C.hidden=true;$("teamLine").hidden=true;return}
+  if(!members.length){H.innerHTML='<div class="big">함께 말씀을<br><b>읽어요</b></div><div class="sub">먼저 조원을 추가해 주세요</div>';C.hidden=false;
+    C.innerHTML='<span class="lbl">첫 조원 추가</span><div class="addrow"><input class="field" id="firstName" maxlength="12" placeholder="이름"><button class="btn primary sm" type="button" id="firstAdd">추가</button></div>';
+    $("firstAdd").onclick=()=>addMember($("firstName").value);$("firstName").onkeydown=e=>{if(e.key==="Enter")$("firstAdd").click()};$("teamLine").hidden=true;return}
+  renderTeamLine();
+  if(!m){H.innerHTML='<div class="big">함께 말씀을<br><b>읽어요</b></div><div class="sub">위에서 내 이름을 골라주세요</div>';C.hidden=true;return}
+  const st=streak(m.id),readToday=logs.some(l=>l.member===m.id&&l.date===TODAY);
+  H.innerHTML=st>0?'<div class="big">'+esc(m.name)+', 말씀과 함께<br><b>'+st+'일째</b>예요</div><div class="sub">'+(readToday?"오늘도 읽었어요. 내일 또 만나요":"끊기지 않고 꾸준히, 오늘도 한 걸음")+'</div>'
+    :'<div class="big">'+esc(m.name)+', 오늘<br><b>한 걸음</b> 시작해요</div><div class="sub">하루 한 장도 좋아요</div>';
+  C.hidden=false;
+  const pr=progress(m);
+  if(!pr){C.innerHTML='<span class="lbl">읽는 순서</span><p class="note" style="font-size:14.5px;color:var(--ink)">어떤 순서로 읽을지 먼저 골라주세요. 고른 순서대로 매일 읽을 말씀을 알려줄게요.</p><button class="btn primary" type="button" id="pickBtn">읽는 순서 고르기</button>';
+    $("pickBtn").onclick=()=>openSheet("pick");return}
+  const key=m.id+"|"+TODAY+"|"+pr.portions.map(p=>p.id).join(",");if(key!==ticksKey){ticksKey=key;ticks=new Set([...ticks].filter(id=>pr.portions.some(p=>p.id===id)))}
+  const todayLogs=logs.filter(l=>l.member===m.id&&l.date===TODAY);
+  let h='<button class="plan" type="button" id="planBox"><div><b>'+esc(pr.P.name)+'</b><br><span>'+esc(pr.sub)+'</span></div><span class="go">바꾸기</span></button>';
+  if(pr.pct!=null)h+='<div class="bar"><i style="width:'+Math.max(2,Math.round(pr.pct*100))+'%"></i></div>';
+  if(todayLogs.length){const labels=todayLogs.flatMap(l=>l.labels||[]);h+='<div class="done-note">✓ <span>오늘 <b>'+esc(labels[0]||"")+'</b>'+(labels.length>1?" 외 "+(labels.length-1):"")+' 기록했어요</span></div>'}
+  if(pr.complete){h+='<p class="note" style="font-size:15px;color:var(--ink);text-align:center">이 읽기표를 끝까지 읽었어요. 수고했어요!<br>다른 순서로 다시 걸어볼까요?</p><button class="btn ghost" type="button" id="pickBtn2">다른 순서 고르기</button>';C.innerHTML=h;$("planBox").onclick=()=>openSheet("pick");$("pickBtn2").onclick=()=>openSheet("pick");return}
+  h+='<div class="row"><span class="lbl">'+(todayLogs.length?"이어서 읽을 말씀":"오늘 읽을 말씀")+'</span><span class="lbl">'+ticks.size+' / '+pr.portions.length+'</span></div><div class="portions" id="portions"></div>'+
+    '<button class="btn primary" type="button" id="recBtn">'+(ticks.size?"읽은 말씀 기록하기":"오늘 읽은 말씀 기록하기")+'</button>';
+  C.innerHTML=h;
+  const P=$("portions");
+  for(const p of pr.portions){const b=document.createElement("button");b.type="button";b.className="portion"+(ticks.has(p.id)?" on":"");
+    b.innerHTML='<span class="tick"></span><span class="t">'+esc(p.label)+'</span>'+(p.tag?'<span class="tag">'+esc(p.tag)+'</span>':"");
+    b.onclick=()=>{ticks.has(p.id)?ticks.delete(p.id):ticks.add(p.id);renderHome()};P.appendChild(b)}
+  $("planBox").onclick=()=>openSheet("pick");
+  $("recBtn").onclick=()=>openSheet("record");
+}
+function renderTeamLine(){
+  const T=$("teamLine");if(!members.length){T.hidden=true;return}
+  const read=new Set(logs.filter(l=>l.date===TODAY).map(l=>l.member));
+  const n=members.filter(m=>read.has(m.id)).length;
+  T.hidden=false;T.innerHTML='<span class="dots">'+members.slice(0,8).map(m=>'<i class="'+(read.has(m.id)?"":"no")+'">'+esc(initial(m.name))+'</i>').join("")+'</span>오늘 우리 조 '+n+'/'+members.length+'명 읽었어요';
+}
+
+// ---------- 대시보드 ----------
+function weekStart(){const d=parseD(TODAY);const k=(d.getDay()+6)%7;return addDays(TODAY,-k)}
+function allDone(d){const s=new Set(logs.filter(l=>l.date===d).map(l=>l.member));const act=members.filter(m=>(m.startDate||"0")<=d);return act.length>0&&act.every(m=>s.has(m.id))}
+function teamStreak(){let d=allDone(TODAY)?TODAY:addDays(TODAY,-1),n=0;while(allDone(d)&&n<3650){n++;d=addDays(d,-1)}return n}
+function renderDash(){
+  const ws=weekStart(),days=[...Array(7)].map((_,i)=>addDays(ws,i));
+  const by={};for(const l of logs)if(l.date>=ws&&l.date<=days[6]){(by[l.date]=by[l.date]||new Set()).add(l.member)}
+  let att=0,poss=0;for(const d of days){if(d>TODAY)continue;for(const m of members){if((m.startDate||"0")>d)continue;poss++;if(by[d]&&by[d].has(m.id))att++}}
+  const ch=logs.filter(l=>l.date>=ws&&l.date<=days[6]).reduce((a,l)=>a+(l.chapters||0),0);
+  $("stats").innerHTML='<div class="stat"><b>'+att+'</b><span>이번 주 출석<br>/ '+poss+'</span></div><div class="stat"><b>'+ch+'</b><span>함께 읽은<br>장 수</span></div><div class="stat"><b>'+teamStreak()+'일</b><span>다 같이<br>연속</span></div>';
+  let g='<span></span>'+days.map(d=>'<span class="h'+(d===TODAY?" today":"")+'">'+WD[parseD(d).getDay()]+'</span>').join("");
+  for(const m of members){g+='<span class="n">'+esc(m.name)+'</span>'+days.map(d=>{const y=by[d]&&by[d].has(m.id);return'<i class="c '+(y?"y":d===TODAY?"t":d>TODAY?"f":"")+'"></i>'}).join("")}
+  $("weekGrid").innerHTML=members.length?g:'<div class="empty" style="grid-column:1/-1">아직 조원이 없어요</div>';
+  const L=$("memList");L.innerHTML=members.length?"":'<div class="empty">홈에서 조원을 추가해 주세요</div>';
+  for(const m of members){const b=document.createElement("button");b.type="button";b.className="mem";const P=PLANS[m.plan];
+    b.innerHTML='<span class="av">'+esc(initial(m.name))+'</span><div class="info"><b>'+esc(m.name)+'</b><div>'+(P?esc(P.name)+(P.kind==="seq"?" · 하루 "+(m.pace||3)+"장":""):"읽는 순서 고르기 전")+' · '+chaptersOf(m.id)+'장</div></div><span class="str">'+(streak(m.id)?streak(m.id)+"일째":"")+'</span>';
+    b.onclick=()=>openSheet("logs",{member:m.id});L.appendChild(b)}
+  const notes=logs.filter(l=>(l.note||"").trim()).sort((a,b)=>(b.date+b.createdAt).localeCompare(a.date+a.createdAt));
+  const who=[...new Set(notes.map(l=>l.member))].filter(id=>members.some(m=>m.id===id));
+  if(shareFilter!=="all"&&!who.includes(shareFilter))shareFilter="all";
+  const F=$("shareFilter");F.innerHTML="";
+  for(const id of ["all",...who]){const b=document.createElement("button");b.type="button";b.className=shareFilter===id?"on":"";b.textContent=id==="all"?"전체":nameOf(id);b.onclick=()=>{shareFilter=id;renderDash()};F.appendChild(b)}
+  F.hidden=who.length<1;
+  const list=notes.filter(l=>shareFilter==="all"||l.member===shareFilter).slice(0,60);
+  $("shareList").innerHTML=list.length?list.map(l=>'<div class="share"><span class="who"><b>'+esc(nameOf(l.member))+'</b> · '+esc((l.labels||[])[0]||"")+((l.labels||[]).length>1?" 외 "+((l.labels.length)-1):"")+' · '+fmtDate(l.date)+(l.member===me?'<button type="button" data-edit="'+esc(l.id)+'">수정</button>':"")+'</span><p>'+esc(l.note)+'</p></div>').join("")
+    :'<div class="empty">기록할 때 남긴 느낀 점이 여기 모여요</div>';
+  $("shareList").querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openSheet("edit",{log:b.dataset.edit}));
+}
+$("manageBtn").onclick=()=>openSheet("manage");
+
+// ---------- 기도제목 ----------
+const HEART='<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-9.6A4 4 0 0 1 12 8a4 4 0 0 1 7 2.4C19 15.6 12 20 12 20z"/></svg>';
+function renderPray(){
+  const open=prayers.filter(p=>!p.answered),done=prayers.filter(p=>p.answered);
+  $("prTabOpen").textContent="함께 기도 중 "+open.length;$("prTabDone").textContent="응답하심 "+done.length;
+  $("prTabOpen").classList.toggle("on",prTab==="open");$("prTabDone").classList.toggle("on",prTab==="done");
+  $("prText").placeholder=meM()?"이번 주 기도제목을 나눠주세요":"홈에서 내 이름을 먼저 골라주세요";$("prText").disabled=$("prSend").disabled=!meM();
+  const list=(prTab==="open"?open:done).sort((a,b)=>(b.answeredAt||b.createdAt)-(a.answeredAt||a.createdAt));
+  const L=$("prList");
+  if(!list.length){L.innerHTML='<div class="empty">'+(prTab==="open"?"아직 나눈 기도제목이 없어요":"응답받은 기도가 여기 모여요")+'</div>';return}
+  L.innerHTML="";
+  for(const p of list){
+    const hs=hearts.filter(h=>h.prayer===p.id),mine=hs.some(h=>h.member===me),own=p.member===me;
+    const el=document.createElement("article");el.className="pr"+(p.answered?" answered":"");
+    el.innerHTML='<div class="who"><span class="av">'+esc(initial(nameOf(p.member)))+'</span><b>'+esc(nameOf(p.member))+'</b> · '+fmtDate(ymd(new Date(p.createdAt)))+(p.answered?' <span class="badge">응답하심</span>':"")+'</div>'+
+      '<p>'+esc(p.text)+'</p>'+(p.answered&&p.answer?'<div class="reply">'+esc(p.answer)+'</div>':"")+
+      '<div class="act"><button type="button" class="heart'+(mine?" on":"")+'" aria-pressed="'+mine+'" aria-label="공감">'+HEART+'<span>'+hs.length+'</span></button>'+
+      (own?'<div class="own">'+(p.answered?'<button type="button" data-a="undo">응답 취소</button>':'<button type="button" class="ok" data-a="ans">응답됐어요</button>')+'<button type="button" data-a="del">삭제</button></div>':"")+'</div>';
+    el.querySelector(".heart").onclick=e=>toggleHeart(p,e.currentTarget);
+    el.querySelectorAll(".own button").forEach(b=>b.onclick=()=>{const a=b.dataset.a;if(a==="ans")openSheet("answer",{prayer:p.id});else if(a==="undo")savePrayer(p,{answered:false,answer:"",answeredAt:null});else openSheet("delprayer",{prayer:p.id})});
+    L.appendChild(el);
+  }
+}
+async function toggleHeart(p,btn){
+  if(!meM())return toast("홈에서 내 이름을 먼저 골라주세요");if(!db)return;
+  const id=p.id+"_"+me,has=hearts.some(h=>h.id===id);
+  try{if(has)await col("hearts").doc(id).delete();else{btn.classList.add("pop");await col("hearts").doc(id).set({prayer:p.id,member:me,createdAt:Date.now()})}}catch(e){toast("저장하지 못했어요")}
+}
+async function savePrayer(p,patch){const{id,...rest}=p;try{await col("prayers").doc(id).set({...rest,...patch})}catch(e){toast("저장하지 못했어요")}}
+$("prSend").onclick=async()=>{const t=$("prText").value.trim();if(!t)return toast("기도제목을 적어주세요");if(!db||!meM())return;
+  $("prSend").disabled=true;try{await col("prayers").add({member:me,text:t,createdAt:Date.now(),answered:false,answer:"",answeredAt:null});$("prText").value="";prTab="open";toast("함께 기도할게요")}catch(e){toast("나누지 못했어요")}$("prSend").disabled=false;render()};
+$("prTabOpen").onclick=()=>{prTab="open";renderPray()};$("prTabDone").onclick=()=>{prTab="done";renderPray()};
+
+// ---------- 읽기표 ----------
+function renderPlans(){
+  const m=meM(),cur=m&&m.plan;const C=$("planCards");C.innerHTML="";
+  const order=[...PLAN_ORDER].sort((a,b)=>(b===cur)-(a===cur));
+  for(const k of order){const P=PLANS[k],I=PLAN_INFO[k];const el=document.createElement("article");el.className="pc"+(k===cur?" cur":"");
+    el.innerHTML='<div class="row"><h3>'+esc(P.name)+'</h3>'+(k===cur?'<span class="cur-tag">읽는 중</span>':"")+'</div>'+
+      '<div class="meta"><span>'+esc(I.who)+'</span><span>'+esc(I.load)+'</span>'+(I.span?'<span>'+esc(I.span)+'</span>':"")+'</div>'+
+      '<dl><dt>목적</dt><dd>'+esc(I.purpose)+'</dd><dt>강조점</dt><dd>'+esc(I.emph)+'</dd><dt>추천</dt><dd>'+esc(I.rec)+'</dd></dl>'+
+      (I.small?'<small>'+esc(I.small)+'</small>':"")+(k===cur?"":'<button type="button" class="cta">이 순서로 읽기</button>');
+    const b=el.querySelector(".cta");if(b)b.onclick=()=>{if(!m)return toast("홈에서 내 이름을 먼저 골라주세요");openSheet("pick",{plan:k})};
+    C.appendChild(el)}
+}
+
+// ---------- 시트 ----------
+let sheetMode=null,sheetData={};
+function openSheet(mode,data){sheetMode=mode;sheetData=data||{};renderSheet(true);$("scrim").classList.add("on")}
+function closeSheet(){sheetMode=null;$("scrim").classList.remove("on")}
+$("scrim").onclick=e=>{if(e.target===$("scrim"))closeSheet()};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&sheetMode)closeSheet()});
+function renderSheet(first){
+  const S=$("sheet"),m=meM();
+  if(!first&&["record","edit","answer","pick"].includes(sheetMode)&&S.contains(document.activeElement))return; // 입력 중엔 다시 그리지 않음
+  const head=(t,sub)=>'<div class="grab"></div><h2>'+t+'</h2>'+(sub?'<p class="sub">'+sub+'</p>':"");
+  if(sheetMode==="pick"){
+    if(!m){closeSheet();return toast("홈에서 내 이름을 먼저 골라주세요")}
+    if(!sheetData.plan)sheetData.plan=m.plan||"mcheyne";if(!sheetData.pace)sheetData.pace=+m.pace||3;
+    const P=PLANS[sheetData.plan];
+    S.innerHTML=head("읽는 순서 고르기","바꿔도 지금까지 읽은 기록은 그대로 남아요")+PLAN_ORDER.map(k=>'<button type="button" class="opt'+(k===sheetData.plan?" on":"")+'" data-p="'+k+'"><span class="r"></span><div><b>'+esc(PLANS[k].name)+'</b><div>'+esc(PLAN_SHORT[k])+'</div></div></button>').join("")+
+      (P.kind==="seq"?'<span class="lbl">하루 분량</span><div class="pace">'+[1,2,3,4,5].map(n=>'<button type="button" data-n="'+n+'" class="'+(n===sheetData.pace?"on":"")+'">'+n+'장</button>').join("")+'</div>'
+        :'<span class="lbl">'+esc(P.name)+'은 하루 '+P.fixed+'장으로 정해져 있어요</span>')+
+      '<button class="btn primary" type="button" id="pickSave">'+(m.plan?"이 순서로 읽기":"이 순서로 시작하기")+'</button>';
+    S.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{sheetData.plan=b.dataset.p;renderSheet(true)});
+    S.querySelectorAll(".pace button").forEach(b=>b.onclick=()=>{sheetData.pace=+b.dataset.n;renderSheet(true)});
+    $("pickSave").onclick=async()=>{const{id,...rest}=m;try{await col("members").doc(id).set({...rest,plan:sheetData.plan,pace:sheetData.pace,planSince:TODAY});closeSheet();ticks.clear();if(view==="plans")go("home");toast(PLANS[sheetData.plan].name+josa(PLANS[sheetData.plan].name,"으로","로")+" 읽어요")}catch(e){toast("저장하지 못했어요")}};
+    return;
+  }
+  if(sheetMode==="record"){
+    const pr=m&&progress(m);if(!pr||pr.complete){closeSheet();return}
+    if(!sheetData.sel)sheetData.sel=new Set(ticks.size?ticks:pr.portions.map(p=>p.id));
+    if(!sheetData.date)sheetData.date=TODAY;
+    S.innerHTML=head("읽은 말씀 기록",esc(m.name)+" · "+esc(pr.P.name))+
+      '<span class="lbl">읽은 말씀</span><div>'+pr.portions.map(p=>'<button type="button" class="check'+(sheetData.sel.has(p.id)?" on":"")+'" data-id="'+esc(p.id)+'"><span class="tick"></span>'+esc(p.label)+'</button>').join("")+'</div>'+
+      '<span class="lbl">읽은 날</span><input class="field" type="date" id="rDate" max="'+TODAY+'" value="'+sheetData.date+'">'+
+      '<span class="lbl">느낀 점 (선택 · 대시보드 나눔에 보여요)</span><textarea class="field" id="rNote" maxlength="1000" placeholder="마음에 남은 한 구절, 한 줄이면 충분해요"></textarea>'+
+      '<button class="btn primary" type="button" id="rSave">기록하기</button>';
+    if(sheetData.note)$("rNote").value=sheetData.note;
+    S.querySelectorAll(".check").forEach(b=>b.onclick=()=>{const id=b.dataset.id;sheetData.sel.has(id)?sheetData.sel.delete(id):sheetData.sel.add(id);sheetData.note=$("rNote").value;sheetData.date=$("rDate").value||TODAY;renderSheet(true)});
+    $("rSave").onclick=async()=>{
+      const sel=pr.portions.filter(p=>sheetData.sel.has(p.id));if(!sel.length)return toast("읽은 말씀을 골라주세요");
+      const date=$("rDate").value||TODAY;if(date>TODAY)return toast("미래 날짜는 고를 수 없어요");
+      const data={member:m.id,date,plan:m.plan,items:sel.map(p=>p.id),labels:sel.map(p=>p.label),chapters:sel.reduce((a,p)=>a+p.chapters.length,0),note:$("rNote").value.trim(),createdAt:Date.now()};
+      $("rSave").disabled=true;
+      try{await col("logs").add(data);ticks.clear();closeSheet();toast(streak(m.id)>1?"기록했어요. "+streak(m.id)+"일째 함께해요":"기록했어요")}catch(e){$("rSave").disabled=false;toast("저장하지 못했어요")}
+    };
+    return;
+  }
+  if(sheetMode==="edit"){
+    const l=logs.find(x=>x.id===sheetData.log);if(!l){closeSheet();return}
+    S.innerHTML=head("기록 수정",esc(nameOf(l.member))+" · "+fmtDate(l.date)+" · "+esc((l.labels||[]).join(", ")))+
+      '<span class="lbl">느낀 점</span><textarea class="field" id="eNote" maxlength="1000"></textarea>'+
+      '<button class="btn primary" type="button" id="eSave">저장</button><button class="btn danger" type="button" id="eDel">'+(sheetData.confirm?"정말 삭제할까요? 한 번 더 누르면 지워져요":"이 기록 삭제")+'</button>';
+    $("eNote").value=l.note||"";
+    $("eSave").onclick=async()=>{const{id,...rest}=l;try{await col("logs").doc(id).set({...rest,note:$("eNote").value.trim()});closeSheet();toast("고쳤어요")}catch(e){toast("저장하지 못했어요")}};
+    $("eDel").onclick=async()=>{if(!sheetData.confirm){sheetData.confirm=true;renderSheet(true);return}try{await col("logs").doc(l.id).delete();closeSheet();toast("지웠어요")}catch(e){toast("지우지 못했어요")}};
+    return;
+  }
+  if(sheetMode==="logs"){
+    const mm=members.find(x=>x.id===sheetData.member);if(!mm){closeSheet();return}
+    const L=logs.filter(l=>l.member===mm.id).sort((a,b)=>(b.date+b.createdAt).localeCompare(a.date+a.createdAt)).slice(0,60);
+    S.innerHTML=head(esc(mm.name)+"의 기록",(PLANS[mm.plan]?esc(PLANS[mm.plan].name)+" · ":"")+chaptersOf(mm.id)+"장 · "+(streak(mm.id)?streak(mm.id)+"일째":"오늘 시작 전"))+
+      (L.length?'<div>'+L.map(l=>'<div class="logrow"><div class="h"><b>'+fmtDate(l.date)+'</b><span>'+esc((l.labels||[]).join(", "))+'</span>'+(mm.id===me?'<button type="button" data-edit="'+esc(l.id)+'">수정</button>':"")+'</div>'+(l.note?'<p>'+esc(l.note)+'</p>':"")+'</div>').join("")+'</div>':'<div class="empty">아직 기록이 없어요</div>')+
+      '<button class="btn line" type="button" id="lClose">닫기</button>';
+    S.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openSheet("edit",{log:b.dataset.edit}));
+    $("lClose").onclick=closeSheet;return;
+  }
+  if(sheetMode==="manage"){
+    S.innerHTML=head("조원 관리","이름을 추가하면 모두의 화면에 바로 생겨요")+
+      '<div class="addrow"><input class="field" id="mName" maxlength="12" placeholder="새 조원 이름"><button class="btn primary sm" type="button" id="mAdd">추가</button></div>'+
+      '<div class="mlist">'+members.map(x=>'<div class="mrow"><b>'+esc(x.name)+'</b><button type="button" data-ren="'+esc(x.id)+'">이름 바꾸기</button><button type="button" class="del" data-del="'+esc(x.id)+'">'+(sheetData.confirm===x.id?"한 번 더 누르면 삭제":"삭제")+'</button></div>').join("")+'</div>'+
+      '<p class="note">조원을 삭제해도 그동안의 기록과 기도제목은 남아요.</p><button class="btn line" type="button" id="mClose">닫기</button>';
+    $("mAdd").onclick=()=>addMember($("mName").value);$("mName").onkeydown=e=>{if(e.key==="Enter")$("mAdd").click()};
+    S.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{const id=b.dataset.del;if(sheetData.confirm!==id){sheetData.confirm=id;renderSheet(true);return}
+      try{await col("members").doc(id).delete();if(me===id){me=null;lsSet("jo-me","")}sheetData.confirm=null;toast("삭제했어요")}catch(e){toast("삭제하지 못했어요")}});
+    S.querySelectorAll("[data-ren]").forEach(b=>b.onclick=()=>openSheet("rename",{member:b.dataset.ren}));
+    $("mClose").onclick=closeSheet;return;
+  }
+  if(sheetMode==="rename"){
+    const x=members.find(y=>y.id===sheetData.member);if(!x){closeSheet();return}
+    S.innerHTML=head("이름 바꾸기")+'<input class="field" id="rnName" maxlength="12"><div class="two"><button class="btn line" type="button" id="rnBack">취소</button><button class="btn primary" type="button" id="rnSave">저장</button></div>';
+    $("rnName").value=x.name;$("rnBack").onclick=()=>openSheet("manage");
+    $("rnSave").onclick=async()=>{const n=$("rnName").value.trim();if(!n)return;if(members.some(y=>y.id!==x.id&&y.name===n))return toast("같은 이름이 있어요");const{id,...rest}=x;try{await col("members").doc(id).set({...rest,name:n});openSheet("manage")}catch(e){toast("저장하지 못했어요")}};
+    return;
+  }
+  if(sheetMode==="answer"){
+    const p=prayers.find(x=>x.id===sheetData.prayer);if(!p){closeSheet();return}
+    S.innerHTML=head("응답됐어요","함께 기도한 조원들에게 응답 소식을 나눠주세요 (선택)")+'<textarea class="field" id="aText" maxlength="300" placeholder="예: 원하던 학교에 합격했어요. 함께 기도해줘서 고마워요!"></textarea><button class="btn primary" type="button" id="aSave">응답하심으로 옮기기</button>';
+    $("aSave").onclick=async()=>{await savePrayer(p,{answered:true,answer:$("aText").value.trim(),answeredAt:Date.now()});closeSheet();prTab="done";toast("하나님께 감사해요");render()};
+    return;
+  }
+  if(sheetMode==="delprayer"){
+    const p=prayers.find(x=>x.id===sheetData.prayer);if(!p){closeSheet();return}
+    S.innerHTML=head("기도제목을 지울까요?","지우면 공감도 함께 사라져요")+'<div class="two"><button class="btn line" type="button" id="dpNo">취소</button><button class="btn danger" type="button" id="dpYes">지우기</button></div>';
+    $("dpNo").onclick=closeSheet;
+    $("dpYes").onclick=async()=>{try{await col("prayers").doc(p.id).delete();for(const h of hearts.filter(h=>h.prayer===p.id))col("hearts").doc(h.id).delete().catch(()=>{});closeSheet();toast("지웠어요")}catch(e){toast("지우지 못했어요")}};
+    return;
+  }
+  if(sheetMode==="push"){S.innerHTML=head("알림 설정");const B=document.createElement("div");B.style.cssText="display:flex;flex-direction:column;gap:14px";S.appendChild(B);renderPushSheet(B);
+    const c=document.createElement("button");c.className="btn line";c.type="button";c.textContent="닫기";c.onclick=closeSheet;S.appendChild(c);return}
+}
+async function addMember(name){
+  name=(name||"").trim();if(!name)return toast("이름을 적어주세요");if(!db)return;
+  if(members.some(m=>m.name===name))return toast("같은 이름이 있어요");
+  try{const r=await col("members").add({name,startDate:TODAY,createdAt:Date.now(),plan:"",pace:3});if(!me){me=r.id;lsSet("jo-me",me)}toast(name+josa(name,"이","가")+" 함께해요");if(sheetMode==="manage")renderSheet(true)}catch(e){toast("추가하지 못했어요")}
+}
+
+// ---------- 알림 ----------
+const VAPID_PUBLIC="BNS4OJoIpx9uNntsmxnzHD-MsjTWsQdaB0KQKIszNoScGC73M55ARYSMx8Dgw8T-zZ49Hxwy_AFvTFL_ICbxzUo";
+const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+const isStandalone=()=>window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+const pushCapable=()=>"serviceWorker" in navigator&&"PushManager" in window&&"Notification" in window;
+let pushStatus="checking",pushBusy=false;
+const noPushStatus=()=>isIOS&&!isStandalone()?"needsInstall":"unsupported";
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").then(()=>refreshPush()).catch(()=>{pushStatus=noPushStatus();render()});else pushStatus=noPushStatus();
+function b64ToBytes(b){const p="=".repeat((4-b.length%4)%4);const r=atob((b+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from(r,c=>c.charCodeAt(0))}
+async function subDocId(endpoint){const h=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(endpoint));return[...new Uint8Array(h)].slice(0,16).map(x=>x.toString(16).padStart(2,"0")).join("")}
+async function currentSub(){if(!pushCapable())return null;const reg=await navigator.serviceWorker.ready;return reg.pushManager.getSubscription()}
+async function refreshPush(){try{if(!pushCapable())pushStatus=noPushStatus();else if(Notification.permission==="denied")pushStatus="denied";else pushStatus=(await currentSub())?"on":"off"}catch(e){pushStatus=noPushStatus()}render()}
+async function saveSub(sub){const j=sub.toJSON();const id=await subDocId(j.endpoint);await col("push").doc(id).set({member:me,endpoint:j.endpoint,p256dh:j.keys.p256dh,auth:j.keys.auth,createdAt:Date.now(),device:isIOS?"ios":"other",site:location.origin+"/"})}
+async function enablePush(){
+  if(!meM())return toast("홈에서 내 이름을 먼저 골라주세요");if(!db)return;
+  pushBusy=true;render();
+  try{const perm=await Notification.requestPermission();if(perm!=="granted"){pushBusy=false;await refreshPush();return toast("알림이 허용되지 않았어요")}
+    const reg=await navigator.serviceWorker.ready;const sub=(await reg.pushManager.getSubscription())||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64ToBytes(VAPID_PUBLIC)});
+    await saveSub(sub);toast("알림을 켰어요")}catch(err){toast("알림을 켜지 못했어요. 잠시 후 다시 해주세요")}
+  pushBusy=false;await refreshPush();
+}
+async function disablePush(){pushBusy=true;render();try{const sub=await currentSub();if(sub){const id=await subDocId(sub.endpoint);await sub.unsubscribe();if(db)await col("push").doc(id).delete()}toast("알림을 껐어요")}catch(e){toast("알림을 끄지 못했어요")}pushBusy=false;await refreshPush()}
+async function testPush(){try{const reg=await navigator.serviceWorker.ready;await reg.showNotification("오늘 말씀 읽으셨나요?",{body:"알림이 이렇게 와요. (테스트)",icon:"icon-192.png",tag:"jo-test"})}catch(e){toast("테스트 알림을 띄우지 못했어요")}}
+async function syncPushMember(){try{if(pushStatus!=="on"||!db||!me)return;const sub=await currentSub();if(sub)await saveSub(sub)}catch(e){}}
+function renderPushSheet(B){
+  const who=meM();
+  const rule='<p class="note">아침 9시, 저녁 9시 무렵에 <b style="color:var(--ink)">그날 기록이 없을 때만</b> 알림이 와요. 기록했으면 오지 않아요.</p>';
+  const st=(c,t,p)=>'<div class="pstate"><i class="dot" style="background:'+c+'"></i><div><strong>'+t+'</strong><p>'+p+'</p></div></div>';
+  if(pushStatus==="needsInstall"){B.innerHTML=st("var(--gold)","홈 화면에 추가해야 알림을 받을 수 있어요","아이폰은 카톡이나 사파리 화면에서는 알림을 못 받아요.")+
+    '<ol class="steps"><li>카톡에서 열었다면 <b>⋯ → 다른 브라우저로 열기</b>로 사파리에서 열기</li><li>사파리 아래 <b>공유 버튼(□↑)</b> → <b>홈 화면에 추가</b></li><li>홈 화면에 생긴 <b>말씀 동행</b> 아이콘으로 열기</li><li>오른쪽 위 <b>종 모양</b>을 눌러 알림 받기</li></ol>'+rule;return}
+  if(pushStatus==="unsupported"){B.innerHTML=st("var(--muted)","이 브라우저는 알림을 지원하지 않아요","아이폰은 iOS 16.4 이상에서, 홈 화면에 추가한 앱으로 열어야 해요.")+rule;return}
+  if(pushStatus==="denied"){B.innerHTML=st("var(--bad)","알림이 차단돼 있어요","아이폰 <b>설정 → 알림 → 말씀 동행</b>에서 알림 허용을 켜고 다시 열어주세요.")+rule;return}
+  if(!who){B.innerHTML=st("var(--gold)","먼저 내 이름을 골라주세요","홈 화면 위쪽 이름에서 고르면 그 사람 기준으로 알림이 와요.");return}
+  if(pushStatus==="on"){B.innerHTML=st("#3fa36b","알림 켜짐 · "+esc(who.name),"이 휴대폰으로 "+esc(who.name)+"의 알림이 와요.")+rule+'<div class="two"><button class="btn line" type="button" id="pTest">테스트 알림</button><button class="btn ghost" type="button" id="pOff">알림 끄기</button></div>';
+    $("pTest").onclick=testPush;$("pOff").onclick=disablePush;$("pOff").disabled=pushBusy;return}
+  B.innerHTML=st("var(--muted)","알림 꺼짐",esc(who.name)+"의 기록 기준으로 알림이 와요.")+rule+'<button class="btn primary" type="button" id="pOn">'+(pushBusy?"켜는 중…":"알림 받기")+'</button>';
+  $("pOn").onclick=enablePush;$("pOn").disabled=pushBusy||pushStatus==="checking";
+}
+$("bellBtn").onclick=()=>openSheet("push");
+
+// ---------- 말씀곁에서 ----------
+const W_BTNS={
+  pick:[["b_full","한 번에 정리",true],["b_purpose","왜 쓰였을까"],["b_who","누가, 누구에게"],["b_background","그 시대 배경"],["b_emphasis","핵심 강조점"],["b_flow","전체 흐름"],["b_watch","읽을 때 눈여겨볼 것"]],
+  paste:[["v_full","한 번에 정리",true],["v_context","앞뒤 맥락"],["v_background","그 시대 배경"],["v_heard","그때는 어떻게 들렸을까"],["v_why","왜 이렇게 썼을까"],["v_today","지금 나에게는"],["v_apply","내 삶에 물어볼 질문"]]
+};
+const W_HINT={pick:"책 한 권을 골라요. 왜 쓰였는지, 무엇을 두고 읽으면 좋은지 알려줄게요.",paste:"궁금한 구절을 붙여넣어 주세요. 왜 이렇게 쓰였는지 같이 살펴봐요."};
+let wSrc=lsGet("jo-word-src")==="paste"?"paste":"pick",wBook=39,wBookTouched=false,wBusy=false,wThread=[],wThreadFor=null,wShowSet=false;
+function wChips(){const B=$("wBtns");B.innerHTML="";for(const[k,t,main]of W_BTNS[wSrc]){const b=document.createElement("button");b.type="button";b.className="pill"+(main?" main":"");b.textContent=t;b.onclick=()=>wAsk(k,t);B.appendChild(b)}}
+function wSetSrc(v){wSrc=v;lsSet("jo-word-src",v);$("wSrcPick").setAttribute("aria-pressed",v==="pick");$("wSrcPaste").setAttribute("aria-pressed",v==="paste");
+  $("wBook").hidden=v!=="pick";$("wPaste").hidden=v!=="paste";$("wSrcHint").textContent=W_HINT[v];$("wQ").placeholder=v==="pick"?"이 책에 대해 궁금한 걸 적어주세요":"이 구절에 대해 궁금한 걸 적어주세요";wChips();if(view==="ask")render()}
+function wLoadThread(){if(wThreadFor===me)return;wThreadFor=me;try{wThread=JSON.parse(lsGet("jo-word-"+me)||"[]")}catch(e){wThread=[]}}
+function wSave(){lsSet("jo-word-"+me,JSON.stringify(wThread.slice(-20)))}
+function mdLite(t){
+  const lines=esc(t).split("\n");let out="",list=null;
+  const inline=x=>x.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/`([^`]+)`/g,"<code>$1</code>").replace(/(^|[^*])\*([^*\s][^*]*?)\*(?!\*)/g,"$1<i>$2</i>");
+  const close=()=>{if(list){out+="</"+list+">";list=null}};
+  for(const raw of lines){const l=raw.trimEnd();let m;
+    if(!l.trim()){close();continue}
+    if(m=l.match(/^#{1,6}\s+(.*)$/)){close();out+="<h4>"+inline(m[1])+"</h4>";continue}
+    if(m=l.match(/^\s*[-*•]\s+(.*)$/)){if(list!=="ul"){close();out+="<ul>";list="ul"}out+="<li>"+inline(m[1])+"</li>";continue}
+    if(m=l.match(/^\s*\d+[.)]\s+(.*)$/)){if(list!=="ol"){close();out+="<ol>";list="ol"}out+="<li>"+inline(m[1])+"</li>";continue}
+    if(m=l.match(/^&gt;\s?(.*)$/)){close();out+="<blockquote>"+inline(m[1])+"</blockquote>";continue}
+    if(/^-{3,}$/.test(l.trim())){close();continue}
+    close();out+="<p>"+inline(l)+"</p>"}
+  close();return out;
+}
+function renderAsk(){
+  const m=meM();
+  if(!$("wBook").options.length){$("wBook").innerHTML=BIBLE.map((b,i)=>'<option value="'+i+'">'+b[0]+'</option>').join("");$("wBook").onchange=()=>{wBook=+$("wBook").value;wBookTouched=true}}
+  if(!wBookTouched){let b=39;const pr=m&&progress(m);if(pr&&pr.portions.length)b=pos(pr.portions[0].chapters[0])[0];wBook=b}
+  $("wBook").value=wBook;
+  const code=lsGet("jo-code");$("wCodeCard").hidden=!!code;$("wMain").hidden=!code;
+  if(wShowSet&&!$("wSetBox")){
+    const box=document.createElement("section");box.className="card";box.id="wSetBox";
+    box.innerHTML='<span class="lbl">내 소개 (선택 · 이 휴대폰에만 저장돼요)</span><p class="note">"지금 나에게는", "내 삶에 물어볼 질문"을 내 삶에 맞게 답할 때 참고해요. 예: 하는 일, 교회에서 맡은 일, 가정, 요즘 기도제목.</p>'+
+      '<textarea class="field" id="wProfile" maxlength="2000" placeholder="예: 대학생이고 청년부 찬양팀에서 섬겨요. 요즘 진로를 놓고 기도 중이에요."></textarea>'+
+      '<div class="two"><button class="btn line" type="button" id="wCodeReset">코드 다시 입력</button><button class="btn primary" type="button" id="wSetDone">저장하고 닫기</button></div>';
+    $("wMain").before(box);$("wProfile").value=lsGet("jo-profile-"+(me||""));
+    $("wSetDone").onclick=()=>{lsSet("jo-profile-"+(me||""),$("wProfile").value.trim());wShowSet=false;box.remove();toast("저장했어요");render()};
+    $("wCodeReset").onclick=()=>{lsSet("jo-code","");wShowSet=false;box.remove();render()};
+  }
+  if(!$("wBtns").children.length)wChips();
+  $("wBtns").querySelectorAll("button").forEach(b=>b.disabled=wBusy||!m);$("wSend").disabled=wBusy||!m;
+  if(!m){$("wThread").innerHTML='<div class="empty">홈에서 내 이름을 먼저 골라주세요</div>';$("wClear").hidden=true;return}
+  wLoadThread();wRenderThread();
+}
+function wRenderThread(){
+  const T=$("wThread");T.innerHTML="";
+  wThread.forEach((x,i)=>{
+    if(x.role==="user"){const q=document.createElement("div");q.className="w-q";q.innerHTML="<small>"+esc(x.passage||"")+"</small>"+esc(x.label||x.content);T.appendChild(q)}
+    else{const a=document.createElement("div");a.className="w-a";
+      a.innerHTML=x.content?mdLite(x.content):'<div class="w-wait"><i></i><i></i><i></i> 말씀을 살펴보는 중…</div>';
+      if(x.content&&!x.pending&&!x.error){const tl=document.createElement("div");tl.className="tools";const cut=i===wThread.length-1&&/멈췄어요\. 아래 '이어서 보기'/.test(x.content);
+        tl.innerHTML=(cut?'<button type="button" class="wmore">이어서 보기</button>':'')+'<button type="button" class="wcopy">복사</button>';
+        if(cut)tl.querySelector(".wmore").onclick=()=>wAsk("free","","끊긴 곳 바로 다음부터 이어서 써줘. 앞부분은 반복하지 마.");
+        tl.querySelector(".wcopy").onclick=async()=>{try{await navigator.clipboard.writeText(x.content);toast("복사했어요")}catch(e){toast("길게 눌러서 복사해 주세요")}};a.appendChild(tl)}
+      T.appendChild(a)}
+  });
+  $("wClear").hidden=!wThread.length||wBusy;
+}
+async function wAsk(mode,title,preset){
+  if(wBusy)return;const m=meM();if(!m)return toast("홈에서 내 이름을 먼저 골라주세요");
+  const code=lsGet("jo-code");if(!code){render();return}
+  const q=mode==="free"?(preset||$("wQ").value.trim()):"";if(mode==="free"&&!q)return toast("궁금한 걸 적어주세요");
+  const pasted=wSrc==="paste"?$("wPaste").value.trim():"";if(wSrc==="paste"&&!pasted&&!preset)return toast("구절을 붙여넣어 주세요");
+  const passage=wSrc==="paste"?{label:"",text:pasted}:{label:BIBLE[wBook][0],text:""};
+  const where=wSrc==="paste"?"붙여넣은 구절":passage.label,kind=wSrc==="paste"?"verse":"book";
+  const history=wThread.filter(x=>!x.pending&&x.content&&!x.error).map(x=>({role:x.role,content:x.role==="user"?(x.sent||x.content):x.content}));
+  const sent="[본문] "+where+"\n"+(mode==="free"?"[질문] "+q:"[요청] "+title);
+  wThread.push({role:"user",content:preset?"이어서":(q||title),label:preset?"이어서":(mode==="free"?q:title),passage:where,sent});
+  const ans={role:"assistant",content:"",pending:true};wThread.push(ans);
+  wBusy=true;if(mode==="free"&&!preset){$("wQ").value="";$("wQ").style.height="32px"}render();
+  setTimeout(()=>{const el=$("wThread").lastElementChild;if(el)el.scrollIntoView({block:"start",behavior:"smooth"})},50);
+  let last=0;const MARK=/\[\[(END|CUT)\]\]\s*$/;
+  const paint=()=>{const now=Date.now();if(now-last>120){last=now;const el=$("wThread").lastElementChild;if(el)el.innerHTML=mdLite(ans.content.replace(/\[\[(E|C)[A-Z]*\]?\]?$/,""))}};
+  for(let round=0;round<5;round++){
+    const cont=round>0;let got="",status="";
+    try{
+      const body=cont?{code,kind,mode:"free",cont:true,question:"방금 답이 분량 때문에 중간에 끊겼어. 끊긴 글자 바로 다음부터 이어서 써줘. 앞부분은 반복하지 말고, 인사나 설명 없이 바로 이어서.",passage,history:[...history,{role:"user",content:sent},{role:"assistant",content:ans.content}],name:m.name,profile:lsGet("jo-profile-"+me)}
+        :{code,kind,mode,question:q,passage,history,name:m.name,profile:lsGet("jo-profile-"+me)};
+      const res=await fetch("/api/ask",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
+      if(!res.ok){let e="답을 받지 못했어요";try{e=(await res.json()).error||e}catch(_){}
+        if(res.status===401){lsSet("jo-code","");e+=" 다시 입력해 주세요."}if(res.status===404)e="서버 기능이 아직 연결되지 않았어요";throw new Error(e)}
+      const rd=res.body.getReader(),dec=new TextDecoder(),base=ans.content;
+      for(;;){const{done,value}=await rd.read();if(done)break;got+=dec.decode(value,{stream:true});ans.content=base+got;paint()}
+      const mk=got.match(MARK);status=mk?mk[1]:"CUT";got=got.replace(MARK,"");ans.content=base+got;
+    }catch(err){if(!ans.content.trim()){ans.content="⚠️ "+(err.message||"연결에 실패했어요");ans.error=true;break}status="CUT"}
+    if(status==="END")break;if(!got.trim()&&cont)break;
+    if(round===4)ans.content+="\n\n(답이 아주 길어서 여기서 멈췄어요. 아래 '이어서 보기'를 눌러주세요.)";
+  }
+  if(!ans.error&&!ans.content.trim()){ans.content="⚠️ 빈 답이 왔어요. 다시 시도해 주세요";ans.error=true}
+  ans.pending=false;wBusy=false;wSave();render();
+}
+$("wSend").onclick=()=>wAsk("free");
+$("wQ").onkeydown=e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey))wAsk("free")};
+$("wQ").oninput=()=>{const t=$("wQ");t.style.height="32px";t.style.height=Math.min(t.scrollHeight,160)+"px"};
+$("wSrcPick").onclick=()=>wSetSrc("pick");$("wSrcPaste").onclick=()=>{wSetSrc("paste");$("wPaste").focus()};
+$("wCodeSave").onclick=()=>{const v=$("wCode").value.trim();if(!v)return;lsSet("jo-code",v);$("wCode").value="";render();toast("확인했어요. 이제 물어볼 수 있어요")};
+$("wCode").onkeydown=e=>{if(e.key==="Enter")$("wCodeSave").click()};
+$("wClear").onclick=()=>{wThread=[];wSave();render()};
+$("wSetBtn").onclick=()=>{wShowSet=!wShowSet;if(!wShowSet&&$("wSetBox"))$("wSetBox").remove();render();if(wShowSet)$("app").scrollTo({top:0,behavior:"smooth"})};
+wSetSrc(wSrc);
+
+// ---------- 공통 ----------
+let tt;function toast(msg){const T=$("toast");T.textContent=msg;T.hidden=false;clearTimeout(tt);tt=setTimeout(()=>T.hidden=true,2200)}
+function notice(msg){$("notice").textContent=msg;$("notice").hidden=!msg}
+
+// ---------- 시작 ----------
+view=(location.hash||"").replace("#","");if(!VIEWS[view])view="home";
+render();
+try{
+  if(!window.firebase||!window.FIREBASE_CONFIG)throw new Error("noconfig");
+  firebase.initializeApp(window.FIREBASE_CONFIG);db=firebase.firestore();
+  const fail=e=>{console.error(e);notice("기록을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 열어주세요.")};
+  col("members").onSnapshot(s=>{members=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));ready.m=true;if(me&&!members.some(m=>m.id===me)){me=null;lsSet("jo-me","")}render()},fail);
+  col("logs").onSnapshot(s=>{logs=s.docs.map(d=>({id:d.id,...d.data()}));ready.l=true;render()},fail);
+  col("prayers").onSnapshot(s=>{prayers=s.docs.map(d=>({id:d.id,...d.data()}));render()},fail);
+  col("hearts").onSnapshot(s=>{hearts=s.docs.map(d=>({id:d.id,...d.data()}));render()},fail);
+}catch(e){notice(e.message==="noconfig"?"firebase-config.js 설정이 필요해요.":"연결에 실패했어요.")}
+// 자정이 지나면 날짜·말씀을 새로
+setInterval(()=>{if(ymd(new Date())!==TODAY)render()},60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)render()});
+</script>
+</body>
+</html>

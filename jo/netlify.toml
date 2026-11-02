@@ -1,0 +1,9 @@
+# 말씀 동행 (조원용 사이트). Netlify에서 Base directory를 jo 로 두고 연결한다.
+[build]
+  publish = "site"
+  functions = "netlify/functions"
+  # jo 폴더가 바뀐 커밋만 배포한다 (재웅·동규·준호 사이트나 알림 기록 커밋은 건너뜀)
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- ."
+
+[functions]
+  node_bundler = "esbuild"

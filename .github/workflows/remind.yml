@@ -47,8 +47,18 @@ jobs:
           TEST: ${{ inputs.test }}
           DRY_RUN: ${{ inputs.dry }}
           EVENT: ${{ github.event_name }}
+      # 말씀 동행(조원용 사이트) 알림. 위 단계가 실패해도 따로 실행한다.
+      - run: node notify-jo.mjs
+        if: ${{ !cancelled() }}
+        env:
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          SLOT: ${{ inputs.slot }}
+          TEST: ${{ inputs.test }}
+          DRY_RUN: ${{ inputs.dry }}
+          EVENT: ${{ github.event_name }}
       # 보낸 기록을 저장 (중복 방지 + 저장소가 매일 갱신돼서 예약 실행도 멈추지 않음)
       - name: 보낸 기록 저장
+        if: ${{ !cancelled() }}
         run: |
           if [ -n "$(git status --porcelain sent)" ]; then
             git config user.name "github-actions[bot]"
