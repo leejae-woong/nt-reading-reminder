@@ -139,7 +139,9 @@ main{display:flex;flex-direction:column;gap:22px}
 /* team on home */
 .team{display:flex;flex-direction:column;gap:6px}
 .tlist{display:flex;flex-direction:column}
-.trow{appearance:none;border:0;border-top:1px solid var(--line);background:none;text-align:left;cursor:pointer;display:grid;grid-template-columns:14px minmax(52px,auto) minmax(0,1fr) 34px 24px;gap:10px;align-items:center;padding:13px 0;width:100%}
+.trow{border-top:1px solid var(--line);cursor:pointer;display:grid;grid-template-columns:14px minmax(52px,auto) minmax(0,1fr) 34px 24px 42px;gap:10px;align-items:center;padding:10px 0;min-height:54px;width:100%}
+.nudge{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:99px;height:34px;width:100%;padding:0;font-size:13px;font-weight:600;cursor:pointer}
+.nudge:active{background:var(--note);color:var(--note-ink);border-color:var(--note)}
 .trow:first-child{border-top:0}
 .trow .tn{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .trow .tn small{font-weight:400;color:var(--muted);font-size:11.5px;margin-left:3px}
@@ -857,11 +859,14 @@ function renderTeam(){
   $("teamD").textContent="12/31까지 D-"+(DAYS_LEFT-1);
   const T=$("teamList");T.innerHTML="";
   for(const{m,s,a}of rankRows()){
-    const b=document.createElement("button");b.type="button";b.className="trow";b.setAttribute("aria-label",m.name+" "+s.read+"장, "+(isRead(a.today)?"오늘 읽음":"오늘 아직")+". 대시보드 보기");
+    const b=document.createElement("div");b.className="trow";const can=m.id!==me&&members.some(x=>x.id===me);
     b.innerHTML='<i class="sq" style="background:'+colorOf(m.id)+'"></i><span class="tn">'+esc(m.name)+(m.id===me?"<small>나</small>":"")+"</span>"+
       '<span class="tbar"><i style="width:'+(s.read/TOTAL*100).toFixed(1)+'%"></i></span><span class="tv mono">'+s.read+"</span>"+
-      (isRead(a.today)?'<span class="ms on">✓</span>':'<span class="ms off"></span>');
-    b.onclick=()=>go("dash");T.appendChild(b);
+      (isRead(a.today)?'<span class="ms on" role="img" aria-label="오늘 읽음">✓</span>':'<span class="ms off" role="img" aria-label="오늘 아직"></span>')+
+      (can?'<button class="nudge" type="button" aria-label="'+esc(m.name)+'에게 알림 보내기">콕</button>':"<span></span>");
+    b.onclick=e=>{if(!e.target.closest(".nudge"))go("dash")};
+    if(can)b.querySelector(".nudge").onclick=()=>openSheet("nudge",m.id);
+    T.appendChild(b);
   }
 }
 
@@ -1026,6 +1031,19 @@ function renderSheet(first){
     if($("dl"))$("dl").onclick=()=>{sheetConfirm=true;renderSheet()};
     if($("dlN"))$("dlN").onclick=()=>{sheetConfirm=false;renderSheet()};
     if($("dlY"))$("dlY").onclick=async()=>{try{await db.collection("logs").doc(l.id).delete();toast("삭제했어");closeSheet()}catch(err){fail(err)}};
+  }else if(sheetMode==="nudge"){
+    const t=members.find(x=>x.id===sheetArg);if(!t||!members.some(x=>x.id===me)){closeSheet();return}
+    $("sTitle").textContent=t.name+"에게 콕";
+    if(first){
+      const P=isRead(attStats(t).today)?["오늘도 읽었네, 멋지다!","끝까지 같이 가자","덕분에 나도 힘난다"]:["오늘 말씀 같이 읽자!","한 장이라도 읽자, 화이팅","자기 전에 한 장 어때?"];
+      B.innerHTML='<p class="pcount" style="margin:0">'+esc(t.name)+'의 휴대폰으로 알림이 가. 알림을 켜둔 사람만 받을 수 있어.</p>'+
+        '<div class="w-chips" id="ngP"></div>'+
+        '<div><label class="lbl" for="ngText">보낼 말</label><input id="ngText" maxlength="60" autocomplete="off"></div>'+
+        '<button class="btn primary big" type="button" id="ngSend">알림 보내기</button>';
+      $("ngText").value=P[0];
+      for(const x of P){const c=document.createElement("button");c.type="button";c.className="w-chip";c.textContent=x;c.onclick=()=>{$("ngText").value=x};$("ngP").appendChild(c)}
+      $("ngSend").onclick=()=>nudge(t.id,$("ngText").value);
+    }
   }else if(sheetMode==="who"){
     $("sTitle").textContent="누가 기록해?";
     B.innerHTML='<div class="pick" id="pickSheet"></div><p class="pcount" style="margin:0">고른 이름은 이 휴대폰에서 기억해. 새 멤버는 대시보드 맨 아래에서 추가할 수 있어.</p>';
@@ -1055,6 +1073,19 @@ function renderSheet(first){
   }
 }
 $("sClose").onclick=closeSheet;
+let nudgeBusy=false;
+async function nudge(to,text){
+  const t=members.find(x=>x.id===to);text=(text||"").trim();if(!t||nudgeBusy)return;
+  if(!text)return toast("보낼 말을 적어줘");
+  nudgeBusy=true;if($("ngSend"))$("ngSend").disabled=true;
+  try{
+    const res=await fetch("/api/nudge",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({from:me,to,text})});
+    let j={};try{j=await res.json()}catch(_){}
+    if(!res.ok)throw new Error(j.error||(res.status===404?"서버 기능이 아직 연결되지 않았어":"보내지 못했어. 잠시 후 다시 해줘"));
+    toast(j.sent?t.name+"에게 알림을 보냈어":t.name+josa(t.name,"은","는")+" 아직 알림을 안 켰어");closeSheet();
+  }catch(err){toast(err.message||"보내지 못했어")}
+  nudgeBusy=false;if($("ngSend"))$("ngSend").disabled=false;
+}
 
 // ---------- nav ----------
 $("scrim").onclick=()=>{if(sheetMode)closeSheet()};
