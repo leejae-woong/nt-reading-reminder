@@ -48,10 +48,10 @@ input[type="date"]::-webkit-date-and-time-value{text-align:left}
 .tnav button.on{color:var(--blue-deep)}
 .tnav button.on span{background:linear-gradient(transparent 60%,var(--gold-soft) 60%);padding:0 4px}
 .top-r{display:flex;align-items:center;gap:6px;justify-self:end;min-width:0}
-.who{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 13px 4px 4px;display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;max-width:150px;min-height:40px;cursor:pointer;color:var(--ink)}
-.who .av{width:30px;height:30px;border-radius:50%;background:var(--blue-deep);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;flex:none}
-.who .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.who.none{padding:4px 14px;color:var(--blue-deep)}
+.whobtn{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 13px 4px 4px;display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;max-width:150px;min-height:40px;cursor:pointer;color:var(--ink)}
+.whobtn .av{width:30px;height:30px;border-radius:50%;background:var(--blue-deep);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;flex:none}
+.whobtn .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.whobtn.none{padding:4px 14px;color:var(--blue-deep)}
 .iconbtn{appearance:none;border:1px solid var(--line);background:var(--surface);width:40px;height:40px;padding:0;border-radius:50%;color:var(--muted);cursor:pointer;display:grid;place-items:center;position:relative;flex:none}
 .iconbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .iconbtn.on{color:var(--blue-deep)}
@@ -421,7 +421,7 @@ textarea.field{min-height:110px;resize:vertical;line-height:1.55}
       <button type="button" data-v="plans"><span>읽기표</span></button>
     </nav>
     <div class="top-r">
-      <button class="who" type="button" id="whoBtn" hidden></button>
+      <button class="whobtn" type="button" id="whoBtn" hidden></button>
       <button class="iconbtn" type="button" id="bellBtn" aria-label="알림 설정"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></button>
     </div>
   </header>
@@ -685,7 +685,7 @@ function renderVerse(){const d=new Date();const day=Math.floor(Date.UTC(d.getFul
 function setMe(id){me=id;lsSet("jo-me",me);ticks.clear();syncPushMember();render()}
 function renderWho(){
   const B=$("whoBtn"),m=meM();B.hidden=!members.length;
-  B.className="who"+(m?"":" none");B.setAttribute("aria-label",m?"기록하는 사람: "+m.name+" (바꾸기)":"내 이름 고르기");
+  B.className="whobtn"+(m?"":" none");B.setAttribute("aria-label",m?"기록하는 사람: "+m.name+" (바꾸기)":"내 이름 고르기");
   B.innerHTML=m?'<span class="av">'+esc(initial(m.name))+'</span><span class="nm">'+esc(m.name)+'</span>':'<span class="nm">이름 고르기</span>';
 }
 $("whoBtn").onclick=()=>openSheet("who");
