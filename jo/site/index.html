@@ -35,18 +35,30 @@ input[type="date"]::-webkit-date-and-time-value{text-align:left}
 .card,.pr,.pc,.view,.body{min-width:0}
 .share p,.pr p,.logrow p,.w-a,.plan b,.portion .t{overflow-wrap:anywhere}
 .app{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
-.wrap{overflow-x:hidden;max-width:430px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 6px) 18px calc(96px + var(--safe-b))}
+.wrap{overflow-x:clip;max-width:600px;margin:0 auto;padding-block:env(safe-area-inset-top,0px) calc(96px + var(--safe-b));padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
 .view{display:flex;flex-direction:column;gap:18px}
-.top{display:flex;align-items:center;justify-content:space-between;padding:14px 2px 0;min-height:48px}
-.brand{font-family:var(--f-serif);font-weight:700;font-size:21px;letter-spacing:-.01em;color:var(--blue-deep);display:flex;align-items:center;gap:8px}
+.col{display:flex;flex-direction:column;gap:18px;min-width:0}
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;min-height:62px;padding-top:4px}
+.brand{appearance:none;border:0;background:none;padding:0;cursor:pointer;justify-self:start;font-family:var(--f-serif);font-weight:700;font-size:21px;letter-spacing:-.01em;color:var(--blue-deep);display:flex;align-items:center;gap:8px;white-space:nowrap}
 .brand i{width:9px;height:14px;position:relative;display:inline-block}
 .brand i:before,.brand i:after{content:"";position:absolute;background:var(--gold);border-radius:1px}
 .brand i:before{left:3.5px;top:0;width:2px;height:14px}.brand i:after{left:0;top:4px;width:9px;height:2px}
-.top-r{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
-.iconbtn{appearance:none;border:0;background:none;padding:6px;border-radius:12px;color:var(--muted);cursor:pointer;display:grid;place-items:center;position:relative}
-.iconbtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tnav{display:none}
+.tnav button{appearance:none;border:0;background:none;padding:8px 2px;font-size:15px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tnav button.on{color:var(--blue-deep)}
+.tnav button.on span{background:linear-gradient(transparent 60%,var(--gold-soft) 60%);padding:0 4px}
+.top-r{display:flex;align-items:center;gap:6px;justify-self:end;min-width:0}
+.who{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 13px 4px 4px;display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;max-width:150px;min-height:40px;cursor:pointer;color:var(--ink)}
+.who .av{width:30px;height:30px;border-radius:50%;background:var(--blue-deep);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;flex:none}
+.who .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.who.none{padding:4px 14px;color:var(--blue-deep)}
+.iconbtn{appearance:none;border:1px solid var(--line);background:var(--surface);width:40px;height:40px;padding:0;border-radius:50%;color:var(--muted);cursor:pointer;display:grid;place-items:center;position:relative;flex:none}
+.iconbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .iconbtn.on{color:var(--blue-deep)}
-.iconbtn .pip{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--heart)}
+.iconbtn::after{content:"";position:absolute;top:1px;right:1px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg);background:#b9c6d4}
+.iconbtn.on::after{background:#3fa36b}
+.iconbtn.off::after{display:none}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 /* chips */
 .chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
@@ -58,10 +70,111 @@ input[type="date"]::-webkit-date-and-time-value{text-align:left}
 .chip.on .ck{color:#cfe0f5}
 .chip.add{padding:6px 14px;color:var(--muted)}
 /* hello */
-.hello{text-align:center;padding:8px 0 0}
-.hello .big{font-family:var(--f-serif);font-size:29px;line-height:1.4;font-weight:700;word-break:keep-all}
+.hello{display:flex;flex-direction:column;gap:6px;padding-top:2px}
+.hello .date{font-size:13px;color:var(--muted)}
+.hello .big{font-family:var(--f-serif);font-size:28px;line-height:1.4;font-weight:700;word-break:keep-all;text-wrap:balance}
 .hello .big b{color:var(--blue-deep);background:linear-gradient(transparent 62%,var(--gold-soft) 62%);padding:0 3px}
-.hello .sub{margin-top:6px;font-size:13.5px;color:var(--muted)}
+.hello .sub{font-size:13.5px;color:var(--muted)}
+.streak{display:flex;align-items:flex-end;gap:12px;margin-top:4px}
+.streak .sn{font-family:var(--f-serif);font-weight:700;font-size:96px;line-height:.78;color:var(--blue-deep);letter-spacing:-.04em}
+.streak .big{font-size:23px;line-height:1.3}
+.week{display:flex;gap:8px;margin-top:10px}
+.wd{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;color:var(--muted)}
+.wd i{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:15px;border:1.5px dashed #c9d7e6;background:var(--surface)}
+.wd em{font-style:normal}
+.wd.on i{border:2px solid var(--blue);color:var(--blue-deep);background:var(--blue-mist);box-shadow:inset 0 0 0 2px var(--blue-mist),inset 0 0 0 3px var(--blue);transform:rotate(-9deg)}
+.wd.on:nth-child(2n) i{transform:rotate(7deg)}
+.wd.now i{border:2px solid var(--blue-deep)}
+.wd.now em{color:var(--blue-deep);font-weight:700}
+.wd.miss i{opacity:.6}
+.wd.off i{opacity:.35}
+/* 오늘 카드 */
+.tcard{--t-soft:#c3d5ea;--t-line:rgba(255,255,255,.16);--t-chip:rgba(255,255,255,.1);
+  background:radial-gradient(130% 80% at 100% 0%,#3b70ae 0%,rgba(59,112,174,0) 60%),var(--blue-deep);color:#fff;border-radius:26px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 22px 40px -24px rgba(47,94,149,.75);min-width:0}
+.tcard :focus-visible{outline-color:var(--gold-soft)}
+.tcard .lbl{color:var(--t-soft)}
+.tcard .plan{background:var(--t-chip);color:#fff}
+.tcard .plan span{color:var(--t-soft)}
+.tcard .plan .go{color:var(--gold-soft)}
+.tcard .bar{background:rgba(255,255,255,.14)}
+.tcard .bar i{background:var(--gold)}
+.tcard .portion{border-bottom-color:var(--t-line);padding:14px 2px}
+.tcard .portion .t{font-family:var(--f-serif);font-size:20px;font-weight:700;letter-spacing:-.01em}
+.tcard .portion .tag{color:var(--t-soft)}
+.tcard .tick{border-color:rgba(255,255,255,.45);width:26px;height:26px}
+.tcard .on>.tick{background:var(--gold);border-color:var(--gold)}
+.tcard .on>.tick:after{border-color:var(--blue-deep)}
+.tcard .linkbtn{color:var(--t-soft)}
+.tnote{margin:0;font-size:14.5px;line-height:1.6;color:#e7eef7;word-break:keep-all}
+.btn.hero{background:var(--gold-soft);color:var(--blue-deep);font-size:17px;font-weight:700;min-height:58px;border-radius:18px}
+.btn.hero:active{transform:scale(.985)}
+.big-range{appearance:none;border:0;background:none;color:#fff;padding:0;text-align:left;cursor:pointer;font-family:var(--f-serif);font-size:30px;line-height:1.25;font-weight:700;word-break:keep-all}
+.tc-done{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--t-chip);border-radius:18px;padding:14px 12px 14px 16px}
+.tc-done div{min-width:0;font-size:14.5px;line-height:1.5;word-break:keep-all}
+.tc-done b{font-family:var(--f-serif);font-size:18px}
+.tc-done small{display:block;color:var(--t-soft);font-size:12.5px}
+.tc-done .stamp{width:78px;height:78px;flex:none;color:var(--gold);transform:rotate(-10deg)}
+/* 66권 지도 */
+.bmap{border-top:1px solid var(--t-line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.bmap-h{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--t-soft)}
+.bmap-h b{font-family:var(--f-serif);font-size:21px;color:#fff}
+.bm{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:4px}
+.bm i{position:relative;aspect-ratio:1/1.1;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden;font-style:normal;font-size:9.5px;line-height:1;font-weight:600;display:grid;place-items:center;color:rgba(255,255,255,.62);letter-spacing:-.04em}
+.bm i::before{content:"";position:absolute;left:0;right:0;bottom:0;height:var(--f,0%);background:rgba(255,255,255,.3)}
+.bm i span{position:relative}
+.bm i.full::before{background:#fff}.bm i.full{color:var(--blue-deep)}
+.bm i.td::before{background:var(--gold)}.bm i.td{color:#3a2b08;box-shadow:inset 0 0 0 1.5px var(--gold)}
+.bm i.nt0{box-shadow:inset 2px 0 0 var(--gold)}
+.bm i.td.nt0{box-shadow:inset 0 0 0 1.5px var(--gold)}
+.bm i.pop::before{animation:fillup .9s cubic-bezier(.2,.9,.3,1) both}
+@keyframes fillup{0%{height:0}}
+.bm-lg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--t-soft)}
+.bm-lg span{display:inline-flex;align-items:center;gap:6px}
+.bm-lg i{width:10px;height:10px;border-radius:3px;background:rgba(255,255,255,.5)}
+.bm-lg i.t{background:var(--gold)}.bm-lg i.n{background:transparent;box-shadow:inset 2px 0 0 var(--gold)}
+/* 오늘 우리 조 */
+.crew{gap:2px}
+.lblrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
+.trow{display:grid;grid-template-columns:36px minmax(0,1fr) 26px 46px;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line);cursor:pointer}
+.trow:first-child{border-top:0}
+.trow .av{width:36px;height:36px;border-radius:50%;background:var(--blue-soft);color:var(--blue-deep);font-weight:700;font-size:14px;display:grid;place-items:center}
+.trow.me .av{background:var(--blue-deep);color:#fff}
+.trow .tn{font-weight:600;font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trow .tn small{font-weight:600;color:var(--blue);font-size:11.5px;margin-left:5px}
+.trow .ts{display:block;font-size:12px;color:var(--muted);font-weight:400;overflow:hidden;text-overflow:ellipsis}
+.ms{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;border:1.5px dashed #c9d7e6}
+.ms.on{border:2px solid var(--blue);color:var(--blue-deep);background:var(--blue-mist);transform:rotate(-9deg)}
+.nudge{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--blue-deep);border-radius:99px;height:36px;width:100%;padding:0;font-size:14px;font-weight:700;cursor:pointer}
+.nudge:active{background:var(--gold-soft);border-color:var(--gold)}
+/* 이름 고르기 */
+.pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px}
+.pk{appearance:none;border:1.5px solid var(--line);background:var(--surface);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;cursor:pointer;text-align:left;min-width:0}
+.pk .av{width:34px;height:34px;border-radius:50%;background:var(--blue-soft);color:var(--blue-deep);font-weight:700;display:grid;place-items:center}
+.pk b{font-size:16px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pk small{font-size:12px;color:var(--muted)}
+.pk.on{border-color:var(--blue);background:var(--blue-mist)}
+.pk.on .av{background:var(--blue-deep);color:#fff}
+/* 기록 도장 */
+.stamp{display:block}
+.cele{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:rgba(31,45,61,.45);padding:24px max(24px,env(safe-area-inset-right,0px)) 24px max(24px,env(safe-area-inset-left,0px));overflow-y:auto}
+.cele-card{position:relative;width:min(350px,100%);background:var(--surface);border-radius:28px;padding:34px 24px 22px;box-shadow:0 34px 60px -24px rgba(31,45,61,.55);display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.cele-card::before{content:"";position:absolute;left:0;right:0;top:0;height:120px;background:linear-gradient(var(--blue-mist),rgba(238,245,252,0))}
+.cele-card>*{position:relative}
+.cele.go .cele-card{animation:celein .32s cubic-bezier(.2,.9,.3,1.2) both}
+.cele-stamp{position:absolute;right:16px;top:16px;width:112px;height:112px;color:var(--blue);transform:rotate(-12deg)}
+.cele-stamp .stamp{width:100%;height:100%}
+.cele.go .cele-stamp{animation:slam .5s .2s cubic-bezier(.2,1.5,.4,1) both}
+.cele-n{display:flex;align-items:flex-end;gap:8px;padding-top:6px}
+.cele-n b{font-family:var(--f-serif);font-size:96px;line-height:.78;font-weight:700;color:var(--blue-deep);letter-spacing:-.04em}
+.cele-n span{font-family:var(--f-serif);font-size:24px;font-weight:700;line-height:1.1}
+.cele-r{font-size:14.5px;font-weight:600;color:var(--ink);word-break:keep-all;line-height:1.5}
+.cele-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 0}
+.cele-stats div{display:flex;flex-direction:column;gap:3px;min-width:0}
+.cele-stats b{font-family:var(--f-serif);font-size:26px;line-height:1;color:var(--blue-deep);white-space:nowrap}
+.cele-stats span{font-size:11.5px;color:var(--muted)}
+.cele-m{margin:0;font-family:var(--f-serif);font-size:16px;line-height:1.55;color:var(--ink);word-break:keep-all}
+@keyframes celein{0%{transform:translateY(24px) scale(.96);opacity:0}100%{transform:none;opacity:1}}
+@keyframes slam{0%{transform:rotate(-12deg) scale(2.4);opacity:0}55%{transform:rotate(-12deg) scale(.94);opacity:1}100%{transform:rotate(-12deg) scale(1);opacity:1}}
 /* cards */
 .card{background:var(--surface);border-radius:22px;padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px}
 .lbl{font-size:12.5px;color:var(--muted);letter-spacing:.02em}
@@ -105,7 +218,7 @@ input[type="date"]::-webkit-date-and-time-value{text-align:left}
 /* dashboard */
 .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .stat{background:var(--surface);border-radius:18px;padding:14px 10px;box-shadow:var(--shadow);text-align:center}
-.stat b{display:block;font-family:var(--f-serif);font-size:24px;color:var(--blue-deep)}
+.stat b{display:block;font-family:var(--f-serif);font-size:32px;line-height:1.15;color:var(--blue-deep)}
 .stat span{font-size:12px;color:var(--muted);line-height:1.4;display:block}
 .mem{appearance:none;border:0;background:none;width:100%;text-align:left;display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
 .mem:last-child{border-bottom:0}
@@ -118,8 +231,9 @@ input[type="date"]::-webkit-date-and-time-value{text-align:left}
 .grid .h{color:var(--muted);text-align:center}
 .grid .h.today{color:var(--blue-deep);font-weight:700}
 .grid .n{font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.grid .c{aspect-ratio:1;border-radius:8px;background:#edf1f5}
-.grid .c.y{background:var(--blue)}
+.grid .c{aspect-ratio:1;width:100%;max-width:36px;justify-self:center;border-radius:50%;background:#edf1f5;display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:700}
+.grid .c.y{background:var(--blue-mist);border:2px solid var(--blue);color:var(--blue-deep);transform:rotate(-9deg)}
+.grid .c.y:nth-child(2n){transform:rotate(7deg)}
 .grid .c.t{background:transparent;border:1.5px dashed var(--line)}
 .grid .c.f{background:transparent}
 .fchips{display:flex;gap:6px;overflow-x:auto;margin:2px 0 4px;scrollbar-width:none}
@@ -255,38 +369,94 @@ textarea.field{min-height:110px;resize:vertical;line-height:1.55}
 .tabbar button.on{color:var(--blue-deep);font-weight:700}
 .toast{position:fixed;left:50%;bottom:calc(96px + var(--safe-b));transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:99px;font-size:14px;z-index:30;max-width:86vw;text-align:center}
 .notice{background:#fff7e6;border:1px solid #f1dfb5;color:#7a5c1c;border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.5}
+/* 말씀곁에서: 휴대폰에서는 한 줄, 넓은 화면에서는 왼쪽 질문 · 오른쪽 답 */
+.w-left{display:contents}
+#wThread{order:2}#wFoot{order:3}#vAsk .w-note{order:4}
+/* 대시보드: 휴대폰 순서는 출석 → 조원 → 나눔 */
+#vDash>.col{display:contents}
+#dWeek{order:1}#dMem{order:2}#dShare{order:3}#dManage{order:4}
+@media (min-width:720px){
+  .scrim{align-items:center;padding:24px}
+  .sheet{max-width:520px;border-radius:26px;max-height:86vh;padding-bottom:24px}
+  .grab{display:none}
+  .bm{gap:5px}.bm i{font-size:11px}
+}
+@media (min-width:960px){
+  .wrap{max-width:1120px;padding-bottom:64px;padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px));gap:20px}
+  .top{grid-template-columns:1fr auto 1fr;min-height:78px}
+  .tnav{display:flex;gap:28px}
+  .tabbar{display:none}
+  .toast{bottom:32px}
+  .stick{position:sticky;top:20px}
+  #vHome,#vPray{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:24px 48px;align-items:start}
+  #vPray{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}
+  #vDash{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px 40px;align-items:start}
+  #vDash>.ptitle,#vDash>.stats{grid-column:1/-1}
+  #vDash>.col{display:flex}
+  .streak .sn{font-size:124px}
+  .hello .big{font-size:32px}
+  .tcard{padding:26px 26px 24px;border-radius:30px}
+  #vAsk{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:22px 56px;align-items:start}
+  .w-left{display:flex;flex-direction:column;gap:18px;position:sticky;top:20px}
+  #wThread{padding-top:8px}
+  #wThread:empty::before{content:"답은 여기에 나와요. 왼쪽에서 책을 고르거나 구절을 붙여넣고 물어보세요.";display:block;border:1.5px dashed var(--line);border-radius:20px;padding:30px;color:var(--muted);font-size:14px;text-align:center;line-height:1.6}
+  #vPlans{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px 22px;align-items:start}
+  #vPlans>.ptitle,#vPlans>.tipcard{grid-column:1/-1}
+  #planCards{display:contents}
+}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="ink" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter></svg>
 <div class="app" id="app"><div class="wrap">
+
+  <header class="top">
+    <button class="brand" type="button" id="brandBtn"><i></i>말씀 동행</button>
+    <nav class="tnav" aria-label="메뉴">
+      <button type="button" data-v="home"><span>홈</span></button>
+      <button type="button" data-v="dash"><span>대시보드</span></button>
+      <button type="button" data-v="ask"><span>말씀곁에서</span></button>
+      <button type="button" data-v="pray"><span>기도제목</span></button>
+      <button type="button" data-v="plans"><span>읽기표</span></button>
+    </nav>
+    <div class="top-r">
+      <button class="who" type="button" id="whoBtn" hidden></button>
+      <button class="iconbtn" type="button" id="bellBtn" aria-label="알림 설정"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></button>
+    </div>
+  </header>
 
   <div class="notice" id="notice" hidden></div>
 
   <!-- 홈 -->
   <main class="view" id="vHome">
-    <div class="top"><div class="brand"><i></i>말씀 동행</div><div class="top-r"><span id="today"></span><button class="iconbtn" type="button" id="bellBtn" aria-label="알림 설정"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></button></div></div>
-    <div class="chips" id="chips"></div>
-    <div class="hello" id="hello"></div>
-    <section class="card" id="todayCard" hidden></section>
-    <div class="team" id="teamLine" hidden></div>
-    <div class="verse"><p id="vText"></p><span id="vRef"></span></div>
+    <div class="col">
+      <div class="hello" id="hello"></div>
+      <section class="card" id="todayCard" hidden aria-label="오늘 읽을 말씀"></section>
+    </div>
+    <aside class="col stick">
+      <section class="card crew" id="crew" hidden><div class="lblrow"><span class="lbl">오늘 우리 조</span><span class="lbl" id="crewN"></span></div><div id="crewList"></div></section>
+      <div class="verse"><p id="vText"></p><span id="vRef"></span></div>
+    </aside>
   </main>
 
   <!-- 대시보드 -->
   <main class="view" id="vDash" hidden>
-    <div class="top"><div class="brand"><i></i>말씀 동행</div></div>
     <h1 class="ptitle">함께 걷는 길<small>우리 조가 이번 주에 읽은 말씀</small></h1>
     <div class="stats" id="stats"></div>
-    <section class="card"><span class="lbl">이번 주 출석</span><div class="grid" id="weekGrid"></div></section>
-    <section class="card" style="gap:0"><span class="lbl" style="margin-bottom:4px">조원 현황 · 이름을 누르면 기록을 볼 수 있어요</span><div id="memList"></div></section>
-    <section class="card" style="gap:0"><span class="lbl" style="margin-bottom:8px">나눔</span><div class="fchips" id="shareFilter"></div><div id="shareList"></div></section>
-    <div style="text-align:center"><button class="linkbtn" type="button" id="manageBtn">조원 관리</button></div>
+    <div class="col">
+      <section class="card" id="dMem" style="gap:0"><span class="lbl" style="margin-bottom:4px">조원 현황 · 이름을 누르면 기록을 볼 수 있어요</span><div id="memList"></div></section>
+      <section class="card" id="dShare" style="gap:0"><span class="lbl" style="margin-bottom:8px">나눔</span><div class="fchips" id="shareFilter"></div><div id="shareList"></div></section>
+    </div>
+    <aside class="col stick">
+      <section class="card" id="dWeek"><span class="lbl">이번 주 출석</span><div class="grid" id="weekGrid"></div></section>
+      <div id="dManage" style="text-align:center"><button class="linkbtn" type="button" id="manageBtn">조원 관리</button></div>
+    </aside>
   </main>
 
   <!-- 말씀곁에서 -->
   <main class="view" id="vAsk" hidden>
-    <div class="top"><div class="brand"><i></i>말씀 동행</div></div>
+   <div class="w-left">
     <h1 class="ptitle">어떤 말씀이<br>궁금해요?</h1>
     <section class="card" id="wCodeCard" hidden>
       <span class="lbl">우리끼리 코드</span>
@@ -302,23 +472,26 @@ textarea.field{min-height:110px;resize:vertical;line-height:1.55}
       <span class="lbl">빠르게 물어보기</span>
       <div class="pills" id="wBtns"></div>
     </div>
-    <section class="w-thread" id="wThread" aria-live="polite"></section>
-    <div style="display:flex;justify-content:center;gap:14px"><button class="linkbtn" type="button" id="wClear" hidden>대화 새로 시작</button><button class="linkbtn" type="button" id="wSetBtn">내 소개 · 코드</button></div>
+    <div id="wFoot" style="display:flex;justify-content:center;gap:14px"><button class="linkbtn" type="button" id="wClear" hidden>대화 새로 시작</button><button class="linkbtn" type="button" id="wSetBtn">내 소개 · 코드</button></div>
     <p class="w-note">AI가 쓴 답이라 틀릴 수 있어요. 성경 본문과 함께 확인하고,<br>교회 안에서 판단이 필요한 일은 담임목사님과 상의해요.</p>
+   </div>
+    <section class="w-thread" id="wThread" aria-live="polite"></section>
   </main>
 
   <!-- 기도제목 -->
   <main class="view" id="vPray" hidden>
-    <div class="top"><div class="brand"><i></i>말씀 동행</div></div>
-    <h1 class="ptitle">서로를 위해<br>기도해요<small>나눈 기도제목은 우리 조원만 볼 수 있어요</small></h1>
-    <section class="card compose"><textarea id="prText" maxlength="600" placeholder="이번 주 기도제목을 나눠주세요"></textarea><button class="btn primary" type="button" id="prSend">나누기</button></section>
-    <div class="tabs"><button type="button" id="prTabOpen" class="on"></button><button type="button" id="prTabDone"></button></div>
-    <div class="view" id="prList" style="gap:14px"></div>
+    <div class="col stick">
+      <h1 class="ptitle">서로를 위해<br>기도해요<small>나눈 기도제목은 우리 조원만 볼 수 있어요</small></h1>
+      <section class="card compose"><textarea id="prText" maxlength="600" placeholder="이번 주 기도제목을 나눠주세요"></textarea><button class="btn primary" type="button" id="prSend">나누기</button></section>
+    </div>
+    <div class="col">
+      <div class="tabs"><button type="button" id="prTabOpen" class="on"></button><button type="button" id="prTabDone"></button></div>
+      <div class="view" id="prList" style="gap:14px"></div>
+    </div>
   </main>
 
   <!-- 읽기표 -->
   <main class="view" id="vPlans" hidden>
-    <div class="top"><div class="brand"><i></i>말씀 동행</div></div>
     <h1 class="ptitle">어떻게 읽을까<small>믿음의 선배들이 만든 성경 읽는 순서예요. 목적이 다르니 나에게 맞는 걸 골라요.</small></h1>
     <section class="tipcard"><b>새 책을 시작할 때</b><p>처음 펼치는 책이라면 <b>말씀곁에서 → 성경 묻기 → 한 번에 정리</b>로 그 책이 왜 쓰였는지, 무엇을 두고 읽으면 좋은지 먼저 보고 읽어요. 숲을 보고 나무를 보면 훨씬 잘 들어와요.</p><button type="button" class="cta" id="tipAsk">말씀곁에서 열기</button></section>
     <div class="view" id="planCards" style="gap:16px"></div>
@@ -327,7 +500,19 @@ textarea.field{min-height:110px;resize:vertical;line-height:1.55}
 </div></div>
 
 <div class="scrim" id="scrim"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
-<div class="toast" id="toast" hidden></div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<!-- 기록하면 찍히는 도장 -->
+<div class="cele" id="cele" hidden role="dialog" aria-modal="true" aria-labelledby="cTitle">
+  <div class="cele-card">
+    <div class="cele-stamp" id="cStamp"></div>
+    <div class="cele-n" id="cTitle"></div>
+    <div class="cele-r" id="cRange"></div>
+    <div class="cele-stats" id="cStats"></div>
+    <p class="cele-m" id="cMsg"></p>
+    <button class="btn primary" id="cOk" type="button">좋아요</button>
+  </div>
+</div>
 
 <div class="tabbar"><nav>
   <button type="button" data-v="home"><svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>홈</button>
@@ -423,6 +608,8 @@ const PLAN_INFO={
     emph:"묶음마다 길이가 달라 매일 다른 조합이 만나요. 성경이 성경을 설명하는 연결을 스스로 발견해요.",
     rec:"많이, 빠르게 읽는 훈련을 하고 싶을 때 (강도 높음)"}
 };
+// 66권 줄임말 (지도에 씀)
+const ABBR=["창","출","레","민","신","수","삿","룻","삼상","삼하","왕상","왕하","대상","대하","스","느","에","욥","시","잠","전","아","사","렘","애","겔","단","호","욜","암","옵","욘","미","나","합","습","학","슥","말","마","막","눅","요","행","롬","고전","고후","갈","엡","빌","골","살전","살후","딤전","딤후","딛","몬","히","약","벧전","벧후","요일","요이","요삼","유","계"];
 const PLAN_ORDER=["mcheyne","chrono","nt","canon","horner","paired","free"];
 const PLAN_SHORT={mcheyne:"하루 4장 · 구약과 신약을 나란히",canon:"창세기부터 요한계시록까지 · 성경 전체의 구조",chrono:"사건이 일어난 순서 · 구원 역사의 흐름",nt:"그리스도를 먼저, 그 빛으로 구약을",horner:"하루 10장 · 성경으로 성경을 연결하며",paired:"짧은 서신부터, 연결된 책끼리 짝지어 14단계",free:"정해진 순서 없이, 읽은 만큼 직접 기록"};
 
@@ -438,6 +625,17 @@ const initial=n=>(n||"?").trim().charAt(0);
 function doneSet(mid){const s=new Set();for(const l of logs)if(l.member===mid)for(const it of l.items||[])s.add(it);return s}
 function dayset(mid){const s=new Set();for(const l of logs)if(l.member===mid)s.add(l.date);return s}
 function streak(mid){const s=dayset(mid);let d=s.has(TODAY)?TODAY:addDays(TODAY,-1),n=0;while(s.has(d)&&n<3650){n++;d=addDays(d,-1)}return n}
+// 기록 한 칸(items)이 어떤 장들인지
+function itemChapters(id){let r;
+  if(r=/^c(\d+)$/.exec(id))return[+r[1]];
+  if(r=/^f(\d+)-(\d+)$/.exec(id)){const o=[];for(let c=+r[1];c<=+r[2];c++)o.push(c);return o}
+  if(r=/^([mh])(\d+)\.(\d+)$/.exec(id)){const P=PLANS[r[1]==="m"?"mcheyne":"horner"],p=P&&P.day(+r[2])[+r[3]];return p?p.chapters:[]}
+  return[]}
+// 읽은 장 전체와 오늘 읽은 장 (이미 읽은 분량 포함)
+function readSets(m){const all=new Set(),today=new Set();
+  for(const it of m.prior||[])for(const c of itemChapters(it))all.add(c);
+  for(const l of logs){if(l.member!==m.id)continue;for(const it of l.items||[])for(const c of itemChapters(it)){all.add(c);if(l.date===TODAY)today.add(c)}}
+  return{all,today}}
 function chaptersOf(mid){let n=0;for(const l of logs)if(l.member===mid)n+=l.chapters||0;return n}
 function progress(m){
   const P=PLANS[m&&m.plan];if(!P)return null;
@@ -473,73 +671,116 @@ function go(v){view=VIEWS[v]?v:"home";try{history.replaceState(null,"","#"+(view
 function render(){
   const nd=ymd(new Date());if(nd!==TODAY){TODAY=nd}
   for(const k in VIEWS)$(VIEWS[k]).hidden=k!==view;
-  document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on",b.dataset.v===view));
+  document.querySelectorAll("[data-v]").forEach(b=>{b.classList.toggle("on",b.dataset.v===view);b.setAttribute("aria-current",b.dataset.v===view?"page":"false")});
+  renderWho();$("bellBtn").classList.toggle("on",pushStatus==="on");$("bellBtn").classList.toggle("off",pushStatus==="checking"||pushStatus==="unsupported");
   if(view==="home")renderHome();else if(view==="dash")renderDash();else if(view==="ask")renderAsk();else if(view==="pray")renderPray();else renderPlans();
   if(sheetMode)renderSheet();
 }
-document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>go(b.dataset.v));
+document.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>go(b.dataset.v));
+$("brandBtn").onclick=()=>go("home");
 
 // ---------- 홈 ----------
 function renderVerse(){const d=new Date();const day=Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5);const[v,r]=VERSES[day%VERSES.length];$("vText").textContent=v;$("vRef").textContent=r}
-function renderChips(){
-  const C=$("chips");C.innerHTML="";
-  const readToday=new Set(logs.filter(l=>l.date===TODAY).map(l=>l.member));
-  for(const m of members){const b=document.createElement("button");b.type="button";b.className="chip"+(m.id===me?" on":"");
-    b.innerHTML='<span class="av">'+esc(initial(m.name))+'</span>'+esc(m.name)+(readToday.has(m.id)?' <span class="ck">✓</span>':"");
-    b.onclick=()=>{me=m.id;lsSet("jo-me",me);ticks.clear();syncPushMember();render()};C.appendChild(b)}
-  const a=document.createElement("button");a.type="button";a.className="chip add";a.textContent="+ 조원 추가";a.onclick=()=>openSheet("manage");C.appendChild(a);
+// 이 휴대폰에서 기록하는 사람
+function setMe(id){me=id;lsSet("jo-me",me);ticks.clear();syncPushMember();render()}
+function renderWho(){
+  const B=$("whoBtn"),m=meM();B.hidden=!members.length;
+  B.className="who"+(m?"":" none");B.setAttribute("aria-label",m?"기록하는 사람: "+m.name+" (바꾸기)":"내 이름 고르기");
+  B.innerHTML=m?'<span class="av">'+esc(initial(m.name))+'</span><span class="nm">'+esc(m.name)+'</span>':'<span class="nm">이름 고르기</span>';
+}
+$("whoBtn").onclick=()=>openSheet("who");
+function fillPick(el){
+  el.innerHTML="";const read=new Set(logs.filter(l=>l.date===TODAY).map(l=>l.member));
+  for(const x of members){const b=document.createElement("button");b.type="button";b.className="pk"+(x.id===me?" on":"");
+    const st=streak(x.id);
+    b.innerHTML='<span class="av">'+esc(initial(x.name))+'</span><b>'+esc(x.name)+'</b><small>'+(x.id===me?"지금 기록 중":read.has(x.id)?"오늘 읽었어요 ✓":st?st+"일째":"&nbsp;")+'</small>';
+    b.onclick=()=>{if(sheetMode==="who")closeSheet();setMe(x.id)};el.appendChild(b)}
+}
+// 도장: 날짜가 가운데 찍힌 둥근 소인
+function stampSVG(d,k){
+  const x=parseD(d),t=(x.getMonth()+1)+"."+pad(x.getDate());
+  return '<svg class="stamp" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="sa'+k+'" d="M19 60a41 41 0 0 1 82 0"/><path id="sb'+k+'" d="M13 60a47 47 0 0 0 94 0"/></defs><g filter="url(#ink)">'+
+    '<g fill="none" stroke="currentColor"><circle cx="60" cy="60" r="56" stroke-width="3.5"/><circle cx="60" cy="60" r="33" stroke-width="1.6"/></g>'+
+    '<g fill="currentColor" font-weight="700" font-family="IBM Plex Sans KR,sans-serif"><text font-size="12.5" letter-spacing="3"><textPath href="#sa'+k+'" startOffset="50%" text-anchor="middle">말씀 동행</textPath></text>'+
+    '<text font-size="11.5" letter-spacing="4"><textPath href="#sb'+k+'" startOffset="50%" text-anchor="middle">함께 읽음</textPath></text>'+
+    '<text x="60" y="70" text-anchor="middle" font-size="27" font-family="Gowun Batang,serif">'+t+'</text></g></g></svg>';
+}
+// 66권 지도: 읽은 만큼 책 칸이 아래에서부터 채워진다
+let freshUntil=0;
+function mapHTML(m){
+  const{all,today}=readSets(m),pop=Date.now()<freshUntil;let h="";
+  BIBLE.forEach(([nm,n],b)=>{let r=0,t=false;for(let c=0;c<n;c++){const g=OFF[b]+c;if(all.has(g))r++;if(today.has(g))t=true}
+    const f=r/n;h+='<i class="'+(t?"td":f>=1?"full":"")+(t&&pop?" pop":"")+(b===39?" nt0":"")+'" style="--f:'+(f*100).toFixed(1)+'%"><span>'+ABBR[b]+'</span></i>'});
+  return'<div class="bmap"><div class="bmap-h"><span>성경 66권</span><span><b>'+all.size+'</b> / '+TOTAL+'장</span></div>'+
+    '<div class="bm" role="img" aria-label="성경 '+TOTAL+'장 중 '+all.size+'장 읽음">'+h+'</div>'+
+    '<div class="bm-lg"><span><i></i>읽은 만큼 채워져요</span><span><i class="t"></i>오늘 읽은 책</span><span><i class="n"></i>신약 시작</span></div></div>';
+}
+// 최근 7일 도장 줄 (맨 오른쪽이 오늘)
+function weekStrip(m){
+  const s=dayset(m.id),start=m.startDate||"0";let h='<div class="week" role="img" aria-label="최근 7일 중 '+[...Array(7)].filter((_,i)=>s.has(addDays(TODAY,-i))).length+'일 읽음">';
+  for(let i=6;i>=0;i--){const d=addDays(TODAY,-i),rd=s.has(d);
+    h+='<span class="wd '+(rd?"on":d===TODAY?"now":d>=start?"miss":"off")+'"><i>'+(rd?"✓":"")+'</i><em>'+(i?WD[parseD(d).getDay()]:"오늘")+'</em></span>'}
+  return h+'</div>';
 }
 function renderHome(){
-  const d=new Date();$("today").textContent=(d.getMonth()+1)+"월 "+d.getDate()+"일 "+WD[d.getDay()]+"요일";
-  $("bellBtn").classList.toggle("on",pushStatus==="on");
-  renderChips();renderVerse();
-  const m=meM(),H=$("hello"),C=$("todayCard");
-  if(!ready.m){H.innerHTML='<div class="big">말씀과 함께</div><div class="sub">불러오는 중…</div>';C.hidden=true;$("teamLine").hidden=true;return}
-  if(!members.length){H.innerHTML='<div class="big">함께 말씀을<br><b>읽어요</b></div><div class="sub">먼저 조원을 추가해 주세요</div>';C.hidden=false;
+  renderVerse();renderCrew();
+  const m=meM(),H=$("hello"),C=$("todayCard"),d=new Date(),dl='<div class="date">'+(d.getMonth()+1)+"월 "+d.getDate()+"일 "+WD[d.getDay()]+'요일</div>';
+  if(!ready.m){H.innerHTML=dl+'<div class="big">말씀과 함께</div><div class="sub">불러오는 중…</div>';C.hidden=true;return}
+  if(!members.length){H.innerHTML=dl+'<div class="big">함께 말씀을<br><b>읽어요</b></div><div class="sub">먼저 조원을 추가해 주세요</div>';C.hidden=false;C.className="card";
     C.innerHTML='<span class="lbl">첫 조원 추가</span><div class="addrow"><input class="field" id="firstName" maxlength="12" placeholder="이름"><button class="btn primary sm" type="button" id="firstAdd">추가</button></div>';
-    $("firstAdd").onclick=()=>addMember($("firstName").value);$("firstName").onkeydown=e=>{if(e.key==="Enter")$("firstAdd").click()};$("teamLine").hidden=true;return}
-  renderTeamLine();
-  if(!m){H.innerHTML='<div class="big">함께 말씀을<br><b>읽어요</b></div><div class="sub">위에서 내 이름을 골라주세요</div>';C.hidden=true;return}
+    $("firstAdd").onclick=()=>addMember($("firstName").value);$("firstName").onkeydown=e=>{if(e.key==="Enter")$("firstAdd").click()};return}
+  if(!m){H.innerHTML=dl+'<div class="big">함께 말씀을<br><b>읽어요</b></div><div class="sub">내 이름을 골라주세요. 이 휴대폰에서 기억해둘게요</div>';C.hidden=false;C.className="card";
+    C.innerHTML='<div class="pick" id="pickHome"></div><button class="linkbtn" type="button" id="pickAdd" style="align-self:center">내 이름이 없어요 · 조원 추가</button>';fillPick($("pickHome"));$("pickAdd").onclick=()=>openSheet("manage");return}
   const st=streak(m.id),readToday=logs.some(l=>l.member===m.id&&l.date===TODAY);
-  H.innerHTML=st>0?'<div class="big">'+esc(m.name)+', 말씀과 함께<br><b>'+st+'일째</b>예요</div><div class="sub">'+(readToday?"오늘도 읽었어요. 내일 또 만나요":"끊기지 않고 꾸준히, 오늘도 한 걸음")+'</div>'
-    :'<div class="big">'+esc(m.name)+', 오늘<br><b>한 걸음</b> 시작해요</div><div class="sub">하루 한 장도 좋아요</div>';
-  C.hidden=false;
-  const pr=progress(m);
-  if(!pr){C.innerHTML='<span class="lbl">읽는 순서</span><p class="note" style="font-size:14.5px;color:var(--ink)">어떤 순서로 읽을지 먼저 골라주세요. 고른 순서대로 매일 읽을 말씀을 알려줄게요.</p><button class="btn primary" type="button" id="pickBtn">읽는 순서 고르기</button>';
+  H.innerHTML=dl+(st>0?'<div class="streak"><b class="sn">'+st+'</b><span class="big">일째,<br>말씀과 함께해요</span></div><div class="sub">'+esc(m.name)+' · '+(readToday?"오늘도 읽었어요. 내일 또 만나요":"끊기지 않게, 오늘도 한 걸음")+'</div>'
+    :'<div class="big">'+esc(m.name)+', 오늘<br><b>한 걸음</b> 시작해요</div><div class="sub">하루 한 장도 좋아요</div>')+weekStrip(m);
+  C.hidden=false;C.className="tcard";
+  const pr=progress(m),map=mapHTML(m);
+  if(!pr){C.innerHTML='<span class="lbl">읽는 순서</span><p class="tnote">어떤 순서로 읽을지 먼저 골라주세요. 고른 순서대로 매일 읽을 말씀을 알려줄게요.</p><button class="btn hero" type="button" id="pickBtn">읽는 순서 고르기</button>'+map;
     $("pickBtn").onclick=()=>openSheet("pick");return}
+  const todayLogs=logs.filter(l=>l.member===m.id&&l.date===TODAY);
+  let done="";
+  if(todayLogs.length){const labels=todayLogs.flatMap(l=>l.labels||[]),n=todayLogs.reduce((a,l)=>a+(l.chapters||0),0);
+    done='<div class="tc-done"><div>오늘 기록 완료<br><b>'+esc(labels[0]||"")+'</b>'+(labels.length>1?" 외 "+(labels.length-1):"")+'<small>'+n+'장 읽었어요</small></div>'+stampSVG(TODAY,"h")+'</div>'}
+  const planBox='<button class="plan" type="button" id="planBox"><div><b>'+esc(pr.P.name)+'</b><br><span>'+esc(pr.sub)+'</span></div><span class="go">바꾸기</span></button>'+
+    (pr.pct!=null?'<div class="bar"><i style="width:'+Math.max(2,Math.round(pr.pct*100))+'%"></i></div>':"");
   if(pr.free){
-    const todayLogs=logs.filter(l=>l.member===m.id&&l.date===TODAY);
-    let h='<button class="plan" type="button" id="planBox"><div><b>'+esc(pr.P.name)+'</b><br><span>'+esc(pr.sub)+'</span></div><span class="go">바꾸기</span></button><div class="bar"><i style="width:'+Math.max(2,Math.round(pr.pct*100))+'%"></i></div>';
-    if(todayLogs.length){const labels=todayLogs.flatMap(l=>l.labels||[]);h+='<div class="done-note">✓ <span>오늘 <b>'+esc(labels[0]||"")+'</b>'+(labels.length>1?" 외 "+(labels.length-1):"")+' 기록했어요</span></div>'}
-    h+=pr.next!=null?'<div class="row"><span class="lbl">이어서 읽기</span></div><button class="portion" type="button" id="nextBtn"><span class="t">'+esc(chLabel(pr.next))+'부터</span><span class="tag">마지막 기록 다음 장</span></button>'
-      :'<p class="note" style="font-size:14.5px;color:var(--ink)">지금 읽고 있는 곳부터 기록해 보세요. 다음부터는 이어서 읽을 곳을 알려줄게요.</p>';
-    h+='<button class="btn primary" type="button" id="recBtn">읽은 말씀 기록하기</button>'+
-      '<button class="linkbtn" type="button" id="priorBtn" style="align-self:center">'+(pr.priorN?"이미 읽은 분량 "+pr.priorN+"장 · 고치기":"혼자 읽어온 분량이 있다면 · 이미 읽은 분량 넣기")+'</button>';
+    let h=planBox+done;
+    h+=pr.next!=null?'<span class="lbl">'+(todayLogs.length?"이어서 읽기":"오늘 이어서 읽기")+'</span><button class="big-range" type="button" id="nextBtn">'+esc(chLabel(pr.next))+'부터</button>'
+      :'<p class="tnote">지금 읽고 있는 곳부터 기록해 보세요. 다음부터는 이어서 읽을 곳을 알려줄게요.</p>';
+    h+='<button class="btn hero" type="button" id="recBtn">읽었어요! 기록하기</button>'+
+      '<button class="linkbtn" type="button" id="priorBtn" style="align-self:center">'+(pr.priorN?"이미 읽은 분량 "+pr.priorN+"장 · 고치기":"혼자 읽어온 분량이 있다면 · 이미 읽은 분량 넣기")+'</button>'+map;
     C.innerHTML=h;$("planBox").onclick=()=>openSheet("pick");$("priorBtn").onclick=()=>openSheet("prior");
     const startFree=()=>{const o={mode:"free"};if(pr.next!=null){const[b,c]=pos(pr.next);o.fb=b;o.f1=c;o.f2=c}openSheet("record",o)};
     $("recBtn").onclick=startFree;if($("nextBtn"))$("nextBtn").onclick=startFree;return;
   }
   const key=m.id+"|"+TODAY+"|"+pr.portions.map(p=>p.id).join(",");if(key!==ticksKey){ticksKey=key;ticks=new Set([...ticks].filter(id=>pr.portions.some(p=>p.id===id)))}
-  const todayLogs=logs.filter(l=>l.member===m.id&&l.date===TODAY);
-  let h='<button class="plan" type="button" id="planBox"><div><b>'+esc(pr.P.name)+'</b><br><span>'+esc(pr.sub)+'</span></div><span class="go">바꾸기</span></button>';
-  if(pr.pct!=null)h+='<div class="bar"><i style="width:'+Math.max(2,Math.round(pr.pct*100))+'%"></i></div>';
-  if(todayLogs.length){const labels=todayLogs.flatMap(l=>l.labels||[]);h+='<div class="done-note">✓ <span>오늘 <b>'+esc(labels[0]||"")+'</b>'+(labels.length>1?" 외 "+(labels.length-1):"")+' 기록했어요</span></div>'}
-  if(pr.complete){h+='<p class="note" style="font-size:15px;color:var(--ink);text-align:center">이 읽기표를 끝까지 읽었어요. 수고했어요!<br>다른 순서로 다시 걸어볼까요?</p><button class="btn ghost" type="button" id="pickBtn2">다른 순서 고르기</button>';C.innerHTML=h;$("planBox").onclick=()=>openSheet("pick");$("pickBtn2").onclick=()=>openSheet("pick");return}
-  h+='<div class="row"><span class="lbl">'+(todayLogs.length?"이어서 읽을 말씀":"오늘 읽을 말씀")+'</span><span class="lbl">'+ticks.size+' / '+pr.portions.length+'</span></div><div class="portions" id="portions"></div>'+
-    '<button class="btn primary" type="button" id="recBtn">'+(ticks.size?"읽은 말씀 기록하기":"오늘 읽은 말씀 기록하기")+'</button>';
+  let h=planBox+done;
+  if(pr.complete){h+='<p class="tnote" style="text-align:center">이 읽기표를 끝까지 읽었어요. 수고했어요!<br>다른 순서로 다시 걸어볼까요?</p><button class="btn hero" type="button" id="pickBtn2">다른 순서 고르기</button>'+map;
+    C.innerHTML=h;$("planBox").onclick=()=>openSheet("pick");$("pickBtn2").onclick=()=>openSheet("pick");return}
+  h+='<div class="row"><span class="lbl">'+(todayLogs.length?"이어서 읽을 말씀":"오늘 읽을 말씀")+'</span><span class="lbl">'+ticks.size+' / '+pr.portions.length+' 체크</span></div><div class="portions" id="portions"></div>'+
+    '<button class="btn hero" type="button" id="recBtn">읽었어요! 기록하기</button>'+map;
   C.innerHTML=h;
   const P=$("portions");
-  for(const p of pr.portions){const b=document.createElement("button");b.type="button";b.className="portion"+(ticks.has(p.id)?" on":"");
+  for(const p of pr.portions){const b=document.createElement("button");b.type="button";b.className="portion"+(ticks.has(p.id)?" on":"");b.setAttribute("aria-pressed",ticks.has(p.id));
     b.innerHTML='<span class="tick"></span><span class="t">'+esc(p.label)+'</span>'+(p.tag?'<span class="tag">'+esc(p.tag)+'</span>':"");
     b.onclick=()=>{ticks.has(p.id)?ticks.delete(p.id):ticks.add(p.id);renderHome()};P.appendChild(b)}
   $("planBox").onclick=()=>openSheet("pick");
   $("recBtn").onclick=()=>openSheet("record");
 }
-function renderTeamLine(){
-  const T=$("teamLine");if(!members.length){T.hidden=true;return}
-  const read=new Set(logs.filter(l=>l.date===TODAY).map(l=>l.member));
-  const n=members.filter(m=>read.has(m.id)).length;
-  T.hidden=false;T.innerHTML='<span class="dots">'+members.slice(0,8).map(m=>'<i class="'+(read.has(m.id)?"":"no")+'">'+esc(initial(m.name))+'</i>').join("")+'</span>오늘 우리 조 '+n+'/'+members.length+'명 읽었어요';
+// 오늘 우리 조: 누가 읽었는지 + 콕 찌르기
+function renderCrew(){
+  const B=$("crew");if(!members.length){B.hidden=true;return}B.hidden=false;
+  const read=new Set(logs.filter(l=>l.date===TODAY).map(l=>l.member)),n=members.filter(x=>read.has(x.id)).length;
+  $("crewN").textContent=n+" / "+members.length+"명 읽었어요";
+  const L=$("crewList");L.innerHTML="";const can=!!meM();
+  for(const x of [...members].sort((a,b)=>(b.id===me)-(a.id===me))){
+    const r=document.createElement("div");r.className="trow"+(x.id===me?" me":"");const st=streak(x.id),rd=read.has(x.id),P=PLANS[x.plan];
+    r.innerHTML='<span class="av">'+esc(initial(x.name))+'</span><span class="tn">'+esc(x.name)+(x.id===me?'<small>나</small>':"")+'<span class="ts">'+(st?st+"일째":"오늘 시작 전")+' · '+(P?esc(P.short||P.name):"순서 고르기 전")+'</span></span>'+
+      (rd?'<span class="ms on" role="img" aria-label="오늘 읽음">✓</span>':'<span class="ms" role="img" aria-label="오늘 아직"></span>')+
+      (can&&x.id!==me?'<button class="nudge" type="button" aria-label="'+esc(x.name)+'에게 콕 찌르기">콕</button>':"<span></span>");
+    r.onclick=e=>{if(e.target.closest(".nudge"))openSheet("nudge",{member:x.id});else openSheet("logs",{member:x.id})};
+    L.appendChild(r)}
 }
 
 // ---------- 대시보드 ----------
@@ -553,7 +794,7 @@ function renderDash(){
   const ch=logs.filter(l=>l.date>=ws&&l.date<=days[6]).reduce((a,l)=>a+(l.chapters||0),0);
   $("stats").innerHTML='<div class="stat"><b>'+att+'</b><span>이번 주 출석<br>/ '+poss+'</span></div><div class="stat"><b>'+ch+'</b><span>함께 읽은<br>장 수</span></div><div class="stat"><b>'+teamStreak()+'일</b><span>다 같이<br>연속</span></div>';
   let g='<span></span>'+days.map(d=>'<span class="h'+(d===TODAY?" today":"")+'">'+WD[parseD(d).getDay()]+'</span>').join("");
-  for(const m of members){g+='<span class="n">'+esc(m.name)+'</span>'+days.map(d=>{const y=by[d]&&by[d].has(m.id);return'<i class="c '+(y?"y":d===TODAY?"t":d>TODAY?"f":"")+'"></i>'}).join("")}
+  for(const m of members){g+='<span class="n">'+esc(m.name)+'</span>'+days.map(d=>{const y=by[d]&&by[d].has(m.id);return'<i class="c '+(y?"y":d===TODAY?"t":d>TODAY?"f":"")+'">'+(y?"✓":"")+'</i>'}).join("")}
   $("weekGrid").innerHTML=members.length?g:'<div class="empty" style="grid-column:1/-1">아직 조원이 없어요</div>';
   const L=$("memList");L.innerHTML=members.length?"":'<div class="empty">홈에서 조원을 추가해 주세요</div>';
   for(const m of members){const b=document.createElement("button");b.type="button";b.className="mem";const P=PLANS[m.plan];
@@ -578,7 +819,7 @@ function renderPray(){
   const open=prayers.filter(p=>!p.answered),done=prayers.filter(p=>p.answered);
   $("prTabOpen").textContent="함께 기도 중 "+open.length;$("prTabDone").textContent="응답하심 "+done.length;
   $("prTabOpen").classList.toggle("on",prTab==="open");$("prTabDone").classList.toggle("on",prTab==="done");
-  $("prText").placeholder=meM()?"이번 주 기도제목을 나눠주세요":"홈에서 내 이름을 먼저 골라주세요";$("prText").disabled=$("prSend").disabled=!meM();
+  $("prText").placeholder=meM()?"이번 주 기도제목을 나눠주세요":"오른쪽 위에서 내 이름을 먼저 골라주세요";$("prText").disabled=$("prSend").disabled=!meM();
   const list=(prTab==="open"?open:done).sort((a,b)=>(b.answeredAt||b.createdAt)-(a.answeredAt||a.createdAt));
   const L=$("prList");
   if(!list.length){L.innerHTML='<div class="empty">'+(prTab==="open"?"아직 나눈 기도제목이 없어요":"응답받은 기도가 여기 모여요")+'</div>';return}
@@ -596,7 +837,7 @@ function renderPray(){
   }
 }
 async function toggleHeart(p,btn){
-  if(!meM())return toast("홈에서 내 이름을 먼저 골라주세요");if(!db)return;
+  if(!meM())return toast("오른쪽 위에서 내 이름을 먼저 골라주세요");if(!db)return;
   const id=p.id+"_"+me,has=hearts.some(h=>h.id===id);
   try{if(has)await col("hearts").doc(id).delete();else{btn.classList.add("pop");await col("hearts").doc(id).set({prayer:p.id,member:me,createdAt:Date.now()})}}catch(e){toast("저장하지 못했어요")}
 }
@@ -615,7 +856,7 @@ function renderPlans(){
       '<div class="meta"><span>'+esc(I.who)+'</span><span>'+esc(I.load)+'</span>'+(I.span?'<span>'+esc(I.span)+'</span>':"")+'</div>'+
       '<dl><dt>목적</dt><dd>'+esc(I.purpose)+'</dd><dt>강조점</dt><dd>'+esc(I.emph)+'</dd><dt>추천</dt><dd>'+esc(I.rec)+'</dd></dl>'+
       (I.small?'<small>'+esc(I.small)+'</small>':"")+(k===cur?"":'<button type="button" class="cta">이 순서로 읽기</button>');
-    const b=el.querySelector(".cta");if(b)b.onclick=()=>{if(!m)return toast("홈에서 내 이름을 먼저 골라주세요");openSheet("pick",{plan:k})};
+    const b=el.querySelector(".cta");if(b)b.onclick=()=>{if(!m)return toast("오른쪽 위에서 내 이름을 먼저 골라주세요");openSheet("pick",{plan:k})};
     C.appendChild(el)}
 }
 
@@ -624,13 +865,13 @@ let sheetMode=null,sheetData={};
 function openSheet(mode,data){sheetMode=mode;sheetData=data||{};renderSheet(true);$("scrim").classList.add("on")}
 function closeSheet(){sheetMode=null;$("scrim").classList.remove("on")}
 $("scrim").onclick=e=>{if(e.target===$("scrim"))closeSheet()};
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&sheetMode)closeSheet()});
+document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;if(!$("cele").hidden)closeCele();else if(sheetMode)closeSheet()});
 function renderSheet(first){
   const S=$("sheet"),m=meM();
-  if(!first&&["record","edit","answer","pick"].includes(sheetMode)&&S.contains(document.activeElement))return; // 입력 중엔 다시 그리지 않음
+  if(!first&&["record","edit","answer","pick","nudge"].includes(sheetMode)&&S.contains(document.activeElement))return; // 입력 중엔 다시 그리지 않음
   const head=(t,sub)=>'<div class="grab"></div><h2>'+t+'</h2>'+(sub?'<p class="sub">'+sub+'</p>':"");
   if(sheetMode==="pick"){
-    if(!m){closeSheet();return toast("홈에서 내 이름을 먼저 골라주세요")}
+    if(!m){closeSheet();return toast("오른쪽 위에서 내 이름을 먼저 골라주세요")}
     if(!sheetData.plan)sheetData.plan=m.plan||"mcheyne";if(!sheetData.pace)sheetData.pace=+m.pace||3;
     const P=PLANS[sheetData.plan];
     S.innerHTML=head("읽는 순서 고르기","바꿔도 지금까지 읽은 기록은 그대로 남아요")+PLAN_ORDER.map(k=>'<button type="button" class="opt'+(k===sheetData.plan?" on":"")+'" data-p="'+k+'"><span class="r"></span><div><b>'+esc(PLANS[k].name)+'</b><div>'+esc(PLAN_SHORT[k])+'</div></div></button>').join("")+
@@ -680,7 +921,7 @@ function renderSheet(first){
       else{const sel=pr.portions.filter(p=>sheetData.sel.has(p.id));if(!sel.length)return toast("읽은 말씀을 골라주세요");
         data={member:m.id,date,plan:m.plan,items:sel.map(p=>p.id),labels:sel.map(p=>p.label),chapters:sel.reduce((a,p)=>a+p.chapters.length,0),note:$("rNote").value.trim(),createdAt:Date.now()}}
       $("rSave").disabled=true;
-      try{await col("logs").add(data);if(!free)ticks.clear();closeSheet();toast(streak(m.id)>1?"기록했어요. "+streak(m.id)+"일째 함께해요":"기록했어요")}catch(e){$("rSave").disabled=false;toast("저장하지 못했어요")}
+      try{await col("logs").add(data);if(!free)ticks.clear();closeSheet();if(date===TODAY)celebrate(data);else toast("기록했어요")}catch(e){$("rSave").disabled=false;toast("저장하지 못했어요")}
     };
     return;
   }
@@ -723,10 +964,28 @@ function renderSheet(first){
     const mm=members.find(x=>x.id===sheetData.member);if(!mm){closeSheet();return}
     const L=logs.filter(l=>l.member===mm.id).sort((a,b)=>(b.date+b.createdAt).localeCompare(a.date+a.createdAt)).slice(0,60);
     S.innerHTML=head(esc(mm.name)+"의 기록",(PLANS[mm.plan]?esc(PLANS[mm.plan].name)+" · ":"")+chaptersOf(mm.id)+"장 · "+(streak(mm.id)?streak(mm.id)+"일째":"오늘 시작 전"))+
+      (m&&mm.id!==me?'<button class="btn ghost sm" type="button" id="lNudge">'+esc(mm.name)+'에게 콕 찌르기</button>':"")+
       (L.length?'<div>'+L.map(l=>'<div class="logrow"><div class="h"><b>'+fmtDate(l.date)+'</b><span>'+esc((l.labels||[]).join(", "))+'</span>'+(mm.id===me?'<button type="button" data-edit="'+esc(l.id)+'">수정</button>':"")+'</div>'+(l.note?'<p>'+esc(l.note)+'</p>':"")+'</div>').join("")+'</div>':'<div class="empty">아직 기록이 없어요</div>')+
       '<button class="btn line" type="button" id="lClose">닫기</button>';
     S.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openSheet("edit",{log:b.dataset.edit}));
+    if($("lNudge"))$("lNudge").onclick=()=>openSheet("nudge",{member:mm.id});
     $("lClose").onclick=closeSheet;return;
+  }
+  if(sheetMode==="who"){
+    S.innerHTML=head("누가 읽고 있나요?","고른 이름은 이 휴대폰에서 기억해요")+'<div class="pick" id="pickSheet"></div>'+
+      '<div class="two"><button class="btn line" type="button" id="whoAdd">조원 추가</button><button class="btn line" type="button" id="whoClose">닫기</button></div>';
+    fillPick($("pickSheet"));$("whoAdd").onclick=()=>openSheet("manage");$("whoClose").onclick=closeSheet;return;
+  }
+  if(sheetMode==="nudge"){
+    const t=members.find(x=>x.id===sheetData.member);if(!t||!m){closeSheet();return}
+    const rd=logs.some(l=>l.member===t.id&&l.date===TODAY);
+    const P=rd?["오늘도 읽었네요, 멋져요!","끝까지 함께 걸어요","덕분에 저도 힘이 나요"]:["오늘 말씀 같이 읽어요!","한 장이라도 함께 읽어요","자기 전에 한 장 어때요?"];
+    S.innerHTML=head(esc(t.name)+"에게 콕",esc(t.name)+"의 휴대폰으로 알림이 가요. 알림을 켜둔 조원만 받을 수 있어요.")+
+      '<div class="pills" id="ngP">'+P.map(x=>'<button type="button" class="pill">'+esc(x)+'</button>').join("")+'</div>'+
+      '<span class="lbl">보낼 말</span><input class="field" id="ngText" maxlength="60" autocomplete="off">'+
+      '<button class="btn primary" type="button" id="ngSend">알림 보내기</button>';
+    $("ngText").value=P[0];S.querySelectorAll("#ngP .pill").forEach(b=>b.onclick=()=>{$("ngText").value=b.textContent});
+    $("ngSend").onclick=()=>nudge(t.id,$("ngText").value);return;
   }
   if(sheetMode==="manage"){
     S.innerHTML=head("조원 관리","이름을 추가하면 모두의 화면에 바로 생겨요")+
@@ -762,6 +1021,37 @@ function renderSheet(first){
   if(sheetMode==="push"){S.innerHTML=head("알림 설정");const B=document.createElement("div");B.style.cssText="display:flex;flex-direction:column;gap:14px";S.appendChild(B);renderPushSheet(B);
     const c=document.createElement("button");c.className="btn line";c.type="button";c.textContent="닫기";c.onclick=closeSheet;S.appendChild(c);return}
 }
+// 콕 찌르기: 서버 기능(/api/nudge)이 상대 휴대폰으로 알림을 보낸다
+let nudgeBusy=false;
+async function nudge(to,text){
+  const t=members.find(x=>x.id===to);text=(text||"").trim();if(!t||nudgeBusy)return;if(!text)return toast("보낼 말을 적어주세요");
+  nudgeBusy=true;if($("ngSend"))$("ngSend").disabled=true;
+  try{
+    const res=await fetch("/api/nudge",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({from:me,to,text})});
+    let j={};try{j=await res.json()}catch(_){}
+    if(!res.ok)throw new Error(j.error||(res.status===404?"서버 기능이 아직 연결되지 않았어요":"보내지 못했어요. 잠시 후 다시 해주세요"));
+    closeSheet();toast(j.sent?t.name+"에게 알림을 보냈어요":t.name+josa(t.name,"은","는")+" 아직 알림을 켜지 않았어요");
+  }catch(err){toast(err.message||"보내지 못했어요")}
+  nudgeBusy=false;if($("ngSend"))$("ngSend").disabled=false;
+}
+// 기록하면 도장이 찍힌다
+let celeT=null;
+function celebrate(data){
+  const m=meM();if(!m)return;
+  const keep=logs;if(!logs.some(l=>l.member===data.member&&l.createdAt===data.createdAt))logs=[...logs,{id:"_new",...data}];
+  const st=streak(m.id),tot=readSets(m).all.size,read=new Set(logs.filter(l=>l.date===TODAY).map(l=>l.member)),rn=members.filter(x=>read.has(x.id)).length;logs=keep;
+  $("cStamp").innerHTML=stampSVG(data.date,"c");
+  $("cTitle").innerHTML='<b>'+(data.chapters||0)+'</b><span>장<br>읽었어요</span>';
+  $("cRange").textContent=(data.labels||[]).join(" · ");
+  $("cStats").innerHTML='<div><b>'+st+'일째</b><span>말씀과 함께</span></div><div><b>'+tot+'</b><span>장 / '+TOTAL+'장</span></div><div><b>'+rn+'/'+members.length+'</b><span>오늘 우리 조</span></div>';
+  const left=members.length-rn;
+  $("cMsg").textContent=left?"아직 "+left+"명이 남았어요. 콕 찔러서 함께 읽어요":"오늘 우리 조 모두 읽었어요!";
+  const C=$("cele");C.hidden=false;C.classList.remove("go");void C.offsetWidth;C.classList.add("go");
+  $("cOk").focus();clearTimeout(celeT);celeT=setTimeout(closeCele,8000);
+}
+function closeCele(){clearTimeout(celeT);if($("cele").hidden)return;$("cele").hidden=true;freshUntil=Date.now()+1500;render()}
+$("cOk").onclick=closeCele;
+$("cele").onclick=e=>{if(e.target===$("cele"))closeCele()};
 async function addMember(name){
   name=(name||"").trim();if(!name)return toast("이름을 적어주세요");if(!db)return;
   if(members.some(m=>m.name===name))return toast("같은 이름이 있어요");
@@ -782,7 +1072,7 @@ async function currentSub(){if(!pushCapable())return null;const reg=await naviga
 async function refreshPush(){try{if(!pushCapable())pushStatus=noPushStatus();else if(Notification.permission==="denied")pushStatus="denied";else pushStatus=(await currentSub())?"on":"off"}catch(e){pushStatus=noPushStatus()}render()}
 async function saveSub(sub){const j=sub.toJSON();const id=await subDocId(j.endpoint);await col("push").doc(id).set({member:me,endpoint:j.endpoint,p256dh:j.keys.p256dh,auth:j.keys.auth,createdAt:Date.now(),device:isIOS?"ios":"other",site:location.origin+"/"})}
 async function enablePush(){
-  if(!meM())return toast("홈에서 내 이름을 먼저 골라주세요");if(!db)return;
+  if(!meM())return toast("오른쪽 위에서 내 이름을 먼저 골라주세요");if(!db)return;
   pushBusy=true;render();
   try{const perm=await Notification.requestPermission();if(perm!=="granted"){pushBusy=false;await refreshPush();return toast("알림이 허용되지 않았어요")}
     const reg=await navigator.serviceWorker.ready;const sub=(await reg.pushManager.getSubscription())||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64ToBytes(VAPID_PUBLIC)});
@@ -794,13 +1084,13 @@ async function testPush(){try{const reg=await navigator.serviceWorker.ready;awai
 async function syncPushMember(){try{if(pushStatus!=="on"||!db||!me)return;const sub=await currentSub();if(sub)await saveSub(sub)}catch(e){}}
 function renderPushSheet(B){
   const who=meM();
-  const rule='<p class="note">아침 9시, 저녁 9시 무렵에 <b style="color:var(--ink)">그날 기록이 없을 때만</b> 알림이 와요. 기록했으면 오지 않아요.</p>';
+  const rule='<p class="note">아침 9시, 저녁 9시 무렵에 <b style="color:var(--ink)">그날 기록이 없을 때만</b> 알림이 와요. 조원이 <b style="color:var(--ink)">콕</b> 찌르면 그때도 와요.</p>';
   const st=(c,t,p)=>'<div class="pstate"><i class="dot" style="background:'+c+'"></i><div><strong>'+t+'</strong><p>'+p+'</p></div></div>';
   if(pushStatus==="needsInstall"){B.innerHTML=st("var(--gold)","홈 화면에 추가해야 알림을 받을 수 있어요","아이폰은 카톡이나 사파리 화면에서는 알림을 못 받아요.")+
-    '<ol class="steps"><li>카톡에서 열었다면 <b>⋯ → 다른 브라우저로 열기</b>로 사파리에서 열기</li><li>사파리 아래 <b>공유 버튼(□↑)</b> → <b>홈 화면에 추가</b></li><li>홈 화면에 생긴 <b>말씀 동행</b> 아이콘으로 열기</li><li>오른쪽 위 <b>종 모양</b>을 눌러 알림 받기</li></ol>'+rule;return}
+    '<ol class="steps"><li>카톡에서 열었다면 <b>⋯ → 다른 브라우저로 열기</b>로 사파리에서 열기</li><li>사파리 아래 <b>공유 버튼(□↑)</b> → <b>홈 화면에 추가</b></li><li>홈 화면에 생긴 <b>말씀 동행</b> 아이콘으로 열기</li><li>오른쪽 위 <b>종 버튼</b>을 눌러 알림 받기</li></ol>'+rule;return}
   if(pushStatus==="unsupported"){B.innerHTML=st("var(--muted)","이 브라우저는 알림을 지원하지 않아요","아이폰은 iOS 16.4 이상에서, 홈 화면에 추가한 앱으로 열어야 해요.")+rule;return}
   if(pushStatus==="denied"){B.innerHTML=st("var(--bad)","알림이 차단돼 있어요","아이폰 <b>설정 → 알림 → 말씀 동행</b>에서 알림 허용을 켜고 다시 열어주세요.")+rule;return}
-  if(!who){B.innerHTML=st("var(--gold)","먼저 내 이름을 골라주세요","홈 화면 위쪽 이름에서 고르면 그 사람 기준으로 알림이 와요.");return}
+  if(!who){B.innerHTML=st("var(--gold)","먼저 내 이름을 골라주세요","오른쪽 위 이름 버튼에서 고르면 그 사람 기준으로 알림이 와요.");return}
   if(pushStatus==="on"){B.innerHTML=st("#3fa36b","알림 켜짐 · "+esc(who.name),"이 휴대폰으로 "+esc(who.name)+"의 알림이 와요.")+rule+'<div class="two"><button class="btn line" type="button" id="pTest">테스트 알림</button><button class="btn ghost" type="button" id="pOff">알림 끄기</button></div>';
     $("pTest").onclick=testPush;$("pOff").onclick=disablePush;$("pOff").disabled=pushBusy;return}
   B.innerHTML=st("var(--muted)","알림 꺼짐",esc(who.name)+"의 기록 기준으로 알림이 와요.")+rule+'<button class="btn primary" type="button" id="pOn">'+(pushBusy?"켜는 중…":"알림 받기")+'</button>';
@@ -869,7 +1159,7 @@ function wRenderThread(){
   $("wClear").hidden=!wThread.length||wBusy;
 }
 async function wAsk(mode,title,preset){
-  if(wBusy)return;const m=meM();if(!m)return toast("홈에서 내 이름을 먼저 골라주세요");
+  if(wBusy)return;const m=meM();if(!m)return toast("오른쪽 위에서 내 이름을 먼저 골라주세요");
   const code=lsGet("jo-code");if(!code){render();return}
   const q=mode==="free"?(preset||$("wQ").value.trim()):"";if(mode==="free"&&!q)return toast("궁금한 걸 적어주세요");
   const pasted=wSrc==="paste"?$("wPaste").value.trim():"";if(wSrc==="paste"&&!pasted&&!preset)return toast("구절을 붙여넣어 주세요");

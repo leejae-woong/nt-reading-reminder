@@ -1,0 +1,7 @@
+{
+  "name": "malsseum-donghaeng",
+  "private": true,
+  "type": "module",
+  "description": "말씀 동행: 콕 찌르기 알림을 보내는 서버 기능이 쓰는 패키지",
+  "dependencies": { "web-push": "3.6.7" }
+}
