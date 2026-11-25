@@ -118,10 +118,6 @@ main{display:flex;flex-direction:column;gap:22px}
 .stamp text{font-family:var(--f-body)}
 .stamp .stamp-d{font-family:var(--f-num);font-weight:700}
 .today .stamp{width:100px;height:100px;color:var(--stamp-hi);transform:rotate(-10deg)}
-.goal{border-top:1px solid var(--hero-line);padding-top:14px;display:flex;flex-direction:column;gap:3px}
-.goal b{font-size:16px;font-weight:700;color:var(--note);word-break:keep-all}
-.goal span{font-size:13px;color:var(--hero-soft);line-height:1.5;word-break:keep-all}
-.goal.warn b{color:var(--stamp-hi)}
 .tc-map{border-top:1px solid var(--hero-line);padding-top:16px;display:flex;flex-direction:column;gap:11px}
 .map-head{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--m-lbl)}
 .map-head b{font-family:var(--f-num);font-size:24px;font-weight:600;line-height:1}
@@ -696,14 +692,6 @@ function stats(m){
   const early=eta&&remain?diffDays(eta,END):0;
   return{mine,prior,set,todaySet,read,remain,quota,need,raised,oldGoal,oldEta,gain,early,readToday,todayLeft,next,expected,expectedPct:expected/TOTAL,diff:read-expected,eta,days,gained};
 }
-// 목표 한 줄: 하루 몇 장이면 언제 끝나는지, 더 읽으면 얼마나 앞당겼는지, 밀리면 언제 끝나고 이제 몇 장인지
-function goalText(s){
-  if(!s||s.remain===0||!s.eta)return null;
-  if(s.raised)return{warn:true,head:"목표가 하루 "+s.oldGoal+"장 → "+s.quota+"장으로 올랐어",
-    sub:"하루 "+s.oldGoal+"장이면 "+md(s.oldEta)+" 완독이라, 12/31에 끝내려면 이제 하루 "+s.quota+"장"};
-  return{warn:false,head:"하루 "+s.quota+"장이면 "+md(s.eta)+" 완독",
-    sub:(s.gain>0?"오늘 더 읽어서 "+s.gain+"일 앞당겼어 · ":"")+(s.early>0?"12/31보다 "+s.early+"일 빨라":"12/31에 딱 맞춰 완독")};
-}
 function logDates(id){const s=new Set();for(const l of logs)if(l.member===id)s.add(l.date);return s}
 function dayState(id,d,ld){return ld.has(d)?"auto":d<TODAY?"skip":""}
 const isRead=st=>st==="auto"||st==="read";
@@ -854,8 +842,7 @@ function renderHome(m){
     sub=doneToday?(s.todayLeft?"오늘 "+s.todayLeft+"장 더 읽으면 오늘 분량 끝":"오늘 분량 끝. 내일도 이어가자"):"오늘 "+s.todayLeft+"장 · "+label(s.next)+"부터"}
   else{big='<div class="big">오늘 <b>첫 장</b>을 펼쳐볼까?</div>';sub="오늘 "+s.todayLeft+"장이면 돼 · "+label(s.next)+"부터"}
   H.innerHTML=big+'<p class="sub">'+esc(sub)+"</p>"+weekStrip(a);
-  const G=goalText(s),goal=G?'<div class="goal'+(G.warn?" warn":"")+'"><b>'+esc(G.head)+'</b><span>'+esc(G.sub)+'</span></div>':"";
-  const map=goal+'<div class="tc-map"><div class="map-head"><span>신약 260장</span><span><b>'+s.read+"</b> / 260</span></div>"+
+  const map='<div class="tc-map"><div class="map-head"><span>신약 260장</span><span><b>'+s.read+"</b> / 260</span></div>"+
     '<div class="map" role="img" aria-label="신약 260장 중 '+s.read+'장 읽음">'+mapHTML(s)+"</div>"+
     '<div class="map-legend"><span><i class="r"></i>읽음</span><span><i class="t"></i>오늘</span><span><i class="nx"></i>다음</span></div></div>';
   if(doneToday){
@@ -941,13 +928,6 @@ function rankRows(){
   let pk=null,pr=0;rows.forEach((r,i)=>{const k=r.s.remain===0?"d"+r.s.eta:"n"+r.s.read;r.rank=k===pk?pr:i+1;pk=k;pr=r.rank});
   return rows;
 }
-function paceChip(s){
-  if(s.remain===0)return'<span class="chip done">완독</span>';
-  if(s.readToday>0&&s.todayLeft===0)return'<span class="chip good">오늘 완료</span>';
-  if(s.diff>=0)return'<span class="chip good">페이스 OK'+(s.diff>0?' +'+s.diff:'')+'</span>';
-  if(s.diff>=-5)return'<span class="chip warn">'+(-s.diff)+'장 뒤처짐</span>';
-  return'<span class="chip bad">'+(-s.diff)+'장 뒤처짐</span>';
-}
 function renderDash(){
   $("dDay").textContent="D-"+(DAYS_LEFT-1);
   const rows=rankRows(),M=$("mlist");M.innerHTML="";
@@ -963,13 +943,14 @@ function renderDash(){
   for(const{m,s,a,rank}of rows){
     const pct=s.read/TOTAL*100;
     const b=document.createElement("button");b.type="button";b.className="mcard"+(rank===1&&s.read>0?" first":"");b.setAttribute("aria-label",m.name+" 수정");
-    let eta=s.remain===0?md(s.eta)+" 완독":s.raised?'하루 '+s.oldGoal+'장이면 <b style="color:var(--bad)">'+md(s.oldEta)+'</b>':'<b>'+md(s.eta)+'</b> 완독 예정'+(s.early>0?' · '+s.early+'일 빨라':'');
+    const chip=s.remain===0?'<span class="chip done">'+md(s.eta)+' 완독</span>':s.raised?'<span class="chip bad">'+md(s.oldEta)+' 완독 예정</span>':'<span class="chip good">'+md(s.eta)+' 완독 예정</span>';
+    const goal=s.remain===0?'':s.raised?'<b style="color:var(--bad)">12/31까지 하루 '+s.quota+'장</b>':'하루 <b>'+s.quota+'장</b>'+(s.early>0?' · '+s.early+'일 빨라':'')+(s.gain>0?' (오늘 +'+s.gain+'일)':'');
     b.innerHTML='<span class="rk">'+rank+'</span>'+
       '<div class="mname"><i class="sq" style="background:'+colorOf(m.id)+'"></i><span>'+esc(m.name)+'</span>'+(a.streak>=2?'<span class="chip streak">'+a.streak+'일 연속</span>':'')+'</div>'+
       '<div class="mpct">'+pct.toFixed(1)+'<small>%</small></div>'+
       '<div class="bar"><i style="width:'+pct.toFixed(2)+'%"></i><s style="left:calc('+(s.expectedPct*100).toFixed(2)+'% - 1px)"></s></div>'+
-      '<div class="mrow"><span>'+(s.remain===0?'완독!':s.todayLeft?'오늘 <b>'+s.todayLeft+'장</b>'+(s.readToday?' 더':'')+' · '+esc(label(s.next))+'부터':'오늘 분량 끝')+'</span>'+paceChip(s)+'</div>'+
-      '<div class="mrow sm"><span>출석 '+a.readN+'/'+a.counted+'일'+(s.remain?' · 하루 <b>'+s.quota+'장</b> 목표'+(s.raised?' (↑'+(s.quota-s.oldGoal)+')':''):'')+'</span><span>'+eta+'</span></div>';
+      '<div class="mrow"><span>'+(s.remain===0?'완독!':s.todayLeft?'오늘 <b>'+s.todayLeft+'장</b>'+(s.readToday?' 더':'')+' · '+esc(label(s.next))+'부터':'오늘 분량 끝')+'</span>'+chip+'</div>'+
+      '<div class="mrow sm"><span>출석 '+a.readN+'/'+a.counted+'일 · '+s.read+'/260장</span><span>'+goal+'</span></div>';
     b.onclick=()=>openSheet("member",m.id);
     M.appendChild(b);
   }
