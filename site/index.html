@@ -118,6 +118,10 @@ main{display:flex;flex-direction:column;gap:22px}
 .stamp text{font-family:var(--f-body)}
 .stamp .stamp-d{font-family:var(--f-num);font-weight:700}
 .today .stamp{width:100px;height:100px;color:var(--stamp-hi);transform:rotate(-10deg)}
+.goal{border-top:1px solid var(--hero-line);padding-top:14px;display:flex;flex-direction:column;gap:3px}
+.goal b{font-size:16px;font-weight:700;color:var(--note);word-break:keep-all}
+.goal span{font-size:13px;color:var(--hero-soft);line-height:1.5;word-break:keep-all}
+.goal.warn b{color:var(--stamp-hi)}
 .tc-map{border-top:1px solid var(--hero-line);padding-top:16px;display:flex;flex-direction:column;gap:11px}
 .map-head{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--m-lbl)}
 .map-head b{font-family:var(--f-num);font-size:24px;font-weight:600;line-height:1}
@@ -642,7 +646,7 @@ const TODAY=ymd(NOW);
 const END=NOW.getFullYear()+"-12-31";
 const DAYS_LEFT=Math.max(1,diffDays(TODAY,END)+1);
 const MIN_DAYS=3;
-const RECENT=7; // 예상 완독일은 최근 7일 페이스로 계산 (처음에 느렸던 날들이 계속 발목 잡지 않게)
+const HOLD=7; // 더 읽어서 필요량이 줄어도 하루 목표는 이 기간 동안 그대로 둔다
 const NOTE_COLORS=["var(--note)","var(--note2)","var(--note3)","#c9dcf7","#f3c1d3","#d9cdf5"];
 
 // 자정이 지나면 새로고침해서 날짜와 말씀을 바꿈
@@ -664,28 +668,41 @@ function stats(m){
   for(const l of mine){for(let i=l.start;i<=l.end;i++){set.add(i);if(l.date===TODAY)todaySet.add(i)}}
   const beforeToday=new Set(prior);for(const l of mine)if(l.date<TODAY)for(let i=l.start;i<=l.end;i++)beforeToday.add(i);
   const read=set.size,remain=TOTAL-read,remainStart=TOTAL-beforeToday.size;
-  const quota=remainStart>0?Math.ceil(remainStart/DAYS_LEFT):0;
+  let start=m.startDate||TODAY;for(const l of mine)if(l.date<start)start=l.date;
+  // 하루 목표: 그날 아침 남은 장 ÷ 12/31까지 남은 날.
+  // 더 읽어서 필요량이 줄면 목표는 그대로 두고(완독일이 앞당겨짐), 못 읽어서 필요량이 늘면 목표를 올린다.
+  const needOn=d=>{const b=new Set(prior);for(const l of mine)if(l.date<d)for(let i=l.start;i<=l.end;i++)b.add(i);const r=TOTAL-b.size;return r>0?Math.ceil(r/Math.max(1,diffDays(d,END)+1)):0};
+  const need=needOn(TODAY);
+  let held=0;for(let k=1;k<HOLD;k++){const d=addDays(TODAY,-k);if(d<start)break;held=Math.max(held,needOn(d))}
+  const quota=remainStart>0?Math.min(remainStart,Math.max(need,held)):0;
+  // 일주일 전 목표보다 지금 필요한 양이 늘었으면, 그동안 목표만큼 못 읽어서 밀린 것
+  let from=addDays(TODAY,-(HOLD-1));if(from<start)from=start;
+  const before=from<TODAY?needOn(from):0,raised=before>0&&need>before;
   const readToday=[...todaySet].filter(i=>!beforeToday.has(i)).length;
   const todayLeft=Math.max(0,quota-readToday);
   let next=-1;for(let i=0;i<TOTAL;i++)if(!set.has(i)){next=i;break}
-  let start=m.startDate||TODAY;for(const l of mine)if(l.date<start)start=l.date;
   const totalDays=Math.max(1,diffDays(start,END)+1);
   const elapsed=Math.max(0,Math.min(totalDays,diffDays(start,TODAY)));
   const base=prior.size;
   const expected=Math.round(base+(TOTAL-base)*elapsed/totalDays);
   const gained=[...set].filter(i=>!prior.has(i)).length;
   const days=Math.max(1,diffDays(start,TODAY)+(readToday>0?1:0));
-  // 최근 7일(오늘 아직 안 읽었으면 어제까지) 하루 평균 몇 장을 새로 읽었는지
-  const lastDay=readToday>0?TODAY:addDays(TODAY,-1);
-  let wFrom=addDays(lastDay,-(RECENT-1));if(wFrom<start)wFrom=start;
-  const wDays=Math.max(1,diffDays(wFrom,lastDay)+1);
-  const before=new Set(prior);for(const l of mine)if(l.date<wFrom)for(let i=l.start;i<=l.end;i++)before.add(i);
-  let recentN=0;for(const i of set)if(!before.has(i))recentN++;
-  const rate=recentN/wDays;
-  let eta=null;
+  // 하루 g장씩 읽으면 언제 끝나는지 (오늘 몫을 마저 읽는다고 보고)
+  const finishAt=(g,left=remain,rt=readToday)=>{if(left<=0)return TODAY;if(g<=0)return null;const r=left-Math.max(0,g-rt);return r<=0?TODAY:addDays(TODAY,Math.ceil(r/g))};
+  let eta=null,gain=0,oldGoal=raised?before:0,oldEta=raised?finishAt(before):null;
   if(remain===0){let last=start;for(const l of mine)if(l.date>last)last=l.date;eta=last}
-  else if(rate>0&&days>=MIN_DAYS){const d=parse(TODAY);d.setDate(d.getDate()+(readToday>0?1:0)+Math.ceil(remain/rate)-1);eta=ymd(d)}
-  return{mine,prior,set,todaySet,read,remain,quota,readToday,todayLeft,next,expected,expectedPct:expected/TOTAL,diff:read-expected,rate,eta,days,gained};
+  else{eta=finishAt(quota);
+    if(readToday>quota){const e0=finishAt(quota,remain+(readToday-quota),quota);gain=Math.max(0,diffDays(eta,e0))}}
+  const early=eta&&remain?diffDays(eta,END):0;
+  return{mine,prior,set,todaySet,read,remain,quota,need,raised,oldGoal,oldEta,gain,early,readToday,todayLeft,next,expected,expectedPct:expected/TOTAL,diff:read-expected,eta,days,gained};
+}
+// 목표 한 줄: 하루 몇 장이면 언제 끝나는지, 더 읽으면 얼마나 앞당겼는지, 밀리면 언제 끝나고 이제 몇 장인지
+function goalText(s){
+  if(!s||s.remain===0||!s.eta)return null;
+  if(s.raised)return{warn:true,head:"목표가 하루 "+s.oldGoal+"장 → "+s.quota+"장으로 올랐어",
+    sub:"하루 "+s.oldGoal+"장이면 "+md(s.oldEta)+" 완독이라, 12/31에 끝내려면 이제 하루 "+s.quota+"장"};
+  return{warn:false,head:"하루 "+s.quota+"장이면 "+md(s.eta)+" 완독",
+    sub:(s.gain>0?"오늘 더 읽어서 "+s.gain+"일 앞당겼어 · ":"")+(s.early>0?"12/31보다 "+s.early+"일 빨라":"12/31에 딱 맞춰 완독")};
 }
 function logDates(id){const s=new Set();for(const l of logs)if(l.member===id)s.add(l.date);return s}
 function dayState(id,d,ld){return ld.has(d)?"auto":d<TODAY?"skip":""}
@@ -837,8 +854,8 @@ function renderHome(m){
     sub=doneToday?(s.todayLeft?"오늘 "+s.todayLeft+"장 더 읽으면 오늘 분량 끝":"오늘 분량 끝. 내일도 이어가자"):"오늘 "+s.todayLeft+"장 · "+label(s.next)+"부터"}
   else{big='<div class="big">오늘 <b>첫 장</b>을 펼쳐볼까?</div>';sub="오늘 "+s.todayLeft+"장이면 돼 · "+label(s.next)+"부터"}
   H.innerHTML=big+'<p class="sub">'+esc(sub)+"</p>"+weekStrip(a);
-  const etaT=s.remain&&s.eta?(s.eta>END?"이 속도면 "+md(s.eta)+" 완독":md(s.eta)+" 완독 예정"):"신약 260장";
-  const map='<div class="tc-map"><div class="map-head"><span'+(s.eta>END&&s.remain?' style="color:var(--stamp-hi)"':'')+'>'+esc(etaT)+'</span><span><b>'+s.read+"</b> / 260</span></div>"+
+  const G=goalText(s),goal=G?'<div class="goal'+(G.warn?" warn":"")+'"><b>'+esc(G.head)+'</b><span>'+esc(G.sub)+'</span></div>':"";
+  const map=goal+'<div class="tc-map"><div class="map-head"><span>신약 260장</span><span><b>'+s.read+"</b> / 260</span></div>"+
     '<div class="map" role="img" aria-label="신약 260장 중 '+s.read+'장 읽음">'+mapHTML(s)+"</div>"+
     '<div class="map-legend"><span><i class="r"></i>읽음</span><span><i class="t"></i>오늘</span><span><i class="nx"></i>다음</span></div></div>';
   if(doneToday){
@@ -946,13 +963,13 @@ function renderDash(){
   for(const{m,s,a,rank}of rows){
     const pct=s.read/TOTAL*100;
     const b=document.createElement("button");b.type="button";b.className="mcard"+(rank===1&&s.read>0?" first":"");b.setAttribute("aria-label",m.name+" 수정");
-    let eta=s.remain===0?md(s.eta)+" 완독":s.eta?(s.eta>END?'이 속도면 <b style="color:var(--bad)">'+md(s.eta)+' 완독</b>':'예상 완독 <b>'+md(s.eta)+'</b>'):s.rate>0?'예상 완독은 기록 3일째부터':'최근 7일 기록 없음';
+    let eta=s.remain===0?md(s.eta)+" 완독":s.raised?'하루 '+s.oldGoal+'장이면 <b style="color:var(--bad)">'+md(s.oldEta)+'</b>':'<b>'+md(s.eta)+'</b> 완독 예정'+(s.early>0?' · '+s.early+'일 빨라':'');
     b.innerHTML='<span class="rk">'+rank+'</span>'+
       '<div class="mname"><i class="sq" style="background:'+colorOf(m.id)+'"></i><span>'+esc(m.name)+'</span>'+(a.streak>=2?'<span class="chip streak">'+a.streak+'일 연속</span>':'')+'</div>'+
       '<div class="mpct">'+pct.toFixed(1)+'<small>%</small></div>'+
       '<div class="bar"><i style="width:'+pct.toFixed(2)+'%"></i><s style="left:calc('+(s.expectedPct*100).toFixed(2)+'% - 1px)"></s></div>'+
       '<div class="mrow"><span>'+(s.remain===0?'완독!':s.todayLeft?'오늘 <b>'+s.todayLeft+'장</b>'+(s.readToday?' 더':'')+' · '+esc(label(s.next))+'부터':'오늘 분량 끝')+'</span>'+paceChip(s)+'</div>'+
-      '<div class="mrow sm"><span>출석 '+a.readN+'/'+a.counted+'일'+(s.remain&&s.rate>0?' · 최근 7일 하루 '+(Math.round(s.rate*10)/10)+'장':'')+'</span><span>'+eta+'</span></div>';
+      '<div class="mrow sm"><span>출석 '+a.readN+'/'+a.counted+'일'+(s.remain?' · 하루 <b>'+s.quota+'장</b> 목표'+(s.raised?' (↑'+(s.quota-s.oldGoal)+')':''):'')+'</span><span>'+eta+'</span></div>';
     b.onclick=()=>openSheet("member",m.id);
     M.appendChild(b);
   }
